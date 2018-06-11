@@ -17,6 +17,7 @@ SET(TCIMGLIB_SRCS
 )
 
 ADD_LIBRARY(tcimg SHARED ${TCIMGLIB_SRCS})
+#ADD_LIBRARY(tcimg STATIC ${TCIMGLIB_SRCS})
 #ADD_LIBRARY(testapi STATIC ${TESTLIB_SRCS})
 
 #target_link_libraries(testapi
