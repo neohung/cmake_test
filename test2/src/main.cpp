@@ -4,21 +4,20 @@
 #include <tcimg.h>
 
 #include <SDL.h>
-//#include <SDL2/SDL.h>
 
 class SDLWindow
 {
   protected:
 	static SDLWindow *s_instance;
 	unsigned int DELAYTIME;
-	unsigned short Width;
-	unsigned short Height;
 	void (* event_cb)(SDL_Event e);
 	void (* update_cb)(SDL_Surface* screenbuffer);
 	SDL_Window* Window;
 public:
 	unsigned short MouseX;
 	unsigned short MouseY;
+	unsigned short Width;
+	unsigned short Height;
 	SDLWindow(){};
 	void init(const char* title, unsigned short w, unsigned short h);
 	~SDLWindow();
@@ -40,8 +39,8 @@ void SDLWindow::init(const char* title, unsigned short w, unsigned short h)
 	Width=w;
 	Height=h;
 	DELAYTIME=10;
-	MouseX = 0;
-	MouseY = 0;
+	MouseX = 100;
+	MouseY = 100;
 	//extern TrueColorImage abc;
 	//INIT SDL
 	if (SDL_Init( SDL_INIT_VIDEO)  < 0 ){
@@ -68,13 +67,6 @@ void SDLWindow::init(const char* title, unsigned short w, unsigned short h)
 SDLWindow::~SDLWindow()
 {
 
-}
-
-void SDLWindow::resize(unsigned short w, unsigned short h)
-{
-	//EVERY TIME RESIZE NEED TO GET SCREEN AGAIN
-    SDL_SetWindowSize(Window,w,h);
-    Screen = SDL_GetWindowSurface(Window);
 }
 
 int SDLWindow::show(void (*u_cb)(SDL_Surface* screenbuffer),void (*e_cb)(SDL_Event e))
@@ -142,7 +134,7 @@ void eventcb(SDL_Event e)
 	}
 }
 
-//SDL_Surface *screen2;
+int c=0;
 void updatecb(SDL_Surface* screenbuffer)
 {
 	extern TrueColorImage abc;
@@ -156,15 +148,20 @@ void updatecb(SDL_Surface* screenbuffer)
     */    
 	SDL_Surface *screen2 = SDL_CreateRGBSurface(0, abc.ImgWidth, abc.ImgHeight, 24,  0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	memcpy(screen2->pixels,abc.ImgData,abc.ImgTotalBytes);
+        c++;
+        if (c > 255) c= 0;
+ 
 	int i,j;
-    //SDL_UnlockSurface( screenbuffer );
-    //SDL_LockSurface( screenbuffer );
 	for (j=-20;j<20;j++)
 	  for (i=-20;i<20;i++){
-	  	unsigned char* offset = (unsigned char*)(screen2->pixels) + (((SDLWindow::instance()->MouseY+j) * screen2->pitch)+ 3*(SDLWindow::instance()->MouseX+i));
-	  	offset[0] = 0;
-	  	offset[1] = 0;
-	  	offset[2] = 255;
+                int jj = SDLWindow::instance()->MouseY+j;
+                int ii = SDLWindow::instance()->MouseX+i;
+                if ((jj > 5) && (ii > 5) && (jj < SDLWindow::instance()->Height-5) && (ii < SDLWindow::instance()->Width-5)){
+	  	  unsigned char* offset = (unsigned char*)(screen2->pixels) + (((SDLWindow::instance()->MouseY+j) * screen2->pitch)+ 3*(SDLWindow::instance()->MouseX+i));
+	  	  offset[0] = 0;
+	  	  offset[1] = 0;
+	  	  offset[2] = 255;
+                }
 	  }
 	//memcpy(screen2->pixels,screenbuffer,abc.ImgTotalBytes);
 	SDL_BlitSurface(screen2, NULL, screenbuffer, NULL); // blit it to the screen
@@ -182,8 +179,8 @@ int main()
 	printf("ImgTotalPixels --> %d\n",abc.ImgTotalPixels);
 	printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
 
-    SDLWindow::instance()->init("",640,480);
-    SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
+    //SDLWindow::instance()->init("",640,480);
+    SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
     SDLWindow::instance()->show(updatecb,eventcb);
 
 	//api1();

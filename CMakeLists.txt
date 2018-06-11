@@ -1,7 +1,11 @@
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.8)
 project(mainproject)
 
-find_package(SDL2 REQUIRED)
+#find_package(SDL2 REQUIRED)
+INCLUDE (FindPkgConfig)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+
+
 
 ######### List folders included CMakeLists.txt #########
 MACRO(SUBDIRLIST result curdir)

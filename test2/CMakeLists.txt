@@ -1,12 +1,13 @@
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.8)
 #project(Test)
 #USE FOLDER NAME AS PROJECT NAME
 get_filename_component(ProjectId ${CMAKE_CURRENT_LIST_DIR} NAME)
 string(REPLACE " " "_" ProjectId ${ProjectId})
 project(${ProjectId} C CXX)
 
-find_package(SDL2 REQUIRED)
-#find_package(SDL2 REQUIRED)
+
+INCLUDE (FindPkgConfig)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
