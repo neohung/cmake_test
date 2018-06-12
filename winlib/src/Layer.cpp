@@ -24,7 +24,96 @@ class Layer
     ~Layer*();
     void update(Layer* l);
 };
+
+Layer
 */
+
+Layer::Layer()
+{
+}
+
+Layer::~Layer()
+{
+}
+
+void Layer::update(PixelBuffer* pb)
+{
+}
+
+
+union xPointer {
+	unsigned char *u8;
+	unsigned short *u16;
+	unsigned int *u32;
+	unsigned int uint32;
+};
+//https://zhuanlan.zhihu.com/p/28796736
+void* memset_(void* pvDest, int iValue, size_t ulBytes)
+{
+  union xPointer pxDestination;
+  union xPointer pxLast;
+  unsigned int ulPattern; 
+
+  pxDestination.u8 = ( unsigned char * ) pvDest;
+  pxLast.u8 = pxDestination.u8 + ulBytes;
+ 
+  if (ulBytes >= 8){
+    unsigned int ulAlignBits;
+    unsigned int ulExtra;
+    int iCount;
+    ulPattern = iValue & 0xFF;
+    ulPattern |= (ulPattern<<8) | (ulPattern << 16) | (ulPattern<<24);
+    ulAlignBits = (pxDestination.uint32 & 0x03);
+    if (ulAlignBits != 0) 
+    {
+       ulAlignBits = 4 - ulAlignBits;
+       while( ulAlignBits-- > 0 )
+       {
+         pxDestination.u8[0] = ( unsigned char )iValue;
+         pxDestination.u8++;
+       }
+    } 
+    //last 1 up-to 3 bytes
+    ulExtra = pxLast.uint32 & 0x03ul;
+    pxLast.uint32 &= ~0x03ul;
+    iCount = ( int ) ( pxLast.u32 - pxDestination.u32 );
+   while( iCount > 8 )
+		{
+			pxDestination.u32[ 0 ] = ulPattern;
+			pxDestination.u32[ 1 ] = ulPattern;
+			pxDestination.u32[ 2 ] = ulPattern;
+			pxDestination.u32[ 3 ] = ulPattern;
+			pxDestination.u32[ 4 ] = ulPattern;
+			pxDestination.u32[ 5 ] = ulPattern;
+			pxDestination.u32[ 6 ] = ulPattern;
+			pxDestination.u32[ 7 ] = ulPattern;
+			pxDestination.u32 += 8;
+			iCount -= 8;
+		}
+   while( pxDestination.u32 < pxLast.u32 )
+		{
+			*( pxDestination.u32++ ) = ulPattern;
+		}
+
+		pxLast.uint32 |= ulExtra;		
+  }
+  //
+  while( pxDestination.u8 < pxLast.u8 )
+  {
+    pxDestination.u8[0] = ( unsigned char ) iValue;
+    pxDestination.u8++;
+  }
+  return pvDest; 
+}
+
+
+Layer::Layer(char* name, unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color):
+Name(name), PosX(x), PosY(y), Width(w), Height(h), IsSkip(false)
+{
+   pixels = createPixelBuffer(Width,Height, 24);
+
+ 
+}
 #if 0
 void SDLWindow::init(const char* title, unsigned short w, unsigned short h)
 {

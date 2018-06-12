@@ -1,6 +1,8 @@
 #ifndef __WINAPI_H__
 #define __WINAPI_H__
 
+#include <vector>
+
 #define STATE_RELEASED 0
 #define STATE_PRESSED	1
 #define MOUSE_BUTTON_LEFT 1
@@ -82,6 +84,24 @@ typedef struct{
 PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char colorbit);
 void freePixelBuffer(PixelBuffer* pb);
 
+class Layer
+{
+  protected:
+  public:
+    char* Name;
+    unsigned short PosX;
+    unsigned short PosY;
+    unsigned short Width;
+    unsigned short Height;
+    bool IsSkip;
+    PixelBuffer* pixels;
+    Layer();
+    Layer(char* name,unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color);
+    ~Layer();
+    void update(PixelBuffer* pb);
+};
+
+
 typedef struct{
   int w;
   int h;
@@ -90,7 +110,7 @@ typedef struct{
   void* handle;
 } WINDOW;
 
-typedef void * SCREEN;
+//typedef void * SCREEN;
 //typedef void * WINDOW;
 
 class SDLWindow
@@ -103,6 +123,7 @@ class SDLWindow
         //SDL_Window* Window;
         WINDOW Window;
 public:
+        std::vector<Layer> layers;
         unsigned short MouseX;
         unsigned short MouseY;
         unsigned short Width;
@@ -126,21 +147,4 @@ public:
 //For Singleton the static need to init first
 //SDLWindow* SDLWindow::s_instance = 0;
 
-class Layer
-{
-  protected:
-  public:
-    char* Name;
-    unsigned short PosX;
-    unsigned short PosY;
-    unsigned short Width;
-    unsigned short Height;
-    bool IsSkip;
-    unsigned char* Buffer;
-    unsigned int BufferSize;
-    unsigned char BytePerLine;
-    Layer();
-    ~Layer();
-    void update(Layer* l);
-};
 #endif

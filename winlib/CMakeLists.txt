@@ -29,6 +29,7 @@ include_directories(
 
 SET(WINLIB_SRCS
     src/SDLWindow.cpp
+    src/Layer.cpp
     inc/winapi.h
 )
 
