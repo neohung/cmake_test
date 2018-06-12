@@ -7,6 +7,10 @@ project(${ProjectId} C CXX)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 
+set(CMAKE_INSTALL_RPATH "./")
+#set(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 if (APPLE)
   message(STATUS ">>> MAC")
   set(CMAKE_MACOSX_RPATH 0)
@@ -58,6 +62,6 @@ ADD_DEPENDENCIES(${ProjectId}
   tcimg
 )
 
-#INSTALL(TARGETS ${ProjectId} DESTINATION ${CMAKE_BINARY_DIR}/bin)
+INSTALL(TARGETS ${ProjectId} DESTINATION ${CMAKE_BINARY_DIR}/bin)
 ############################
 
