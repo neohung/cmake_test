@@ -69,7 +69,7 @@ int main()
     Layer* l2 = new Layer("BBB",20,20,30,20,255);
     SDLWindow::instance()->init("",640,480);
     SDLWindow::instance()->addLayer(l1);
-    //SDLWindow::instance()->addLayer(l2);
+    SDLWindow::instance()->addLayer(l2);
     //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
     //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
     SDLWindow::instance()->show(updatecb,eventcb);

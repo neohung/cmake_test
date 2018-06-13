@@ -78,14 +78,11 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
                 if (layers.size() > 0){
                   //printf("%dx%d %d, %d, %d\n",Width, Height, Screen.size, Screen.bytesperline, Screen.h);
                   PixelBuffer*  p = createPixelBuffer(Width , Height, 24);
-                  printf("(%d,%d) %d , %d\n",p->w, p->h, p->bytesperline, p->size);
-
-                  SDL_Surface* sf = SDL_GetWindowSurface((SDL_Window*)Window.handle);
-                  //printf("sf: %dx%d %d, %d\n", sf->w, sf->h, sf->pitch, sf->pitch*sf->h);
-                  //memcpy(p->pixels, sf->pixels, Screen.size);
+                  SDL_BlitSurface((SDL_Surface*)Screen.freePtr, NULL, (SDL_Surface*)p->freePtr, NULL);
                   int i;
                   for(i=0;i<layers.size();i++){
                   //Layer* l = layers[0];
+                     memcpy(p->pixels, layers[i]->pixelbuf->pixels , layers[i]->pixelbuf->size);
                     //render(layers[i]->pixelbuf);    
                   }
                   render(p);    
@@ -174,7 +171,7 @@ PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char
  pb->bytesperline = tmp->pitch;
  pb->colors = tmp->pitch/tmp->w;
  pb->size = tmp->pitch* tmp->h;
- printf("pb (%d,%d) perline %d , size %d\n",pb->w, pb->h, pb->bytesperline, pb->size);
+ //printf("pb (%d,%d) perline %d , size %d\n",pb->w, pb->h, pb->bytesperline, pb->size);
  return pb;   
 }
 void freePixelBuffer(PixelBuffer* pb){
