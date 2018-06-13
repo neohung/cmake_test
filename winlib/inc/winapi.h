@@ -96,7 +96,7 @@ class Layer
     bool IsSkip;
     PixelBuffer* pixels;
     Layer();
-    Layer(char* name,unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color);
+    Layer(const char* name,unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color);
     ~Layer();
     void update(PixelBuffer* pb);
 };
