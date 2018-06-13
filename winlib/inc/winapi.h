@@ -93,8 +93,9 @@ class Layer
     unsigned short PosY;
     unsigned short Width;
     unsigned short Height;
+    unsigned char order;
     bool IsSkip;
-    PixelBuffer* pixels;
+    PixelBuffer* pixelbuf;
     Layer();
     Layer(const char* name,unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color);
     ~Layer();
@@ -123,7 +124,8 @@ class SDLWindow
         //SDL_Window* Window;
         WINDOW Window;
 public:
-        std::vector<Layer> layers;
+        std::vector<Layer*> layers;
+        void addLayer(Layer* l);
         unsigned short MouseX;
         unsigned short MouseY;
         unsigned short Width;

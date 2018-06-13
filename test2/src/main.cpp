@@ -65,8 +65,11 @@ int main()
 	printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);
 	printf("ImgTotalPixels --> %d\n",abc.ImgTotalPixels);
 	printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
-    Layer* l = new Layer("AAA",0,0,100,100,0xffffff);
+    Layer* l1 = new Layer("AAA",10,10,100,50,128);
+    Layer* l2 = new Layer("BBB",20,20,30,20,255);
     SDLWindow::instance()->init("",640,480);
+    SDLWindow::instance()->addLayer(l1);
+    //SDLWindow::instance()->addLayer(l2);
     //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
     //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
     SDLWindow::instance()->show(updatecb,eventcb);
