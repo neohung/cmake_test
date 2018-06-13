@@ -99,6 +99,7 @@ class Layer
     Layer();
     Layer(const char* name,unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color);
     ~Layer();
+    void setPos(unsigned short x, unsigned short y);
     void update(PixelBuffer* pb);
 };
 
@@ -137,6 +138,7 @@ public:
         void render(PixelBuffer* pb);
         //void resize(unsigned short w, unsigned short h);
         void resize(unsigned short w,unsigned short h);
+        Layer* getLayerByName(char* n);
         //SDL_Surface* Screen;
         PixelBuffer Screen;
         static SDLWindow *instance(void)

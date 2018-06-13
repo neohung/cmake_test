@@ -13,6 +13,8 @@ void eventcb(WINEVENT e)
 		case MOUSEBUTTONDOWN:
 		{ 
 			printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
+      Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+      l->setPos(e.button.x,e.button.y);
                         break;
 		}
 		case KEYUP:
@@ -29,6 +31,9 @@ void eventcb(WINEVENT e)
 
 void updatecb(PixelBuffer screenbuffer)
 {
+   Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+   l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
+  /*
 	extern TrueColorImage abc;
         PixelBuffer*  p = createPixelBuffer(abc.ImgWidth , abc.ImgHeight, 24);
 	memcpy(p->pixels,abc.ImgData,abc.ImgTotalBytes);
@@ -45,9 +50,9 @@ void updatecb(PixelBuffer screenbuffer)
                   offset[2] = 255;
                 }
         }
-        SDLWindow::instance()->render(p);
+        //SDLWindow::instance()->render(p);
         freePixelBuffer(p);
-
+   */
 	 /*
     SDL_Surface *screen1 = SDL_CreateRGBSurfaceFrom(abc.ImgData, abc.ImgWidth, abc.ImgHeight, 24,
      	                                 abc.ImgByteWidth,
@@ -65,8 +70,9 @@ int main()
 	printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);
 	printf("ImgTotalPixels --> %d\n",abc.ImgTotalPixels);
 	printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
-    Layer* l1 = new Layer("AAA",10,10,100,50,128);
-    Layer* l2 = new Layer("BBB",20,20,30,20,255);
+    Layer* l1 = new Layer("AAA",0,0,abc.ImgWidth, abc.ImgHeight,0);
+    memcpy(l1->pixelbuf->pixels,abc.ImgData,abc.ImgTotalBytes);
+    Layer* l2 = new Layer("BBB",250,150,50,50,128);
     SDLWindow::instance()->init("",640,480);
     SDLWindow::instance()->addLayer(l1);
     SDLWindow::instance()->addLayer(l2);

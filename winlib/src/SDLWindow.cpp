@@ -82,7 +82,17 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
                   int i;
                   for(i=0;i<layers.size();i++){
                   //Layer* l = layers[0];
-                     memcpy(p->pixels, layers[i]->pixelbuf->pixels , layers[i]->pixelbuf->size);
+
+                     int j = 0;
+                     unsigned char* dst_offset = (unsigned char*)p->pixels + (layers[i]->PosY * p->bytesperline )+ (layers[i]->pixelbuf->colors*layers[i]->PosX);
+                     unsigned char* src_offset = (unsigned char*)layers[i]->pixelbuf->pixels;
+                     while(j<layers[i]->Height){
+                       dst_offset += p->bytesperline;
+                       src_offset += layers[i]->pixelbuf->bytesperline;
+                       //memcpy(p->pixels, layers[i]->pixelbuf->pixels , layers[i]->pixelbuf->size);
+                       memcpy(dst_offset, src_offset , layers[i]->pixelbuf->bytesperline);
+                       j++;
+                     }
                     //render(layers[i]->pixelbuf);    
                   }
                   render(p);    
@@ -143,6 +153,17 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
 	QUITPOINT:
 	return EXIT_SUCCESS;
 	exit(0);
+}
+
+
+Layer* SDLWindow::getLayerByName(char* n)
+{
+  int i;
+  for(i=0;i<layers.size();i++){
+    if (strcmp (n,layers[i]->Name) == 0)
+      return layers[i];
+  }
+  return NULL;
 }
 
 void SDLWindow::render(PixelBuffer* pb){
