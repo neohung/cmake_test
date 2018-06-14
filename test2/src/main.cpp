@@ -33,7 +33,9 @@ void eventcb(WINEVENT e)
 void updatecb(PixelBuffer screenbuffer)
 {
    Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
-   l->draw_point(10,10, 0xffffffff, 0);
+   l->draw_point(100,200, 0xff0000, 10);
+
+   l->draw_line(10,10, 20,200,0xff0000, 1);
    //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
   /*
 	extern TrueColorImage abc;

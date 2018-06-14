@@ -34,16 +34,56 @@ PosX(x), PosY(y), Width(w), Height(h), IsSkip(false),order(255)
 
 void Layer::draw_line(unsigned short x1,unsigned short y1, unsigned short x2,unsigned short y2,unsigned int color, unsigned char size)
 {
+	unsigned char b = 0x0000ff & color;
+    unsigned char g = (0x00ff00 & color) >> 8;
+    unsigned char r = (0xff0000 & color) >> 16;
+	if (x2 < x1){
+		int tmp = x2;
+		x2 = x1;
+		x1 = tmp;
+		tmp = y2;
+		y2 = y1;
+		y1 = tmp;
+	}
+	double slop = double(y2-y1)/double(x2-x1);
+    double bb = double(y2*x1-y1*x2)/double(x1-x2);
+	//printf("slop=%f\n",slop);
+	int i;
+	for(i=x1;i<x2;i++){
+		int j = int((i*slop)+bb);
+		//printf("j=%d\n",j);
+		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
+		*offset = b;
+  		*(offset+1) = g; //G
+  		*(offset+2) = r; //R
+	}
+
 }
 void Layer::draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size)
 {
-  unsigned char* offset = (unsigned char*)pixelbuf->pixels;
-  
-  offset += y *  pixelbuf->bytesperline + (pixelbuf->colors*x);
   unsigned char b = 0x0000ff & color;
   unsigned char g = (0x00ff00 & color) >> 8;
   unsigned char r = (0xff0000 & color) >> 16;
-  *offset = r;
-  *(offset+1) = g;
-  *(offset+2) = b;
+  int li,ri,uj,dj;
+  li = x - size;
+  ri = x + size;
+  uj = y - size;
+  dj = y + size;
+  if (li < 0) li = 0;
+  if (ri > (Width-1)) ri = Width-1;
+  if (uj < 0) uj = 0;
+  if (dj > (Height-1)) dj = Height-1;
+  int size2 = size*size;
+  int i,j;
+  for(j=uj;j<dj;j++){
+  	for(i=li;i<ri;i++){
+  		int dist2 = (j-y)*(j-y)+(i-x)*(i-x);
+  		if (dist2 < size2){
+  		  unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
+  		  *offset = b;
+  		  *(offset+1) = g; //G
+  		  *(offset+2) = r; //R
+  		}
+  	}
+  } 
 }
