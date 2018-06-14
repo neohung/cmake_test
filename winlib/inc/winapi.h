@@ -101,6 +101,8 @@ class Layer
     ~Layer();
     void setPos(unsigned short x, unsigned short y);
     void update(PixelBuffer* pb);
+    void draw_line(unsigned short x1,unsigned short y1, unsigned short x2,unsigned short y2,unsigned int color, unsigned char size);
+    void draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size);
 };
 
 

@@ -29,10 +29,12 @@ void eventcb(WINEVENT e)
 	}
 }
 
+
 void updatecb(PixelBuffer screenbuffer)
 {
    Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
-   l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
+   l->draw_point(10,10, 0xffffffff, 0);
+   //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
   /*
 	extern TrueColorImage abc;
         PixelBuffer*  p = createPixelBuffer(abc.ImgWidth , abc.ImgHeight, 24);
@@ -72,7 +74,7 @@ int main()
 	printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
     Layer* l1 = new Layer("AAA",0,0,abc.ImgWidth, abc.ImgHeight,0);
     memcpy(l1->pixelbuf->pixels,abc.ImgData,abc.ImgTotalBytes);
-    Layer* l2 = new Layer("BBB",250,150,50,50,128);
+    Layer* l2 = new Layer("BBB",50,50,500,300,0);
     SDLWindow::instance()->init("",640,480);
     SDLWindow::instance()->addLayer(l1);
     SDLWindow::instance()->addLayer(l2);
