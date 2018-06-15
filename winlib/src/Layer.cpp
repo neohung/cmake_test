@@ -137,3 +137,11 @@ void Layer::draw_point(unsigned short x,unsigned short y, unsigned int color, un
   	}
   } 
 }
+
+void Layer::draw_tri(Triangle tri,unsigned int color, unsigned char size)
+{
+	draw_line(tri.v1.x,tri.v1.y, tri.v2.x,tri.v2.y, color, size);
+	draw_line(tri.v2.x,tri.v2.y, tri.v3.x,tri.v3.y, color, size);
+	draw_line(tri.v3.x,tri.v3.y, tri.v1.x,tri.v1.y, color, size);
+
+}

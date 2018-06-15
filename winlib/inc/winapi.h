@@ -84,6 +84,35 @@ typedef struct{
 PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char colorbit);
 void freePixelBuffer(PixelBuffer* pb);
 
+typedef struct{
+  int x;
+  int y;
+} Vec2;
+
+typedef struct{
+  int x;
+  int y;
+  int z;
+} Vec3;
+
+typedef struct{
+  int x;
+  int y;
+  unsigned int w;
+  unsigned int h;
+} Rect;
+
+typedef struct{
+  Vec2 v1;
+  Vec2 v2;
+} Line;
+
+typedef struct{
+  Vec2 v1;
+  Vec2 v2;
+  Vec2 v3;
+} Triangle;
+
 class Layer
 {
   protected:
@@ -103,6 +132,7 @@ class Layer
     void update(PixelBuffer* pb);
     void draw_line(unsigned short x1,unsigned short y1, unsigned short x2,unsigned short y2,unsigned int color, unsigned char size);
     void draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size);
+    void draw_tri(Triangle tri,unsigned int color, unsigned char size);
     void clearDraw();
 };
 
