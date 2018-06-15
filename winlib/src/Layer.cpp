@@ -37,27 +37,49 @@ void Layer::draw_line(unsigned short x1,unsigned short y1, unsigned short x2,uns
 	unsigned char b = 0x0000ff & color;
     unsigned char g = (0x00ff00 & color) >> 8;
     unsigned char r = (0xff0000 & color) >> 16;
-	if (x2 < x1){
-		int tmp = x2;
-		x2 = x1;
-		x1 = tmp;
-		tmp = y2;
-		y2 = y1;
-		y1 = tmp;
-	}
 	double slop = double(y2-y1)/double(x2-x1);
-    double bb = double(y2*x1-y1*x2)/double(x1-x2);
-	//printf("slop=%f\n",slop);
-	int i;
-	for(i=x1;i<x2;i++){
-		int j = int((i*slop)+bb);
-		//printf("j=%d\n",j);
-		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
-		*offset = b;
-  		*(offset+1) = g; //G
-  		*(offset+2) = r; //R
-	}
-
+	double bb = double(y2*x1-y1*x2)/double(x1-x2);
+        double abs_slop = abs(slop);
+    int k;
+    for(k=-size;k<size;k++){
+        if (abs_slop < 1){
+        	//X>Y
+        	if (x2 < x1){
+        		int tmp = x2;
+        		x2 = x1;
+        		x1 = tmp;
+        		tmp = y2;
+        		y2 = y1;
+        		y1 = tmp;
+        	}
+        	int i;
+        	for(i=x1;i<x2;i++){
+        		int j = int((i*slop)+bb)+k;
+        		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
+        		*offset = b;
+        		*(offset+1) = g; //G
+        		*(offset+2) = r; 
+        	}
+        }else{
+           //Y>X
+        	if (y2 < y1){
+        		int tmp = y2;
+        		y2 = y1;
+        		y1 = tmp;
+        		tmp = x2;
+        		x2 = x1;
+        		x1 = tmp;
+        	}
+        	int j;
+        	for(j=y1;j<y2;j++){
+        		int i = int((j-bb)/slop)-k;
+        		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
+        		*offset = b;
+        		*(offset+1) = g; //G
+        		*(offset+2) = r; 
+        	}
+        }
+    }
 }
 void Layer::draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size)
 {

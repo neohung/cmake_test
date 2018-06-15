@@ -132,6 +132,19 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
                                         }
                                         break;
                                 }
+                                case SDL_MOUSEBUTTONUP:
+                                {
+                                        if (event_cb){
+                                           WINEVENT wine;
+                                           wine.button.type = MOUSEBUTTONUP;
+                                           wine.button.state = event.button.state;
+                                           wine.button.button = event.button.button; 
+                                           wine.button.x = event.button.x; 
+                                           wine.button.y = event.button.y; 
+                                           event_cb(wine);
+                                        }
+                                        break;
+                                }
                                 case SDL_KEYUP:
                                 {
                                        if (event_cb){

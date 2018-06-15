@@ -6,17 +6,35 @@
 #include <tcimg.h>
 #include <winapi.h>
 
+int mflag = 1;
+int lx1=0,ly1=0,lx2=0,ly2=0;
 void eventcb(WINEVENT e)
 {
 	switch (e.type)
 	{
 		case MOUSEBUTTONDOWN:
 		{ 
-			printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
       Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
-      l->setPos(e.button.x,e.button.y);
+      mflag = 0;
+      lx1 = e.button.x - l->PosX;
+      ly1 = e.button.y - l->PosY;
+      lx2 = e.button.x - l->PosX;
+      ly2 = e.button.y - l->PosY;
+			printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
+      //Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+      //l->setPos(e.button.x,e.button.y);
                         break;
 		}
+    case MOUSEBUTTONUP:
+    { 
+      Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+      mflag = 1;
+      lx2 = e.button.x- l->PosX;
+      ly2 = e.button.y- l->PosY;
+      printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
+      break;
+
+    }
 		case KEYUP:
 		{
 			printf("K: state:%d,key (%d)\n",e.key.state,e.key.keysym);
@@ -34,8 +52,12 @@ void updatecb(PixelBuffer screenbuffer)
 {
    Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
    l->draw_point(100,200, 0xff0000, 10);
-
-   l->draw_line(10,10, 20,200,0xff0000, 1);
+    if (mflag == 0){
+      lx2 = SDLWindow::instance()->MouseX- l->PosX;
+      ly2 = SDLWindow::instance()->MouseY- l->PosY;
+    }
+   //l->draw_line(10,10, 20,200,0xff0000, 2);
+    //l->draw_line(lx1,ly1, lx2,ly2,0xff0000, 2);
    //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
   /*
 	extern TrueColorImage abc;
