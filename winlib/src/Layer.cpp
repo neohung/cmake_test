@@ -32,12 +32,39 @@ PosX(x), PosY(y), Width(w), Height(h), IsSkip(false),order(255)
    memset(pixelbuf->pixels,color,pixelbuf->size);
 }
 
+void Layer::clearDraw()
+{
+	memset(pixelbuf->pixels,0,pixelbuf->size);
+}
+
 void Layer::draw_line(unsigned short x1,unsigned short y1, unsigned short x2,unsigned short y2,unsigned int color, unsigned char size)
 {
 	unsigned char b = 0x0000ff & color;
     unsigned char g = (0x00ff00 & color) >> 8;
     unsigned char r = (0xff0000 & color) >> 16;
+    if (x2 == x1){
+    	if (y2 < y1){
+        		int tmp = y2;
+        		y2 = y1;
+        		y1 = tmp;
+        		tmp = x2;
+        		x2 = x1;
+        		x1 = tmp;
+        }
+    	int k;
+    	for(k=-size;k<size;k++){
+        	int j;
+        	for(j=y1;j<y2;j++){
+        		int i = x1+k;
+        		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
+        		*offset = b;
+        		*(offset+1) = g; //G
+        		*(offset+2) = r; 
+        	}
+    	}
+    }else{
 	double slop = double(y2-y1)/double(x2-x1);
+	//printf("slop %f\n", slop);
 	double bb = double(y2*x1-y1*x2)/double(x1-x2);
         double abs_slop = abs(slop);
     int k;
@@ -79,6 +106,7 @@ void Layer::draw_line(unsigned short x1,unsigned short y1, unsigned short x2,uns
         		*(offset+2) = r; 
         	}
         }
+    }
     }
 }
 void Layer::draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size)
