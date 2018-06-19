@@ -5,6 +5,7 @@
 #include <testapi.h>
 #include <tcimg.h>
 #include <winapi.h>
+#include <smath.h>
 
 int mflag = 1;
 int lx1=0,ly1=0,lx2=0,ly2=0;
@@ -96,6 +97,21 @@ void updatecb(PixelBuffer screenbuffer)
 
 int main()
 {
+  SVector3 a1= SVector3(4,5,6);
+  //SVector3 a1(1.0,2.0,3.0);
+  SVector3 a2 = SVector3(1,2,3);
+  SFLOAT v1=1.0;
+  a1 += v1;
+  a2 = a1;
+  a2 += v1;
+  printf("dotProduct: %f\n",SVector3::dotProduct(a1,a2));
+  SVector3 a3 = SVector3();
+  SVector3::crossProduct(a1, a2, a3);
+  printf("crossProduct: %f,%f,%f\n",a3.x(),a3.y(),a3.z());
+  printf("length: %f\n",a3.length());
+  a3.normalize();
+  printf("after length: %f\n",a3.length());
+  //a2 = a1;
 	extern TrueColorImage abc;
 	printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
 	printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);

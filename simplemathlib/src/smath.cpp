@@ -1,10 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "smath.h"
+#include <math.h> //for sqrt
+
 #ifdef WIN32
 //#include <qdatetime.h>
 #endif
 
+//############################################################################
 void SVector3::zero()
 {
     for (int i = 0; i < 3; i++)
@@ -16,8 +19,86 @@ SVector3::SVector3()
     zero();
 }
 
+SVector3::SVector3(SFLOAT x, SFLOAT y, SFLOAT z)
+{
+    m_data[0] = x;
+    m_data[1] = y;
+    m_data[2] = z;
+}
 
 
+SVector3& SVector3::operator =(const SVector3& vec)
+{
+   if (this == &vec)
+     return *this;
+
+    m_data[0] = vec.m_data[0];
+    m_data[1] = vec.m_data[1];
+    m_data[2] = vec.m_data[2];
+
+    return *this;
+}
+
+const SVector3& SVector3::operator +=(SFLOAT& f)
+{
+    for (int i = 0; i < 3; i++)
+        m_data[i] += f;
+    return *this;
+}
+
+const SVector3& SVector3::operator +=(SVector3& vec)
+{
+    for (int i = 0; i < 3; i++)
+        m_data[i] += vec.m_data[i];
+    return *this;
+}
+
+const SVector3& SVector3::operator -=(SFLOAT& f)
+{
+    for (int i = 0; i < 3; i++)
+        m_data[i] -= f;
+    return *this;
+}
+
+const SVector3& SVector3::operator -=(SVector3& vec)
+{
+    for (int i = 0; i < 3; i++)
+        m_data[i] -= vec.m_data[i];
+    return *this;
+}
+
+SFLOAT SVector3::dotProduct(const SVector3& a, const SVector3& b)
+{
+    return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
+}
+
+//Return d
+void SVector3::crossProduct(const SVector3& a, const SVector3& b, SVector3& d)
+{
+    d.setX(a.y() * b.z() - a.z() * b.y());
+    d.setY(a.z() * b.x() - a.x() * b.z());
+    d.setZ(a.x() * b.y() - a.y() * b.x());
+}
+
+void SVector3::normalize()
+{
+    SFLOAT length = sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2]);
+
+    if (length == 0)
+        return;
+
+    m_data[0] /= length;
+    m_data[1] /= length;
+    m_data[2] /= length;
+}
+
+SFLOAT SVector3::length()
+{
+    return sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2]);
+}
+//############################################################################
 
 //  Strings are put here. So the display functions are no re-entrant!
 /*
@@ -140,65 +221,6 @@ void RTMath::convertToVector(unsigned char *rawData, RTVector3& vec, RTFLOAT sca
 //
 //  The RTVector3 class
 
-RTVector3::RTVector3()
-{
-    zero();
-}
-
-RTVector3::RTVector3(RTFLOAT x, RTFLOAT y, RTFLOAT z)
-{
-    m_data[0] = x;
-    m_data[1] = y;
-    m_data[2] = z;
-}
-
-RTVector3& RTVector3::operator =(const RTVector3& vec)
-{
-    if (this == &vec)
-        return *this;
-
-    m_data[0] = vec.m_data[0];
-    m_data[1] = vec.m_data[1];
-    m_data[2] = vec.m_data[2];
-
-    return *this;
-}
-
-
-const RTVector3& RTVector3::operator +=(RTVector3& vec)
-{
-    for (int i = 0; i < 3; i++)
-        m_data[i] += vec.m_data[i];
-    return *this;
-}
-
-const RTVector3& RTVector3::operator -=(RTVector3& vec)
-{
-    for (int i = 0; i < 3; i++)
-        m_data[i] -= vec.m_data[i];
-    return *this;
-}
-
-void RTVector3::zero()
-{
-    for (int i = 0; i < 3; i++)
-        m_data[i] = 0;
-}
-
-
-RTFLOAT RTVector3::dotProduct(const RTVector3& a, const RTVector3& b)
-{
-    return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
-}
-
-void RTVector3::crossProduct(const RTVector3& a, const RTVector3& b, RTVector3& d)
-{
-    d.setX(a.y() * b.z() - a.z() * b.y());
-    d.setY(a.z() * b.x() - a.x() * b.z());
-    d.setZ(a.x() * b.y() - a.y() * b.x());
-}
-
-
 void RTVector3::accelToEuler(RTVector3& rollPitchYaw) const
 {
     RTVector3 normAccel = *this;
@@ -224,26 +246,6 @@ void RTVector3::accelToQuaternion(RTQuaternion& qPose) const
     vec.normalize();
 
     qPose.fromAngleVector(angle, vec);
-}
-
-
-void RTVector3::normalize()
-{
-    RTFLOAT length = sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2]);
-
-    if (length == 0)
-        return;
-
-    m_data[0] /= length;
-    m_data[1] /= length;
-    m_data[2] /= length;
-}
-
-RTFLOAT RTVector3::length()
-{
-    return sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2]);
 }
 
 //----------------------------------------------------------

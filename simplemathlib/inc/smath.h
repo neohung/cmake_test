@@ -7,7 +7,9 @@
 #else
   typedef float SFLOAT;
 #endif
+
 #include <string.h> //for memcpy
+//#include <math.h> //for sqrt
 //  Useful constants
 
 #define	SMATH_PI  3.1415926535
@@ -44,20 +46,20 @@ class SVector3
 public:
     void zero();
     SVector3();
-    //SVector3(SFLOAT x, SFLOAT y, SFLOAT z);
-    //const SVector3&  operator +=(SVector3& vec);
-    //const SVector3&  operator -=(SVector3& vec);
-    //SVector3& operator =(const SVector3& vec);
+    SVector3(SFLOAT x, SFLOAT y, SFLOAT z);
+    SVector3& operator =(const SVector3& vec);
+    const SVector3& operator +=(SFLOAT& f);
+    const SVector3& operator +=(SVector3& vec);
+    const SVector3& operator -=(SFLOAT& f);
+    const SVector3& operator -=(SVector3& vec);
+    static SFLOAT dotProduct(const SVector3& a, const SVector3& b);
+    static void crossProduct(const SVector3& a, const SVector3& b, SVector3& d);
 
-    //SFLOAT length();
-    //void normalize();
-    //const char *display();
-    //const char *displayDegrees();
-    //static float dotProduct(const SVector3& a, const SVector3& b);
-    //static void crossProduct(const SVector3& a, const SVector3& b, SVector3& d);
+    SFLOAT length();
+    void normalize();
 
-    //void accelToEuler(RTVector3& rollPitchYaw) const;
-    //void accelToQuaternion(RTQuaternion& qPose) const;
+    //void accelToEuler(SVector3& rollPitchYaw) const;
+    //void accelToQuaternion(SQuaternion& qPose) const;
 
     inline SFLOAT x() const { return m_data[0]; }
     inline SFLOAT y() const { return m_data[1]; }

@@ -34,6 +34,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/winlib/inc 
   ${CMAKE_SOURCE_DIR}/testlib/inc 
   ${CMAKE_SOURCE_DIR}/tcimg 
+  ${CMAKE_SOURCE_DIR}/simplemathlib/inc 
 )
 
 
@@ -55,11 +56,13 @@ TARGET_LINK_LIBRARIES(${ProjectId}
   testapi
   tcimg
   winapi
+  smathapi
 )
 ADD_DEPENDENCIES(${ProjectId} 
   winapi
   testapi
   tcimg
+  smathapi
 )
 
 INSTALL(TARGETS ${ProjectId} DESTINATION ${CMAKE_BINARY_DIR}/bin)
