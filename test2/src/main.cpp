@@ -62,7 +62,7 @@ void updatecb(PixelBuffer screenbuffer)
     }
     l->draw_line(lx1,ly1, lx2,ly2,0xff0000, 2);
     l->draw_point(100,200, 0xff0000, 10);
-    l->draw_tri(t,0x00ff00, 1);
+    l->draw_tri(t,0x00ff00, 1, true);
    //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
   /*
 	extern TrueColorImage abc;
