@@ -2,12 +2,117 @@
 
 #include "smath.h"
 #include <math.h> //for sqrt
+#include <stdio.h> //for sqrt
 
 #ifdef WIN32
 //#include <qdatetime.h>
 #endif
+//###########################################################################
+void SVector2::zero()
+{
+  int i;
+  for (i = 0; i < 2; i++)
+    m_data[i] = 0;
+}
+SVector2::SVector2()
+{
+  zero();
+}
+
+SVector2::SVector2(SFLOAT x, SFLOAT y)
+{
+  m_data[0] = x;
+  m_data[1] = y;
+}
+
+SFLOAT SVector2::dotProduct(SVector2& a, SVector2& b)
+{
+  return a.x() * b.x() + a.y() * b.y();
+}
+
+SFLOAT SVector2::length()
+{
+  return sqrt( m_data[0]* m_data[0]+ m_data[1]* m_data[1]);
+}
+void SVector2::normalize()
+{
+   SFLOAT l = length();
+   if (l == 0)
+        return;
+    m_data[0] /= l;
+    m_data[1] /= l;
+}
+
+SVector2& SVector2::operator =(const SVector2& vec)
+{
+  if (this == &vec)
+    return *this;
+
+  m_data[0] = vec.m_data[0];
+  m_data[1] = vec.m_data[1];
+  return *this;
+}
+
+SVector2& SVector2::operator +=(const SVector2& vec)
+{
+  m_data[0] += vec.m_data[0];
+  m_data[1] += vec.m_data[1];
+  return *this;
+}
+SVector2& SVector2::operator -=(const SVector2& vec)
+{
+  m_data[0] -= vec.m_data[0];
+  m_data[1] -= vec.m_data[1];
+  return *this;
+}
+SVector2& SVector2::operator +=(const SFLOAT& f)
+{
+  m_data[0] += f;
+  m_data[1] += f;
+  return *this;
+}
+SVector2& SVector2::operator -=(const SFLOAT& f)
+{
+  m_data[0] -= f;
+  m_data[1] -= f;
+  return *this;
+}
+
+const SVector2 SVector2::operator +(const SVector2& vec) const
+{
+    SVector2 result = *this;
+    result += vec;
+    return result;
+}
+
+const SVector2 SVector2::operator -(const SVector2& vec) const
+{
+    SVector2 result = *this;
+    result -= vec;
+    return result;
+}
+
+const SVector2 SVector2::operator +(const SFLOAT& f) const
+{
+    SVector2 result = *this;
+    result += f;
+    return result;
+}
+
+const SVector2 SVector2::operator -(const SFLOAT& f) const
+{
+    SVector2 result = *this;
+    result -= f;
+    return result;
+}
+
+void SVector2::display()
+{
+  printf("data: (%f,%f)\n", m_data[0],m_data[1]);
+}
 
 //############################################################################
+
 void SVector3::zero()
 {
     for (int i = 0; i < 3; i++)
@@ -39,40 +144,69 @@ SVector3& SVector3::operator =(const SVector3& vec)
     return *this;
 }
 
-const SVector3& SVector3::operator +=(SFLOAT& f)
+const SVector3& SVector3::operator +=(const SFLOAT& f)
 {
     for (int i = 0; i < 3; i++)
         m_data[i] += f;
     return *this;
 }
 
-const SVector3& SVector3::operator +=(SVector3& vec)
+const SVector3& SVector3::operator +=(const SVector3& vec)
 {
     for (int i = 0; i < 3; i++)
         m_data[i] += vec.m_data[i];
     return *this;
 }
 
-const SVector3& SVector3::operator -=(SFLOAT& f)
+const SVector3& SVector3::operator -=(const SFLOAT& f)
 {
     for (int i = 0; i < 3; i++)
         m_data[i] -= f;
     return *this;
 }
 
-const SVector3& SVector3::operator -=(SVector3& vec)
+const SVector3& SVector3::operator -=(const SVector3& vec)
 {
     for (int i = 0; i < 3; i++)
         m_data[i] -= vec.m_data[i];
     return *this;
 }
 
+const SVector3 SVector3::operator +(const SVector3& vec) const
+{
+    SVector3 result = *this;
+    result += vec;
+    return result;
+}
+
+const SVector3 SVector3::operator -(const SVector3& vec) const
+{
+    SVector3 result = *this;
+    result -= vec;
+    return result;
+}
+
+const SVector3 SVector3::operator +(const SFLOAT& f) const
+{
+    SVector3 result = *this;
+    result += f;
+    return result;
+}
+
+const SVector3 SVector3::operator -(const SFLOAT& f) const
+{
+    SVector3 result = *this;
+    result -= f;
+    return result;
+}
+
+
 SFLOAT SVector3::dotProduct(const SVector3& a, const SVector3& b)
 {
     return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
 }
 
-//Return d
+//Return d --> [ax,ay,az] X [bx,by,bz] = [aybz-byaz, -1*(axbz-bxaz), axby-bxay]
 void SVector3::crossProduct(const SVector3& a, const SVector3& b, SVector3& d)
 {
     d.setX(a.y() * b.z() - a.z() * b.y());
@@ -98,8 +232,234 @@ SFLOAT SVector3::length()
     return sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
             m_data[2] * m_data[2]);
 }
+
+void SVector3::display()
+{
+  printf("data: (%f,%f,%f)\n", m_data[0],m_data[1],m_data[2]);
+}
+
 //############################################################################
 
+void SMatrix4x4::fill(SFLOAT f)
+{
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] = f;
+}
+SMatrix4x4::SMatrix4x4()
+{
+  fill(0);
+}
+
+void SMatrix4x4::display()
+{
+  printf("Data:\n");
+  for (int row = 0; row < 4; row++){
+  printf("[");
+    for (int col = 0; col < 4; col++)
+      printf("%f ", m_data[row][col]);
+    printf("]\n");
+  }
+
+}
+
+void SMatrix4x4::setAsIdentity()
+{
+    fill(0);
+    m_data[0][0] = 1;
+    m_data[1][1] = 1;
+    m_data[2][2] = 1;
+    m_data[3][3] = 1;
+}
+
+
+SMatrix4x4 SMatrix4x4::transposed()
+{
+    SMatrix4x4 result;
+    for (int row = 0; row < 4; row++)
+        for (int col = 0; col < 4; col++)
+            result.m_data[col][row] = m_data[row][col];
+    return result;
+}
+
+SMatrix4x4& SMatrix4x4::operator =(const SMatrix4x4& mat)
+{
+  if (this == &mat)
+        return *this;
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] = mat.m_data[row][col];
+  return *this;
+}
+
+SMatrix4x4& SMatrix4x4::operator +=(const SMatrix4x4& mat)
+{
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] += mat.m_data[row][col];
+  return *this;
+}
+
+SMatrix4x4& SMatrix4x4::operator -=(const SMatrix4x4& mat)
+{
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] -= mat.m_data[row][col];
+  return *this;
+}
+
+SMatrix4x4& SMatrix4x4::operator *=(const SFLOAT f)
+{
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] *= f;
+    return *this;
+}
+
+SMatrix4x4& SMatrix4x4::operator +=(const SFLOAT f)
+{
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] += f;
+  return *this;
+}
+
+SMatrix4x4& SMatrix4x4::operator -=(const SFLOAT f)
+{
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      m_data[row][col] -= f;
+  return *this;
+}
+
+const SMatrix4x4 SMatrix4x4::operator +(const SMatrix4x4& mat) const
+{
+  SMatrix4x4 result = *this;
+  result += mat;
+  return result;
+}
+
+const SMatrix4x4 SMatrix4x4::operator -(const SMatrix4x4& mat) const
+{
+  SMatrix4x4 result = *this;
+  result -= mat;
+  return result;
+}
+
+const SMatrix4x4 SMatrix4x4::operator +(const SFLOAT f) const
+{
+  SMatrix4x4 result = *this;
+  result += f;
+  return result;
+}
+const SMatrix4x4 SMatrix4x4::operator -(const SFLOAT f) const
+{
+  SMatrix4x4 result = *this;
+  result -= f;
+  return result;
+}
+
+const SMatrix4x4 SMatrix4x4::operator *(const SFLOAT f) const
+{
+  SMatrix4x4 result = *this;
+  result *= f;
+  return result;
+}
+
+SMatrix4x4& SMatrix4x4::operator *=(const SMatrix4x4& mat)
+{
+  SMatrix4x4 tmp = SMatrix4x4();
+  for (int row = 0; row < 4; row++)
+    for (int col = 0; col < 4; col++)
+      tmp.m_data[row][col] =
+                    m_data[row][0] * mat.m_data[0][col] +
+                    m_data[row][1] * mat.m_data[1][col] +
+                    m_data[row][2] * mat.m_data[2][col] +
+                    m_data[row][3] * mat.m_data[3][col];
+    *this = tmp;
+    return *this;
+}
+
+const SMatrix4x4 SMatrix4x4::operator *(const SMatrix4x4& mat) const
+{
+  //sigma(Air*Brj) , here r=0 to 3
+  SMatrix4x4 result = *this;
+    for (int row = 0; row < 4; row++)
+        for (int col = 0; col < 4; col++)
+            result.m_data[row][col] =
+                    m_data[row][0] * mat.m_data[0][col] +
+                    m_data[row][1] * mat.m_data[1][col] +
+                    m_data[row][2] * mat.m_data[2][col] +
+                    m_data[row][3] * mat.m_data[3][col];
+  return result;
+}
+
+SFLOAT SMatrix4x4::minorMatrix(const int row, const int col)
+{
+    //  [1 2 3]
+    //  [0 2 3]
+    //  [0 1 3]
+    //  [0 1 2]
+    static int map[] = {1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2};
+
+    int *rc;
+    int *cc;
+    SFLOAT res = 0;
+
+    rc = map + row * 3;
+    cc = map + col * 3;
+
+    res += m_data[rc[0]][cc[0]] * m_data[rc[1]][cc[1]] * m_data[rc[2]][cc[2]];
+    res -= m_data[rc[0]][cc[0]] * m_data[rc[1]][cc[2]] * m_data[rc[2]][cc[1]];
+    res -= m_data[rc[0]][cc[1]] * m_data[rc[1]][cc[0]] * m_data[rc[2]][cc[2]];
+    res += m_data[rc[0]][cc[1]] * m_data[rc[1]][cc[2]] * m_data[rc[2]][cc[0]];
+    res += m_data[rc[0]][cc[2]] * m_data[rc[1]][cc[0]] * m_data[rc[2]][cc[1]];
+    res -= m_data[rc[0]][cc[2]] * m_data[rc[1]][cc[1]] * m_data[rc[2]][cc[0]];
+    /*
+    printf("+A%d%d*A%d%d*A%d%d\n", rc[0],cc[0],rc[1],cc[1],rc[2],cc[2]);
+    printf("-A%d%d*A%d%d*A%d%d\n", rc[0],cc[0],rc[1],cc[2],rc[2],cc[1]);
+    printf("-A%d%d*A%d%d*A%d%d\n", rc[0],cc[1],rc[1],cc[0],rc[2],cc[2]);
+    printf("+A%d%d*A%d%d*A%d%d\n", rc[0],cc[1],rc[1],cc[2],rc[2],cc[0]);
+    printf("+A%d%d*A%d%d*A%d%d\n", rc[0],cc[2],rc[1],cc[0],rc[2],cc[1]);
+    printf("-A%d%d*A%d%d*A%d%d\n", rc[0],cc[2],rc[1],cc[1],rc[2],cc[0]);
+    */
+    return res;
+}
+
+SFLOAT SMatrix4x4::determinant()
+{
+    SFLOAT det = 0;
+    det += m_data[0][0] * minorMatrix(0, 0);
+    det -= m_data[0][1] * minorMatrix(0, 1);
+    det += m_data[0][2] * minorMatrix(0, 2);
+    det -= m_data[0][3] * minorMatrix(0, 3);
+    return det;
+}
+
+SMatrix4x4 SMatrix4x4::inverted()
+{
+    SMatrix4x4 res;
+
+    SFLOAT det = determinant();
+
+    if (det == 0) {
+        res.setAsIdentity();
+        return res;
+    }
+
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            if ((row + col) & 1)
+                res.m_data[col][row] = -minorMatrix(row, col) / det;
+            else
+                res.m_data[col][row] = minorMatrix(row, col) / det;
+        }
+    }
+
+    return res;
+}
+
+//############################################################################
 //  Strings are put here. So the display functions are no re-entrant!
 /*
 char RTMath::m_string[1000];
@@ -603,23 +963,4 @@ RTFLOAT RTMatrix4x4::matDet()
     return det;
 }
 
-RTFLOAT RTMatrix4x4::matMinor(const int row, const int col)
-{
-    static int map[] = {1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2};
-
-    int *rc;
-    int *cc;
-    RTFLOAT res = 0;
-
-    rc = map + row * 3;
-    cc = map + col * 3;
-
-    res += m_data[rc[0]][cc[0]] * m_data[rc[1]][cc[1]] * m_data[rc[2]][cc[2]];
-    res -= m_data[rc[0]][cc[0]] * m_data[rc[1]][cc[2]] * m_data[rc[2]][cc[1]];
-    res -= m_data[rc[0]][cc[1]] * m_data[rc[1]][cc[0]] * m_data[rc[2]][cc[2]];
-    res += m_data[rc[0]][cc[1]] * m_data[rc[1]][cc[2]] * m_data[rc[2]][cc[0]];
-    res += m_data[rc[0]][cc[2]] * m_data[rc[1]][cc[0]] * m_data[rc[2]][cc[1]];
-    res -= m_data[rc[0]][cc[2]] * m_data[rc[1]][cc[1]] * m_data[rc[2]][cc[0]];
-    return res;
-}
 */

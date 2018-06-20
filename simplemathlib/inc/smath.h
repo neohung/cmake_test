@@ -16,9 +16,38 @@
 #define	SMATH_DEGREE_TO_RAD		(SMATH_PI / 180.0)
 #define	SMATH_RAD_TO_DEGREE		(180.0 / SMATH_PI)
 
+class SVector2;
 class SVector3;
 class SMatrix4x4;
 //class SQuaternion;
+
+class SVector2
+{
+public:
+  void zero();
+  SVector2();
+  SVector2(SFLOAT x, SFLOAT y);
+  inline SFLOAT x() const { return m_data[0]; }
+  inline SFLOAT y() const { return m_data[1]; }
+  inline void setX(const SFLOAT val) {  m_data[0] = val; }
+  inline void setY(const SFLOAT val) {  m_data[1] = val; }
+  static SFLOAT dotProduct(SVector2& a, SVector2& b);
+  SFLOAT length();
+  void normalize();
+  SVector2& operator =(const SVector2& vec);
+  SVector2& operator +=(const SVector2& vec);
+  SVector2& operator -=(const SVector2& vec);
+  SVector2& operator +=(const SFLOAT& f);
+  SVector2& operator -=(const SFLOAT& f);
+  const SVector2 operator +(const SVector2& vec) const;
+  const SVector2 operator -(const SVector2& vec) const;
+  const SVector2 operator +(const SFLOAT& f) const;
+  const SVector2 operator -(const SFLOAT& f) const;
+  void display();
+private:
+  SFLOAT m_data[2];
+};
+
 
 class SMath
 {
@@ -48,10 +77,16 @@ public:
     SVector3();
     SVector3(SFLOAT x, SFLOAT y, SFLOAT z);
     SVector3& operator =(const SVector3& vec);
-    const SVector3& operator +=(SFLOAT& f);
-    const SVector3& operator +=(SVector3& vec);
-    const SVector3& operator -=(SFLOAT& f);
-    const SVector3& operator -=(SVector3& vec);
+    const SVector3& operator +=(const SFLOAT& f);
+    const SVector3& operator +=(const SVector3& vec);
+    const SVector3& operator -=(const SFLOAT& f);
+    const SVector3& operator -=(const SVector3& vec);
+    
+    const SVector3 operator +(const SVector3& vec) const;
+    const SVector3 operator -(const SVector3& vec) const;
+    const SVector3 operator +(const SFLOAT& f) const;
+    const SVector3 operator -(const SFLOAT& f) const;
+
     static SFLOAT dotProduct(const SVector3& a, const SVector3& b);
     static void crossProduct(const SVector3& a, const SVector3& b, SVector3& d);
 
@@ -74,7 +109,7 @@ public:
     inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 3 * sizeof(SFLOAT)); }
     //copy data to array pointer
     inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 3 * sizeof(SFLOAT)); }
-
+    void display();
 private:
     SFLOAT m_data[3];
 };
@@ -129,26 +164,33 @@ private:
 class SMatrix4x4
 {
 public:
+    void fill(SFLOAT f);
     SMatrix4x4();
-
-    //SMatrix4x4& operator +=(const SMatrix4x4& mat);
-    //SMatrix4x4& operator -=(const SMatrix4x4& mat);
-    //SMatrix4x4& operator *=(const SFLOAT val);
-
-    //SMatrix4x4& operator =(const SMatrix4x4& vec);
-    //const SQuaternion operator *(const SQuaternion& q) const;
-    //const SMatrix4x4 operator *(const SFLOAT val) const;
-    //const SMatrix4x4 operator *(const SMatrix4x4& mat) const;
-    //const SMatrix4x4 operator +(const SMatrix4x4& mat) const;
-
     inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
     inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
-    //void fill(SFLOAT val);
-    //void setToIdentity();
+    void display();
+    void setAsIdentity();
+    SMatrix4x4 transposed();
+    SMatrix4x4& operator =(const SMatrix4x4& mat);
+    SMatrix4x4& operator +=(const SMatrix4x4& mat);
+    SMatrix4x4& operator -=(const SMatrix4x4& mat);
+    SMatrix4x4& operator *=(const SFLOAT f);
+    SMatrix4x4& operator +=(const SFLOAT f);
+    SMatrix4x4& operator -=(const SFLOAT f);
+    const SMatrix4x4 operator +(const SMatrix4x4& mat) const;
+    const SMatrix4x4 operator -(const SMatrix4x4& mat) const;
+    const SMatrix4x4 operator +(const SFLOAT f) const;
+    const SMatrix4x4 operator -(const SFLOAT f) const;
+    SMatrix4x4& operator *=(const SMatrix4x4& mat);
+    const SMatrix4x4 operator *(const SFLOAT f) const;
+
+    //const SQuaternion operator *(const SQuaternion& q) const;
+    const SMatrix4x4 operator *(const SMatrix4x4& mat) const;
 
     //SMatrix4x4 inverted();
-    //SMatrix4x4 transposed();
-
+    SFLOAT minorMatrix(const int row, const int col);
+    SFLOAT determinant();
+    SMatrix4x4 inverted();
 private:
     SFLOAT m_data[4][4];                                   // row, column
 

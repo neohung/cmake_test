@@ -97,20 +97,23 @@ void updatecb(PixelBuffer screenbuffer)
 
 int main()
 {
-  SVector3 a1= SVector3(4,5,6);
-  //SVector3 a1(1.0,2.0,3.0);
-  SVector3 a2 = SVector3(1,2,3);
-  SFLOAT v1=1.0;
-  a1 += v1;
-  a2 = a1;
-  a2 += v1;
-  printf("dotProduct: %f\n",SVector3::dotProduct(a1,a2));
-  SVector3 a3 = SVector3();
-  SVector3::crossProduct(a1, a2, a3);
-  printf("crossProduct: %f,%f,%f\n",a3.x(),a3.y(),a3.z());
-  printf("length: %f\n",a3.length());
-  a3.normalize();
-  printf("after length: %f\n",a3.length());
+  SFLOAT data[] = {1,2,3,4,
+                 2,1,4,4,
+                 3,4,1,5,
+                 4,2,5,1};
+  //Determinant = -101
+  SMatrix4x4 m44 = SMatrix4x4();
+  int v=0;
+  for (int r=0;r<4;r++){
+    for (int c=0;c<4;c++)
+      m44.setVal(r,c,data[v++]);
+  }
+  //m44.setAsIdentity();
+  printf("Determinant: %f\n",m44.determinant());
+  m44.display();
+  SMatrix4x4 m_44 = m44.inverted();
+  m_44.display();
+
   //a2 = a1;
 	extern TrueColorImage abc;
 	printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
