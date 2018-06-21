@@ -260,7 +260,6 @@ void SMatrix4x4::display()
       printf("%f ", m_data[row][col]);
     printf("]\n");
   }
-
 }
 
 void SMatrix4x4::setAsIdentity()
@@ -271,7 +270,6 @@ void SMatrix4x4::setAsIdentity()
     m_data[2][2] = 1;
     m_data[3][3] = 1;
 }
-
 
 SMatrix4x4 SMatrix4x4::transposed()
 {
@@ -415,14 +413,7 @@ SFLOAT SMatrix4x4::minorMatrix(const int row, const int col)
     res += m_data[rc[0]][cc[1]] * m_data[rc[1]][cc[2]] * m_data[rc[2]][cc[0]];
     res += m_data[rc[0]][cc[2]] * m_data[rc[1]][cc[0]] * m_data[rc[2]][cc[1]];
     res -= m_data[rc[0]][cc[2]] * m_data[rc[1]][cc[1]] * m_data[rc[2]][cc[0]];
-    /*
-    printf("+A%d%d*A%d%d*A%d%d\n", rc[0],cc[0],rc[1],cc[1],rc[2],cc[2]);
-    printf("-A%d%d*A%d%d*A%d%d\n", rc[0],cc[0],rc[1],cc[2],rc[2],cc[1]);
-    printf("-A%d%d*A%d%d*A%d%d\n", rc[0],cc[1],rc[1],cc[0],rc[2],cc[2]);
-    printf("+A%d%d*A%d%d*A%d%d\n", rc[0],cc[1],rc[1],cc[2],rc[2],cc[0]);
-    printf("+A%d%d*A%d%d*A%d%d\n", rc[0],cc[2],rc[1],cc[0],rc[2],cc[1]);
-    printf("-A%d%d*A%d%d*A%d%d\n", rc[0],cc[2],rc[1],cc[1],rc[2],cc[0]);
-    */
+  
     return res;
 }
 
@@ -438,7 +429,7 @@ SFLOAT SMatrix4x4::determinant()
 
 SMatrix4x4 SMatrix4x4::inverted()
 {
-    SMatrix4x4 res;
+    SMatrix4x4 res = SMatrix4x4();
 
     SFLOAT det = determinant();
 
@@ -450,14 +441,226 @@ SMatrix4x4 SMatrix4x4::inverted()
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if ((row + col) & 1)
+                //[col][row] --> [row,col] transposed, only (0,0) (1,1) (2,2) (3,3) no change
                 res.m_data[col][row] = -minorMatrix(row, col) / det;
             else
                 res.m_data[col][row] = minorMatrix(row, col) / det;
         }
     }
-
     return res;
 }
+
+//############################################################################
+
+void SMatrix2x2::fill(SFLOAT f)
+{
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] = f;
+}
+
+SMatrix2x2::SMatrix2x2()
+{
+  fill(0);
+}
+
+void SMatrix2x2::display()
+{
+  printf("Data:\n");
+  for (int row = 0; row < 2; row++){
+    printf("[");
+    for (int col = 0; col < 2; col++)
+      printf("%f ", m_data[row][col]);
+    printf("]\n");
+  }
+
+}
+
+void SMatrix2x2::setAsIdentity()
+{
+  fill(0);
+  m_data[0][0] = 1;
+  m_data[1][1] = 1;
+}
+
+SMatrix2x2 SMatrix2x2::transposed()
+{
+  SMatrix2x2 result;
+  for (int row = 0; row < 2; row++){
+    for (int col = 0; col < 2; col++)
+      result.m_data[col][row] = m_data[row][col];
+  }
+  return result;
+}
+
+SMatrix2x2& SMatrix2x2::operator =(const SMatrix2x2& mat)
+{
+  if (this == &mat)
+    return *this;
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] = mat.m_data[row][col];
+  return *this;
+}
+
+SMatrix2x2& SMatrix2x2::operator +=(const SMatrix2x2& mat)
+{
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] += mat.m_data[row][col];
+  return *this;
+}
+
+SMatrix2x2& SMatrix2x2::operator -=(const SMatrix2x2& mat)
+{
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] -= mat.m_data[row][col];
+  return *this;
+}
+
+SMatrix2x2& SMatrix2x2::operator *=(const SFLOAT f)
+{
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] *= f;
+  return *this;
+}
+
+SMatrix2x2& SMatrix2x2::operator +=(const SFLOAT f)
+{
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] += f;
+  return *this;
+}
+
+SMatrix2x2& SMatrix2x2::operator -=(const SFLOAT f)
+{
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      m_data[row][col] -= f;
+  return *this;  
+}
+
+const SMatrix2x2 SMatrix2x2::operator +(const SMatrix2x2& mat) const
+{
+  SMatrix2x2 result = *this;
+  result += mat;  
+  return result;
+}
+
+const SMatrix2x2 SMatrix2x2::operator -(const SMatrix2x2& mat) const
+{
+  SMatrix2x2 result = *this;
+  result -= mat;  
+  return result; 
+}
+
+const SMatrix2x2 SMatrix2x2::operator +(const SFLOAT f) const
+{
+  SMatrix2x2 result = *this;
+  result += f;  
+  return result; 
+}
+  
+const SMatrix2x2 SMatrix2x2::operator -(const SFLOAT f) const
+{
+  SMatrix2x2 result = *this;
+  result -= f;  
+  return result; 
+}
+
+const SMatrix2x2 SMatrix2x2::operator *(const SFLOAT f) const
+{
+  SMatrix2x2 result = *this;
+  result *= f;
+  return result;
+}
+
+SMatrix2x2& SMatrix2x2::operator *=(const SMatrix2x2& mat)
+{
+  SMatrix2x2 tmp = SMatrix2x2();
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      tmp.m_data[row][col] =
+                    m_data[row][0] * mat.m_data[0][col] +
+                    m_data[row][1] * mat.m_data[1][col];
+    *this = tmp;
+    return *this;
+}
+
+const SMatrix2x2 SMatrix2x2::operator *(const SMatrix2x2& mat) const
+{
+  SMatrix2x2 result = *this;
+  for (int row = 0; row < 2; row++)
+    for (int col = 0; col < 2; col++)
+      result.m_data[row][col] =
+                    m_data[row][0] * mat.m_data[0][col] +
+                    m_data[row][1] * mat.m_data[1][col];
+  return result;
+}
+
+
+//minorMatrix(0, 0) = d
+//minorMatrix(1, 1) = a
+//minorMatrix(0, 1) = b
+//minorMatrix(1, 0) = c
+SFLOAT SMatrix2x2::minorMatrix(const int row, const int col)
+{
+  static int map[] = {1,0};
+  //A[a b]
+  // [c d]  (0,0) -> (1,1)d, (0,1) -> (0,1) b , (1,0) -> (1,0) c, (1,1) -> (0,0) a
+  int* rc;
+  int* cc;
+  rc = map + row * 1;
+  cc = map + col * 1;
+
+  SFLOAT res = 0;
+
+  res += m_data[rc[0]][cc[0]];
+  return res;
+}
+
+SFLOAT SMatrix2x2::determinant()
+{
+  SFLOAT det = 0;
+  det += m_data[0][0] * m_data[1][1];
+  det -= m_data[0][1] * m_data[1][0];
+  return det;
+}
+
+SMatrix2x2 SMatrix2x2::inverted()
+{
+  // A = [a b]  inverted = 1/det(A) * [d  -b]
+  //     [c d]                        [-c  a]
+  // det(A) = a*d - b*c
+  //
+  SMatrix2x2 result = SMatrix2x2();;
+  SFLOAT det = determinant();
+  if (det == 0) {
+    result.setAsIdentity();
+    return result;
+  }
+  for (int row = 0; row < 2; row++) {
+    for (int col = 0; col < 2; col++) {
+      if ((row + col) & 1)
+        //[col][row]  <==> [row][cp;] transposed
+        result.m_data[col][row] = -minorMatrix(row, col) / det;
+      else
+        result.m_data[col][row] = minorMatrix(row, col) / det;
+      }
+    }
+    return result;
+}
+
+//############################################################################
+
+/*
+    
+    
+    const SMatrix2x2 operator *(const SMatrix2x2& mat) const;
+*/
 
 //############################################################################
 //  Strings are put here. So the display functions are no re-entrant!
@@ -809,90 +1012,6 @@ void RTQuaternion::fromAngleVector(const RTFLOAT& angle, const RTVector3& vec)
 //
 //  The RTMatrix4x4 class
 
-RTMatrix4x4::RTMatrix4x4()
-{
-    fill(0);
-}
-
-RTMatrix4x4& RTMatrix4x4::operator =(const RTMatrix4x4& mat)
-{
-    if (this == &mat)
-        return *this;
-
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            m_data[row][col] = mat.m_data[row][col];
-
-    return *this;
-}
-
-
-void RTMatrix4x4::fill(RTFLOAT val)
-{
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            m_data[row][col] = val;
-}
-
-
-RTMatrix4x4& RTMatrix4x4::operator +=(const RTMatrix4x4& mat)
-{
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            m_data[row][col] += mat.m_data[row][col];
-
-    return *this;
-}
-
-RTMatrix4x4& RTMatrix4x4::operator -=(const RTMatrix4x4& mat)
-{
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            m_data[row][col] -= mat.m_data[row][col];
-
-    return *this;
-}
-
-RTMatrix4x4& RTMatrix4x4::operator *=(const RTFLOAT val)
-{
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            m_data[row][col] *= val;
-
-    return *this;
-}
-
-const RTMatrix4x4 RTMatrix4x4::operator +(const RTMatrix4x4& mat) const
-{
-    RTMatrix4x4 result = *this;
-    result += mat;
-    return result;
-}
-
-const RTMatrix4x4 RTMatrix4x4::operator *(const RTFLOAT val) const
-{
-    RTMatrix4x4 result = *this;
-    result *= val;
-    return result;
-}
-
-
-const RTMatrix4x4 RTMatrix4x4::operator *(const RTMatrix4x4& mat) const
-{
-    RTMatrix4x4 res;
-
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            res.m_data[row][col] =
-                    m_data[row][0] * mat.m_data[0][col] +
-                    m_data[row][1] * mat.m_data[1][col] +
-                    m_data[row][2] * mat.m_data[2][col] +
-                    m_data[row][3] * mat.m_data[3][col];
-
-    return res;
-}
-
-
 const RTQuaternion RTMatrix4x4::operator *(const RTQuaternion& q) const
 {
     RTQuaternion res;
@@ -903,64 +1022,6 @@ const RTQuaternion RTMatrix4x4::operator *(const RTQuaternion& q) const
     res.setZ(m_data[3][0] * q.scalar() + m_data[3][1] * q.x() + m_data[3][2] * q.y() + m_data[3][3] * q.z());
 
     return res;
-}
-
-void RTMatrix4x4::setToIdentity()
-{
-    fill(0);
-    m_data[0][0] = 1;
-    m_data[1][1] = 1;
-    m_data[2][2] = 1;
-    m_data[3][3] = 1;
-}
-
-RTMatrix4x4 RTMatrix4x4::transposed()
-{
-    RTMatrix4x4 res;
-
-    for (int row = 0; row < 4; row++)
-        for (int col = 0; col < 4; col++)
-            res.m_data[col][row] = m_data[row][col];
-    return res;
-}
-
-//  Note:
-//  The matrix inversion code here was strongly influenced by some old code I found
-//  but I have no idea where it came from. Apologies to whoever wrote it originally!
-//  If it's you, please let me know at info@richards-tech.com so I can credit it correctly.
-
-RTMatrix4x4 RTMatrix4x4::inverted()
-{
-    RTMatrix4x4 res;
-
-    RTFLOAT det = matDet();
-
-    if (det == 0) {
-        res.setToIdentity();
-        return res;
-    }
-
-    for (int row = 0; row < 4; row++) {
-        for (int col = 0; col < 4; col++) {
-            if ((row + col) & 1)
-                res.m_data[col][row] = -matMinor(row, col) / det;
-            else
-                res.m_data[col][row] = matMinor(row, col) / det;
-        }
-    }
-
-    return res;
-}
-
-RTFLOAT RTMatrix4x4::matDet()
-{
-    RTFLOAT det = 0;
-
-    det += m_data[0][0] * matMinor(0, 0);
-    det -= m_data[0][1] * matMinor(0, 1);
-    det += m_data[0][2] * matMinor(0, 2);
-    det -= m_data[0][3] * matMinor(0, 3);
-    return det;
 }
 
 */

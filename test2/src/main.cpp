@@ -97,6 +97,7 @@ void updatecb(PixelBuffer screenbuffer)
 
 int main()
 {
+  /*
   SFLOAT data[] = {1,2,3,4,
                  2,1,4,4,
                  3,4,1,5,
@@ -109,11 +110,25 @@ int main()
       m44.setVal(r,c,data[v++]);
   }
   //m44.setAsIdentity();
-  printf("Determinant: %f\n",m44.determinant());
+  //printf("Determinant: %f\n",m44.determinant());
   m44.display();
   SMatrix4x4 m_44 = m44.inverted();
   m_44.display();
-
+*/
+  SMatrix2x2 m22 = SMatrix2x2();
+  int v=0;
+  SFLOAT data[] = {2,5,3,7};
+  for (int r=0;r<2;r++){
+    for (int c=0;c<2;c++)
+      m22.setVal(r,c,data[v++]);
+  }
+  //m22.setAsIdentity();
+  SMatrix2x2 m2_2 = m22;
+  SMatrix2x2 m2_2_2 = m2_2 * m22;
+  //m2_2.setAsIdentity();
+  m22.display();
+  printf("det: %f\n", m22.determinant());
+  m22.inverted().display();
   //a2 = a1;
 	extern TrueColorImage abc;
 	printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);

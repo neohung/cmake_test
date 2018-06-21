@@ -48,28 +48,6 @@ private:
   SFLOAT m_data[2];
 };
 
-
-class SMath
-{
-public:
-    // convenient display routines
-    //static const char *displayRadians(const char *label, SVector3& vec);
-    //static const char *displayDegrees(const char *label, SVector3& vec);
-    //static const char *display(const char *label, SQuaternion& quat);
-    //static const char *display(const char *label, SMatrix4x4& mat);
-    //static uint64_t currentUSecsSinceEpoch();
-    //  poseFromAccelMag generates pose Euler angles from measured settings
-    //static RTVector3 poseFromAccelMag(const RTVector3& accel, const RTVector3& mag);
-    //  Takes signed 16 bit data from a char array and converts it to a vector of scaled RTFLOATs
-    //static void convertToVector(unsigned char *rawData, RTVector3& vec, RTFLOAT scale, bool bigEndian);
-    //  Takes a pressure in hPa and returns height above sea level in meters
-    //static RTFLOAT convertPressureToHeight(RTFLOAT pressure, RTFLOAT staticPressure = 1013.25);
-
-private:
-    //static char m_string[1000];                             // for the display routines
-};
-
-
 class SVector3
 {
 public:
@@ -112,6 +90,103 @@ public:
     void display();
 private:
     SFLOAT m_data[3];
+};
+
+
+class SMatrix2x2
+{
+public:
+    void fill(SFLOAT f);
+    SMatrix2x2();
+    inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
+    inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
+    void display();
+    void setAsIdentity();
+    SMatrix2x2 transposed();
+    SMatrix2x2& operator =(const SMatrix2x2& mat);
+    SMatrix2x2& operator +=(const SMatrix2x2& mat);
+    SMatrix2x2& operator -=(const SMatrix2x2& mat);
+    SMatrix2x2& operator *=(const SFLOAT f);
+    SMatrix2x2& operator +=(const SFLOAT f);
+    SMatrix2x2& operator -=(const SFLOAT f);
+    const SMatrix2x2 operator +(const SMatrix2x2& mat) const;
+    const SMatrix2x2 operator -(const SMatrix2x2& mat) const;
+    const SMatrix2x2 operator +(const SFLOAT f) const;
+    const SMatrix2x2 operator -(const SFLOAT f) const;
+    SMatrix2x2& operator *=(const SMatrix2x2& mat);
+    const SMatrix2x2 operator *(const SFLOAT f) const;
+    const SMatrix2x2 operator *(const SMatrix2x2& mat) const;
+    SFLOAT minorMatrix(const int row, const int col);
+    SFLOAT determinant();
+    SMatrix2x2 inverted();
+
+private:
+    SFLOAT m_data[2][2];
+};
+
+class SMatrix3x3
+{
+public:
+    void fill(SFLOAT f);
+    SMatrix3x3();
+    inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
+    inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
+    void display();
+    void setAsIdentity();
+    SMatrix3x3 transposed();
+    SMatrix3x3& operator =(const SMatrix3x3& mat);
+    SMatrix3x3& operator +=(const SMatrix3x3& mat);
+    SMatrix3x3& operator -=(const SMatrix3x3& mat);
+    SMatrix3x3& operator *=(const SFLOAT f);
+    SMatrix3x3& operator +=(const SFLOAT f);
+    SMatrix3x3& operator -=(const SFLOAT f);
+    const SMatrix3x3 operator +(const SMatrix3x3& mat) const;
+    const SMatrix3x3 operator -(const SMatrix3x3& mat) const;
+    const SMatrix3x3 operator +(const SFLOAT f) const;
+    const SMatrix3x3 operator -(const SFLOAT f) const;
+    SMatrix3x3& operator *=(const SMatrix3x3& mat);
+    const SMatrix3x3 operator *(const SFLOAT f) const;
+    const SMatrix3x3 operator *(const SMatrix3x3& mat) const;
+    SFLOAT minorMatrix(const int row, const int col);
+    SFLOAT determinant();
+    SMatrix3x3 inverted();
+
+private:
+    SFLOAT m_data[3][3];
+};
+
+class SMatrix4x4
+{
+public:
+    void fill(SFLOAT f);
+    SMatrix4x4();
+    inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
+    inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
+    void display();
+    void setAsIdentity();
+    SMatrix4x4 transposed();
+    SMatrix4x4& operator =(const SMatrix4x4& mat);
+    SMatrix4x4& operator +=(const SMatrix4x4& mat);
+    SMatrix4x4& operator -=(const SMatrix4x4& mat);
+    SMatrix4x4& operator *=(const SFLOAT f);
+    SMatrix4x4& operator +=(const SFLOAT f);
+    SMatrix4x4& operator -=(const SFLOAT f);
+    const SMatrix4x4 operator +(const SMatrix4x4& mat) const;
+    const SMatrix4x4 operator -(const SMatrix4x4& mat) const;
+    const SMatrix4x4 operator +(const SFLOAT f) const;
+    const SMatrix4x4 operator -(const SFLOAT f) const;
+    SMatrix4x4& operator *=(const SMatrix4x4& mat);
+    const SMatrix4x4 operator *(const SFLOAT f) const;
+
+    //const SQuaternion operator *(const SQuaternion& q) const;
+    const SMatrix4x4 operator *(const SMatrix4x4& mat) const;
+
+    SMatrix4x4 inverted();
+private:
+    SFLOAT m_data[4][4];                                   // row, column
+
+    SFLOAT minorMatrix(const int row, const int col);
+    SFLOAT determinant();
 };
 
 /*
@@ -160,42 +235,27 @@ public:
 private:
     SFLOAT m_data[4];
 };
-*/
-class SMatrix4x4
+
+
+class SMath
 {
 public:
-    void fill(SFLOAT f);
-    SMatrix4x4();
-    inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
-    inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
-    void display();
-    void setAsIdentity();
-    SMatrix4x4 transposed();
-    SMatrix4x4& operator =(const SMatrix4x4& mat);
-    SMatrix4x4& operator +=(const SMatrix4x4& mat);
-    SMatrix4x4& operator -=(const SMatrix4x4& mat);
-    SMatrix4x4& operator *=(const SFLOAT f);
-    SMatrix4x4& operator +=(const SFLOAT f);
-    SMatrix4x4& operator -=(const SFLOAT f);
-    const SMatrix4x4 operator +(const SMatrix4x4& mat) const;
-    const SMatrix4x4 operator -(const SMatrix4x4& mat) const;
-    const SMatrix4x4 operator +(const SFLOAT f) const;
-    const SMatrix4x4 operator -(const SFLOAT f) const;
-    SMatrix4x4& operator *=(const SMatrix4x4& mat);
-    const SMatrix4x4 operator *(const SFLOAT f) const;
+    // convenient display routines
+    //static const char *displayRadians(const char *label, SVector3& vec);
+    //static const char *displayDegrees(const char *label, SVector3& vec);
+    //static const char *display(const char *label, SQuaternion& quat);
+    //static const char *display(const char *label, SMatrix4x4& mat);
+    //static uint64_t currentUSecsSinceEpoch();
+    //  poseFromAccelMag generates pose Euler angles from measured settings
+    //static RTVector3 poseFromAccelMag(const RTVector3& accel, const RTVector3& mag);
+    //  Takes signed 16 bit data from a char array and converts it to a vector of scaled RTFLOATs
+    //static void convertToVector(unsigned char *rawData, RTVector3& vec, RTFLOAT scale, bool bigEndian);
+    //  Takes a pressure in hPa and returns height above sea level in meters
+    //static RTFLOAT convertPressureToHeight(RTFLOAT pressure, RTFLOAT staticPressure = 1013.25);
 
-    //const SQuaternion operator *(const SQuaternion& q) const;
-    const SMatrix4x4 operator *(const SMatrix4x4& mat) const;
-
-    //SMatrix4x4 inverted();
-    SFLOAT minorMatrix(const int row, const int col);
-    SFLOAT determinant();
-    SMatrix4x4 inverted();
 private:
-    SFLOAT m_data[4][4];                                   // row, column
-
-    //SFLOAT matDet();
-    //SFLOAT matMinor(const int row, const int col);
+    //static char m_string[1000];                             // for the display routines
 };
+*/
 
 #endif /* _SMATH_H_ */
