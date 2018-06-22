@@ -111,6 +111,26 @@ void SVector2::display()
   printf("data: (%f,%f)\n", m_data[0],m_data[1]);
 }
 
+SVector2& SVector2::operator *=(const SMatrix4x4& mat)
+{
+  // mat=[a b]   this = [x y] --> return [ ax + by ]
+  //     [c d] ,                         [ cx + dy ]
+  SVector2 tmp = SVector2();
+  tmp.m_data[0] = mat.val(0,0)*m_data[0] +  mat.val(0,1)*m_data[1];
+  tmp.m_data[1] = mat.val(1,0)*m_data[0] +  mat.val(1,1)*m_data[1];
+  *this = tmp;
+  return *this;
+}
+
+const SVector2 SVector2::operator *(const SMatrix4x4& mat) const
+{
+  // Vec2 * mat ==> Actually  mat=[a b]   Vec = [x y] --> return [ ax + by ]
+  //                              [c d] ,                        [ cx + dy ]
+  SVector2 result = *this;
+  result *= mat;
+  return result;
+}
+
 //############################################################################
 
 void SVector3::zero()
@@ -237,6 +257,28 @@ void SVector3::display()
 {
   printf("data: (%f,%f,%f)\n", m_data[0],m_data[1],m_data[2]);
 }
+
+
+SVector3& SVector3::operator *=(const SMatrix3x3& mat)
+{
+  // mat=[a b c]   this = [x y z] --> return [ ax + by + cz]
+  //     [d e f]                             [ dx + ey + fz]
+  //     [g h i] ,                           [ gx + hy + iz]
+  SVector3 tmp = SVector3();
+  tmp.m_data[0] = mat.val(0,0)*m_data[0] +  mat.val(0,1)*m_data[1] +  mat.val(0,2)*m_data[2];
+  tmp.m_data[1] = mat.val(1,0)*m_data[0] +  mat.val(1,1)*m_data[1] +  mat.val(1,2)*m_data[2];
+  tmp.m_data[2] = mat.val(2,0)*m_data[0] +  mat.val(2,1)*m_data[1] +  mat.val(2,2)*m_data[2];
+  *this = tmp;
+  return *this;
+}
+
+const SVector3 SVector3::operator *(const SMatrix3x3& mat) const
+{
+  SVector3 result = *this;
+  result *= mat;
+  return result;
+}
+
 
 //############################################################################
 
@@ -872,14 +914,162 @@ SMatrix3x3 SMatrix3x3::inverted()
     }
     return result;
 }
-
 //############################################################################
 
-/*
-    
-    
-    const SMatrix2x2 operator *(const SMatrix2x2& mat) const;
-*/
+void SQuaternion::zero()
+{
+  for (int i = 0; i < 4; i++)
+    m_data[i] = 0;
+}
+
+SQuaternion::SQuaternion()
+{
+  zero();
+}
+
+SQuaternion::SQuaternion(SFLOAT scalar, SFLOAT x, SFLOAT y, SFLOAT z)
+{
+    m_data[0] = scalar;
+    m_data[1] = x;
+    m_data[2] = y;
+    m_data[3] = z;
+}
+
+
+void SQuaternion::display(const char* str)
+{
+  printf("%s", str);
+  printf("scalar(%f), x(%f), y(%f), z(%f)\n", scalar(),x(),y(),z());
+}
+
+void SQuaternion::normalize()
+{
+    SFLOAT length = sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2] + m_data[3] * m_data[3]);
+
+    if ((length == 0) || (length == 1))
+        return;
+
+    m_data[0] /= length;
+    m_data[1] /= length;
+    m_data[2] /= length;
+    m_data[3] /= length;
+}
+
+SQuaternion& SQuaternion::operator =(const SQuaternion& quat)
+{
+    if (this == &quat)
+        return *this;
+
+    m_data[0] = quat.m_data[0];
+    m_data[1] = quat.m_data[1];
+    m_data[2] = quat.m_data[2];
+    m_data[3] = quat.m_data[3];
+
+    return *this;
+}
+
+SQuaternion& SQuaternion::operator +=(const SQuaternion& quat)
+{
+    for (int i = 0; i < 4; i++)
+        m_data[i] += quat.m_data[i];
+    return *this;
+}
+
+SQuaternion& SQuaternion::operator -=(const SQuaternion& quat)
+{
+    for (int i = 0; i < 4; i++)
+        m_data[i] -= quat.m_data[i];
+    return *this;
+}
+
+SQuaternion& SQuaternion::operator +=(const SFLOAT f)
+{
+  for (int i = 0; i < 4; i++)
+        m_data[i] += f;
+  return *this;
+}
+
+
+SQuaternion& SQuaternion::operator -=(const SFLOAT f)
+{
+    for (int i = 0; i < 4; i++)
+        m_data[i] -= f;
+    return *this;
+}
+
+
+SQuaternion& SQuaternion::operator *=(const SFLOAT f)
+{
+    m_data[0] *= f;
+    m_data[1] *= f;
+    m_data[2] *= f;
+    m_data[3] *= f;
+
+    return *this;
+}
+
+const SQuaternion SQuaternion::operator *(const SFLOAT f) const
+{
+    SQuaternion result = *this;
+    result *= f;
+    return result;
+}
+
+const SQuaternion SQuaternion::operator +(const SQuaternion& q) const
+{
+    SQuaternion result = *this;
+    result += q;
+    return result;
+}
+
+const SQuaternion SQuaternion::operator +(const SFLOAT f) const
+{
+    SQuaternion result = *this;
+    result += f;
+    return result;
+}
+
+
+const SQuaternion SQuaternion::operator -(const SQuaternion& q) const
+{
+    SQuaternion result = *this;
+    result -= q;
+    return result;
+}
+
+const SQuaternion SQuaternion::operator -(const SFLOAT f) const
+{
+    SQuaternion result = *this;
+    result -= f;
+    return result;
+}
+
+
+SQuaternion& SQuaternion::operator *=(const SQuaternion& q)
+{
+    SQuaternion tmp = SQuaternion();
+    // q = w + xi + yj + zk
+    // q1 * q2 =
+    //           (w1*w2 - x1*x2 - y1*y2 - z1*z2) +
+    //           (w1*x2 + x1*w2 + y1*z2 - z1*y2) i +
+    //           (w1*y2 - x1*z2 + y1*w2 + z1*x2) j +
+    //           (w1*z2 + x1*y2 - y1*x2 + z1*w2) k
+    tmp.m_data[0] = scalar() * q.scalar() - x() * q.x() - y() * q.y() - z() * q.z();
+    tmp.m_data[1] = scalar() * q.x() + x() * q.scalar() + y() * q.z() - z() * q.y();
+    tmp.m_data[2] = scalar() * q.y() - x() * q.z() + y() * q.scalar() + z() * q.x();
+    tmp.m_data[3] = scalar() * q.z() + x() * q.y() - y() * q.x() + z() * q.scalar();
+     
+    *this = tmp;
+    return *this;
+}
+
+const SQuaternion SQuaternion::operator *(const SQuaternion& q) const
+{
+    SQuaternion result = *this;
+    result *= q;
+    return result;
+}
 
 //############################################################################
 //  Strings are put here. So the display functions are no re-entrant!
@@ -912,12 +1102,6 @@ const char *RTMath::displayDegrees(const char *label, RTVector3& vec)
     return m_string;
 }
 
-const char *RTMath::display(const char *label, RTQuaternion& quat)
-{
-    sprintf(m_string, "%s: scalar: %f, x:%f, y:%f, z:%f\n", label, quat.scalar(), quat.x(), quat.y(), quat.z());
-    return m_string;
-}
-
 const char *RTMath::display(const char *label, RTMatrix4x4& mat)
 {
     sprintf(m_string, "%s(0): %f %f %f %f\n%s(1): %f %f %f %f\n%s(2): %f %f %f %f\n%s(3): %f %f %f %f\n",
@@ -926,29 +1110,6 @@ const char *RTMath::display(const char *label, RTMatrix4x4& mat)
             label, mat.val(2,0), mat.val(2,1), mat.val(2,2), mat.val(2,3),
             label, mat.val(3,0), mat.val(3,1), mat.val(3,2), mat.val(3,3));
     return m_string;
-}
-
-//  convertPressureToHeight() - the conversion uses the formula:
-//
-//  h = (T0 / L0) * ((p / P0)**(-(R* * L0) / (g0 * M)) - 1)
-//
-//  where:
-//  h  = height above sea level
-//  T0 = standard temperature at sea level = 288.15
-//  L0 = standard temperatur elapse rate = -0.0065
-//  p  = measured pressure
-//  P0 = static pressure = 1013.25 (but can be overridden)
-//  g0 = gravitational acceleration = 9.80665
-//  M  = mloecular mass of earth's air = 0.0289644
-//  R* = universal gas constant = 8.31432
-//
-//  Given the constants, this works out to:
-//
-//  h = 44330.8 * (1 - (p / P0)**0.190263)
-
-RTFLOAT RTMath::convertPressureToHeight(RTFLOAT pressure, RTFLOAT staticPressure)
-{
-    return 44330.8 * (1 - pow(pressure / staticPressure, (RTFLOAT)0.190263));
 }
 
 
@@ -997,8 +1158,6 @@ void RTMath::convertToVector(unsigned char *rawData, RTVector3& vec, RTFLOAT sca
      }
 }
 
-
-
 //----------------------------------------------------------
 //
 //  The RTVector3 class
@@ -1033,131 +1192,6 @@ void RTVector3::accelToQuaternion(RTQuaternion& qPose) const
 //----------------------------------------------------------
 //
 //  The RTQuaternion class
-
-RTQuaternion::RTQuaternion()
-{
-    zero();
-}
-
-RTQuaternion::RTQuaternion(RTFLOAT scalar, RTFLOAT x, RTFLOAT y, RTFLOAT z)
-{
-    m_data[0] = scalar;
-    m_data[1] = x;
-    m_data[2] = y;
-    m_data[3] = z;
-}
-
-RTQuaternion& RTQuaternion::operator =(const RTQuaternion& quat)
-{
-    if (this == &quat)
-        return *this;
-
-    m_data[0] = quat.m_data[0];
-    m_data[1] = quat.m_data[1];
-    m_data[2] = quat.m_data[2];
-    m_data[3] = quat.m_data[3];
-
-    return *this;
-}
-
-
-
-RTQuaternion& RTQuaternion::operator +=(const RTQuaternion& quat)
-{
-    for (int i = 0; i < 4; i++)
-        m_data[i] += quat.m_data[i];
-    return *this;
-}
-
-RTQuaternion& RTQuaternion::operator -=(const RTQuaternion& quat)
-{
-    for (int i = 0; i < 4; i++)
-        m_data[i] -= quat.m_data[i];
-    return *this;
-}
-
-RTQuaternion& RTQuaternion::operator -=(const RTFLOAT val)
-{
-    for (int i = 0; i < 4; i++)
-        m_data[i] -= val;
-    return *this;
-}
-
-RTQuaternion& RTQuaternion::operator *=(const RTQuaternion& qb)
-{
-    RTQuaternion qa;
-
-    qa = *this;
-
-    m_data[0] = qa.scalar() * qb.scalar() - qa.x() * qb.x() - qa.y() * qb.y() - qa.z() * qb.z();
-    m_data[1] = qa.scalar() * qb.x() + qa.x() * qb.scalar() + qa.y() * qb.z() - qa.z() * qb.y();
-    m_data[2] = qa.scalar() * qb.y() - qa.x() * qb.z() + qa.y() * qb.scalar() + qa.z() * qb.x();
-    m_data[3] = qa.scalar() * qb.z() + qa.x() * qb.y() - qa.y() * qb.x() + qa.z() * qb.scalar();
-
-    return *this;
-}
-
-
-RTQuaternion& RTQuaternion::operator *=(const RTFLOAT val)
-{
-    m_data[0] *= val;
-    m_data[1] *= val;
-    m_data[2] *= val;
-    m_data[3] *= val;
-
-    return *this;
-}
-
-
-const RTQuaternion RTQuaternion::operator *(const RTQuaternion& qb) const
-{
-    RTQuaternion result = *this;
-    result *= qb;
-    return result;
-}
-
-const RTQuaternion RTQuaternion::operator *(const RTFLOAT val) const
-{
-    RTQuaternion result = *this;
-    result *= val;
-    return result;
-}
-
-
-const RTQuaternion RTQuaternion::operator -(const RTQuaternion& qb) const
-{
-    RTQuaternion result = *this;
-    result -= qb;
-    return result;
-}
-
-const RTQuaternion RTQuaternion::operator -(const RTFLOAT val) const
-{
-    RTQuaternion result = *this;
-    result -= val;
-    return result;
-}
-
-
-void RTQuaternion::zero()
-{
-    for (int i = 0; i < 4; i++)
-        m_data[i] = 0;
-}
-
-void RTQuaternion::normalize()
-{
-    RTFLOAT length = sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2] + m_data[3] * m_data[3]);
-
-    if ((length == 0) || (length == 1))
-        return;
-
-    m_data[0] /= length;
-    m_data[1] /= length;
-    m_data[2] /= length;
-    m_data[3] /= length;
-}
 
 void RTQuaternion::toEuler(RTVector3& vec)
 {

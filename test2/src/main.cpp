@@ -97,40 +97,19 @@ void updatecb(PixelBuffer screenbuffer)
 
 int main()
 {
-  /*
-  SFLOAT data[] = {1,2,3,4,
-                 2,1,4,4,
-                 3,4,1,5,
-                 4,2,5,1};
-  //Determinant = -101
-  SMatrix4x4 m44 = SMatrix4x4();
-  int v=0;
-  for (int r=0;r<4;r++){
-    for (int c=0;c<4;c++)
-      m44.setVal(r,c,data[v++]);
-  }
-  //m44.setAsIdentity();
-  //printf("Determinant: %f\n",m44.determinant());
-  m44.display();
-  SMatrix4x4 m_44 = m44.inverted();
-  m_44.display();
-*/
-  SMatrix3x3 m33 = SMatrix3x3();
-  int v=0;
-  SFLOAT data[] = {3,2,-5,
-                   -1,0,-2,
-                   3,-4,1};
-  for (int r=0;r<3;r++){
-    for (int c=0;c<3;c++)
-      m33.setVal(r,c,data[v++]);
-  }
+  SFLOAT data[] = {3,2,-5,1,
+                   -1,0,-2,1,
+                   3,-4,1,1,
+                   1,2,3,4};
+  //SQuaternion  m33 = SQuaternion(data);
+  SQuaternion  m33 = SQuaternion(1,2,3,4);
+  //SMatrix3x3 m33 = SMatrix3x3(data);
+  //m33.fromArray(data);
   //m22.setAsIdentity();
-  SMatrix3x3 m3_3 = m33;
-  SMatrix3x3 m3_3_3 = m3_3 * m33;
+  //SMatrix3x3 m3_3 = m33;
+  //SMatrix3x3 m3_3_3 = m3_3 * m33;
   //m2_2.setAsIdentity();
-  m33.display();
-  printf("det: %f\n", m33.determinant());
-  m33.inverted().display();
+  m33.display("m33:");
   //a2 = a1;
 	extern TrueColorImage abc;
 	printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);

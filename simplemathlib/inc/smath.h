@@ -18,8 +18,11 @@
 
 class SVector2;
 class SVector3;
+//class SVector4;
+class SMatrix2x2;
+class SMatrix3x3;
 class SMatrix4x4;
-//class SQuaternion;
+class SQuaternion;
 
 class SVector2
 {
@@ -31,6 +34,7 @@ public:
   inline SFLOAT y() const { return m_data[1]; }
   inline void setX(const SFLOAT val) {  m_data[0] = val; }
   inline void setY(const SFLOAT val) {  m_data[1] = val; }
+  inline SFLOAT data(const int i) const { return m_data[i]; }
   static SFLOAT dotProduct(SVector2& a, SVector2& b);
   SFLOAT length();
   void normalize();
@@ -44,6 +48,12 @@ public:
   const SVector2 operator +(const SFLOAT& f) const;
   const SVector2 operator -(const SFLOAT& f) const;
   void display();
+  
+  inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 2 * sizeof(SFLOAT)); }
+  inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 2 * sizeof(SFLOAT)); }
+  // Fot rotate
+  SVector2& operator *=(const SMatrix4x4& mat);
+  const SVector2 operator *(const SMatrix4x4& mat) const;
 private:
   SFLOAT m_data[2];
 };
@@ -88,6 +98,8 @@ public:
     //copy data to array pointer
     inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 3 * sizeof(SFLOAT)); }
     void display();
+    SVector3& operator *=(const SMatrix3x3& mat);
+    const SVector3 operator *(const SMatrix3x3& mat) const;
 private:
     SFLOAT m_data[3];
 };
@@ -116,12 +128,16 @@ public:
     SMatrix2x2& operator *=(const SMatrix2x2& mat);
     const SMatrix2x2 operator *(const SFLOAT f) const;
     const SMatrix2x2 operator *(const SMatrix2x2& mat) const;
-    SFLOAT minorMatrix(const int row, const int col);
     SFLOAT determinant();
     SMatrix2x2 inverted();
 
+    inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 4 * sizeof(SFLOAT)); }
+    inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 4 * sizeof(SFLOAT)); }
+    SMatrix2x2(SFLOAT *val) {fromArray(val);}
+
 private:
     SFLOAT m_data[2][2];
+    SFLOAT minorMatrix(const int row, const int col);
 };
 
 class SMatrix3x3
@@ -147,12 +163,15 @@ public:
     SMatrix3x3& operator *=(const SMatrix3x3& mat);
     const SMatrix3x3 operator *(const SFLOAT f) const;
     const SMatrix3x3 operator *(const SMatrix3x3& mat) const;
-    SFLOAT minorMatrix(const int row, const int col);
     SFLOAT determinant();
     SMatrix3x3 inverted();
 
+    inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 9 * sizeof(SFLOAT)); }
+    inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 9 * sizeof(SFLOAT)); }
+    SMatrix3x3(SFLOAT *val) {fromArray(val);}
 private:
     SFLOAT m_data[3][3];
+    SFLOAT minorMatrix(const int row, const int col);
 };
 
 class SMatrix4x4
@@ -177,53 +196,31 @@ public:
     const SMatrix4x4 operator -(const SFLOAT f) const;
     SMatrix4x4& operator *=(const SMatrix4x4& mat);
     const SMatrix4x4 operator *(const SFLOAT f) const;
-
     //const SQuaternion operator *(const SQuaternion& q) const;
     const SMatrix4x4 operator *(const SMatrix4x4& mat) const;
 
+    SFLOAT determinant();
     SMatrix4x4 inverted();
+
+    inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 16 * sizeof(SFLOAT)); }
+    inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 16 * sizeof(SFLOAT)); }
+    SMatrix4x4(SFLOAT *val) {fromArray(val);}
 private:
     SFLOAT m_data[4][4];                                   // row, column
-
     SFLOAT minorMatrix(const int row, const int col);
-    SFLOAT determinant();
 };
 
-/*
 class SQuaternion
 {
 public:
+    void zero();
     SQuaternion();
     SQuaternion(SFLOAT scalar, SFLOAT x, SFLOAT y, SFLOAT z);
-
-    SQuaternion& operator +=(const SQuaternion& quat);
-    SQuaternion& operator -=(const SQuaternion& quat);
-    SQuaternion& operator *=(const SQuaternion& qb);
-    SQuaternion& operator *=(const SFLOAT val);
-    SQuaternion& operator -=(const SFLOAT val);
-
-    SQuaternion& operator =(const SQuaternion& quat);
-    const SQuaternion operator *(const SQuaternion& qb) const;
-    const SQuaternion operator *(const SFLOAT val) const;
-    const SQuaternion operator -(const SQuaternion& qb) const;
-    const SQuaternion operator -(const SFLOAT val) const;
-
-    void normalize();
-    void toEuler(SVector3& vec);
-    void fromEuler(SVector3& vec);
-    RTQuaternion conjugate() const;
-    void toAngleVector(SFLOAT& angle, SVector3& vec);
-    void fromAngleVector(const SFLOAT& angle, const SVector3& vec);
-
-    void zero();
-    const char *display();
-
     inline SFLOAT scalar() const { return m_data[0]; }
     inline SFLOAT x() const { return m_data[1]; }
     inline SFLOAT y() const { return m_data[2]; }
     inline SFLOAT z() const { return m_data[3]; }
     inline SFLOAT data(const int i) const { return m_data[i]; }
-
     inline void setScalar(const SFLOAT val) { m_data[0] = val; }
     inline void setX(const SFLOAT val) { m_data[1] = val; }
     inline void setY(const SFLOAT val) { m_data[2] = val; }
@@ -231,11 +228,37 @@ public:
     inline void setData(const int i, SFLOAT val) { m_data[i] = val; }
     inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 4 * sizeof(SFLOAT)); }
     inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 4 * sizeof(SFLOAT)); }
+    SQuaternion(SFLOAT *val) {fromArray(val);}
+    void display(const char *str);
+    void normalize();
+    SQuaternion& operator =(const SQuaternion& quat);
+    SQuaternion& operator +=(const SQuaternion& quat);
+    SQuaternion& operator -=(const SQuaternion& quat);
+    SQuaternion& operator +=(const SFLOAT f);
+    SQuaternion& operator -=(const SFLOAT f);
+    SQuaternion& operator *=(const SFLOAT f);
+    const SQuaternion operator +(const SQuaternion& q) const;
+    const SQuaternion operator +(const SFLOAT f) const;
+    const SQuaternion operator -(const SQuaternion& q) const;
+    const SQuaternion operator -(const SFLOAT f) const;
+    const SQuaternion operator *(const SFLOAT f) const;
+    SQuaternion& operator *=(const SQuaternion& q);
+    const SQuaternion operator *(const SQuaternion& q) const;
 
 private:
     SFLOAT m_data[4];
 };
 
+/*
+class SQuaternion
+{
+public:
+    void toEuler(SVector3& vec);
+    void fromEuler(SVector3& vec);
+    RTQuaternion conjugate() const;
+    void toAngleVector(SFLOAT& angle, SVector3& vec);
+    void fromAngleVector(const SFLOAT& angle, const SVector3& vec);
+};
 
 class SMath
 {
