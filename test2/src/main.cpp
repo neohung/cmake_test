@@ -115,20 +115,22 @@ int main()
   SMatrix4x4 m_44 = m44.inverted();
   m_44.display();
 */
-  SMatrix2x2 m22 = SMatrix2x2();
+  SMatrix3x3 m33 = SMatrix3x3();
   int v=0;
-  SFLOAT data[] = {2,5,3,7};
-  for (int r=0;r<2;r++){
-    for (int c=0;c<2;c++)
-      m22.setVal(r,c,data[v++]);
+  SFLOAT data[] = {3,2,-5,
+                   -1,0,-2,
+                   3,-4,1};
+  for (int r=0;r<3;r++){
+    for (int c=0;c<3;c++)
+      m33.setVal(r,c,data[v++]);
   }
   //m22.setAsIdentity();
-  SMatrix2x2 m2_2 = m22;
-  SMatrix2x2 m2_2_2 = m2_2 * m22;
+  SMatrix3x3 m3_3 = m33;
+  SMatrix3x3 m3_3_3 = m3_3 * m33;
   //m2_2.setAsIdentity();
-  m22.display();
-  printf("det: %f\n", m22.determinant());
-  m22.inverted().display();
+  m33.display();
+  printf("det: %f\n", m33.determinant());
+  m33.inverted().display();
   //a2 = a1;
 	extern TrueColorImage abc;
 	printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);

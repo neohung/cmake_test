@@ -473,7 +473,6 @@ void SMatrix2x2::display()
       printf("%f ", m_data[row][col]);
     printf("]\n");
   }
-
 }
 
 void SMatrix2x2::setAsIdentity()
@@ -644,6 +643,226 @@ SMatrix2x2 SMatrix2x2::inverted()
   }
   for (int row = 0; row < 2; row++) {
     for (int col = 0; col < 2; col++) {
+      if ((row + col) & 1)
+        //[col][row]  <==> [row][cp;] transposed
+        result.m_data[col][row] = -minorMatrix(row, col) / det;
+      else
+        result.m_data[col][row] = minorMatrix(row, col) / det;
+      }
+    }
+    return result;
+}
+
+//############################################################################
+/*
+class SMatrix3x3
+{
+public:
+    SFLOAT minorMatrix(const int row, const int col);
+    SFLOAT determinant();
+    SMatrix3x3 inverted();
+
+};
+*/
+void SMatrix3x3::fill(SFLOAT f)
+{
+  for (int row = 0; row < 3; row++)
+    for (int col = 0; col < 3; col++)
+      m_data[row][col] = f;
+}
+
+SMatrix3x3::SMatrix3x3()
+{
+  fill(0);
+}
+
+void SMatrix3x3::display()
+{
+  printf("Data:\n");
+  for (int row = 0; row < 3; row++){
+    printf("[");
+    for (int col = 0; col < 3; col++)
+      printf("%f ", m_data[row][col]);
+    printf("]\n");
+  }
+}
+
+void SMatrix3x3::setAsIdentity()
+{
+  fill(0);
+  for (int i = 0; i < 3; i++)
+    m_data[i][i] = 1;
+}
+
+SMatrix3x3 SMatrix3x3::transposed()
+{
+  SMatrix3x3 result;
+  for (int row = 0; row < 3; row++){
+    for (int col = 0; col < 3; col++)
+      result.m_data[col][row] = m_data[row][col];
+  }
+  return result;
+}
+
+SMatrix3x3& SMatrix3x3::operator =(const SMatrix3x3& mat)
+{
+  if (this == &mat)
+    return *this;
+   for (int row = 0; row < 3; row++){
+     for (int col = 0; col < 3; col++)
+       m_data[row][col] = mat.m_data[row][col];
+   }
+  return *this;
+}
+
+SMatrix3x3& SMatrix3x3::operator +=(const SMatrix3x3& mat)
+{
+  for (int row = 0; row < 3; row++){
+     for (int col = 0; col < 3; col++)
+       m_data[row][col] += mat.m_data[row][col];
+  }
+  return *this;
+}
+
+SMatrix3x3& SMatrix3x3::operator -=(const SMatrix3x3& mat)
+{
+  for (int row = 0; row < 3; row++){
+     for (int col = 0; col < 3; col++)
+       m_data[row][col] -= mat.m_data[row][col];
+  }
+  return *this;
+}
+
+SMatrix3x3& SMatrix3x3::operator *=(const SFLOAT f)
+{
+  for (int row = 0; row < 3; row++){
+     for (int col = 0; col < 3; col++)
+       m_data[row][col] *= f;
+  }
+  return *this;
+}
+
+SMatrix3x3& SMatrix3x3::operator +=(const SFLOAT f)
+{
+  for (int row = 0; row < 3; row++){
+     for (int col = 0; col < 3; col++)
+       m_data[row][col] += f;
+  }
+  return *this;
+}
+SMatrix3x3& SMatrix3x3::operator -=(const SFLOAT f)
+{
+  for (int row = 0; row < 3; row++){
+     for (int col = 0; col < 3; col++)
+       m_data[row][col] -= f;
+  }
+  return *this;
+}
+SMatrix3x3& SMatrix3x3::operator *=(const SMatrix3x3& mat)
+{
+  SMatrix3x3 tmp = SMatrix3x3();
+  for (int row = 0; row < 3; row++)
+    for (int col = 0; col < 3; col++)
+      tmp.m_data[row][col] =
+                    m_data[row][0] * mat.m_data[0][col] +
+                    m_data[row][1] * mat.m_data[1][col] +
+                    m_data[row][2] * mat.m_data[2][col];
+  *this = tmp;
+  return *this;
+}
+
+const SMatrix3x3 SMatrix3x3::operator +(const SMatrix3x3& mat) const
+{
+  SMatrix3x3 result = *this;
+  result += mat;
+  return result;
+}
+
+const SMatrix3x3 SMatrix3x3::operator -(const SMatrix3x3& mat) const
+{
+  SMatrix3x3 result = *this;
+  result -= mat;
+  return result;
+}
+
+const SMatrix3x3 SMatrix3x3::operator +(const SFLOAT f) const
+{
+  SMatrix3x3 result = *this;
+  result += f;
+  return result;
+}
+
+const SMatrix3x3 SMatrix3x3::operator -(const SFLOAT f) const
+{
+  SMatrix3x3 result = *this;
+  result -= f;
+  return result;
+}
+
+const SMatrix3x3 SMatrix3x3::operator *(const SFLOAT f) const
+{
+  SMatrix3x3 result = *this;
+  result *= f;
+  return result;
+}
+
+const SMatrix3x3 SMatrix3x3::operator *(const SMatrix3x3& mat) const
+{
+  SMatrix3x3 result = *this;
+  for (int row = 0; row < 3; row++)
+    for (int col = 0; col < 3; col++)
+      result.m_data[row][col] =
+                    m_data[row][0] * mat.m_data[0][col] +
+                    m_data[row][1] * mat.m_data[1][col] +
+                    m_data[row][2] * mat.m_data[2][col];
+  return result;
+}
+
+SFLOAT SMatrix3x3::minorMatrix(const int row, const int col)
+{
+  static int map[] = {1,2,
+                      0,2,
+                      0,1};
+  //A[a b c]
+  // [d e f]           [e f]
+  // [g h i]  (0,0) -> [g i]
+  int* rc;
+  int* cc;
+  rc = map + row * 2;
+  cc = map + col * 2;
+
+  SFLOAT res = 0;
+
+  res += m_data[rc[0]][cc[0]] * m_data[rc[1]][cc[1]];
+  res -= m_data[rc[0]][cc[1]] * m_data[rc[1]][cc[0]];
+  return res;
+}
+
+SFLOAT SMatrix3x3::determinant()
+{
+  SFLOAT det = 0;
+  //A[a b c]
+  // [d e f]          
+  // [g h i]  det(A) = a*e*i + b*f*g + c*d*h 
+  det += m_data[0][0] * m_data[1][1] * m_data[2][2];
+  det += m_data[0][1] * m_data[1][2] * m_data[2][0];
+  det += m_data[0][2] * m_data[1][0] * m_data[2][1];
+  det -= m_data[0][0] * m_data[1][2] * m_data[2][1];
+  det -= m_data[0][1] * m_data[1][0] * m_data[2][2];
+  det -= m_data[0][2] * m_data[1][1] * m_data[2][0];
+  return det;
+}
+
+SMatrix3x3 SMatrix3x3::inverted()
+{
+  SMatrix3x3 result = SMatrix3x3();;
+  SFLOAT det = determinant();
+  if (det == 0) {
+    result.setAsIdentity();
+    return result;
+  }
+  for (int row = 0; row < 3; row++) {
+    for (int col = 0; col < 3; col++) {
       if ((row + col) & 1)
         //[col][row]  <==> [row][cp;] transposed
         result.m_data[col][row] = -minorMatrix(row, col) / det;
