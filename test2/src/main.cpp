@@ -9,6 +9,13 @@
 
 int mflag = 1;
 int lx1=0,ly1=0,lx2=0,ly2=0;
+Triangle t = {
+                  .v1=Position2D(100,100),
+                  .v2=Position2D(50,150),
+                  .v3=Position2D(150,150) 
+                };
+
+Point pp = Point(Position2D(100,100), 5, 0x00FFFFFF);
 void eventcb(WINEVENT e)
 {
 	switch (e.type)
@@ -42,7 +49,15 @@ void eventcb(WINEVENT e)
 			if (e.key.keysym == KEY_ESCAPE){
 			//	printf("Press ESC\n");
 				exit(0);
-			}
+			}else if (e.key.keysym == KEY_LEFT){
+      //  printf("Press ESC\n");
+      }else if (e.key.keysym == KEY_RIGHT){
+      //  printf("Press ESC\n");
+      }else if (e.key.keysym == KEY_UP){
+      //  printf("Press ESC\n");
+      }else if (e.key.keysym == KEY_DOWN){
+      //  printf("Press ESC\n");
+      }
 		        break;
                }
 	}
@@ -58,12 +73,13 @@ void updatecb(PixelBuffer screenbuffer)
     }
     l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
     l->draw_point(Position2D(100,200), 0xff0000, 10);
-    //l->draw_tri(t,0x00ff00, 1, true);
-    l->draw_tri((Triangle){
-                  .v1=Position2D(100,100),
-                  .v2=Position2D(50,150),
-                  .v3=Position2D(150,150) 
-                },0x00ff00, 1, true);
+    l->draw_tri(t,0x00ff00, 1, true);
+
+    //l->draw_tri((Triangle){
+    //              .v1=Position2D(100,100),
+    //              .v2=Position2D(50,150),
+    //              .v3=Position2D(150,150) 
+    //            },0x00ff00, 1, true);
    //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
   /*
 	extern TrueColorImage abc;

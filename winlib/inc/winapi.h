@@ -88,18 +88,46 @@ void freePixelBuffer(PixelBuffer* pb);
 
 typedef SVector2 Position2D;
 
-typedef struct{
-  int x;
-  int y;
-} Vec2;
-
 typedef SVector3 Position3D;
 
-typedef struct{
-  int x;
-  int y;
-  int z;
-} Vec3;
+typedef SFLOAT PFLOAT;
+
+class DrawBase
+{
+public:
+  DrawBase():is_skip(false){};
+  inline PFLOAT size() {return s;};
+  inline unsigned int color() {return c;};
+  inline bool skip() {return is_skip;};
+  void setSize(PFLOAT size) { s=size;};
+  void setColor(unsigned int color) { c=color;};
+  void setSkip(bool skip) { is_skip=skip;};
+private:
+  bool is_skip;
+  PFLOAT s;
+  unsigned int c;
+};
+
+class Point : public DrawBase
+{
+public:
+  Point(Position2D p, PFLOAT size, unsigned int color)
+  { 
+    setPos(p);
+    setSize(size);
+    setColor(color);
+    //is_fill=fill;
+  };
+  inline PFLOAT x() {return pos.x();};
+  inline PFLOAT y() {return pos.y();};
+  //inline bool fill() {return is_fill;};
+  void translation(Position2D p){pos += p;};
+  void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
+private:
+  Position2D pos;
+  std::vector<Position2D> v;
+  //bool is_fill;
+};
 
 typedef struct{
   int x;
