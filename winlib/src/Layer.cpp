@@ -37,11 +37,15 @@ void Layer::clearDraw()
 	memset(pixelbuf->pixels,0,pixelbuf->size);
 }
 
-void Layer::draw_line(unsigned short x1,unsigned short y1, unsigned short x2,unsigned short y2,unsigned int color, unsigned char size)
+void Layer::draw_line(Line l,unsigned int color, unsigned char size)
 {
 	unsigned char b = 0x0000ff & color;
     unsigned char g = (0x00ff00 & color) >> 8;
     unsigned char r = (0xff0000 & color) >> 16;
+    unsigned short x2 = l.v2.x();
+    unsigned short x1 = l.v1.x();
+    unsigned short y2 = l.v2.y();
+    unsigned short y1 = l.v1.y();
     if (x2 == x1){
     	if (y2 < y1){
         		int tmp = y2;
@@ -109,12 +113,14 @@ void Layer::draw_line(unsigned short x1,unsigned short y1, unsigned short x2,uns
     }
     }
 }
-void Layer::draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size)
+void Layer::draw_point(Position2D p, unsigned int color, unsigned char size)
 {
   unsigned char b = 0x0000ff & color;
   unsigned char g = (0x00ff00 & color) >> 8;
   unsigned char r = (0xff0000 & color) >> 16;
   int li,ri,uj,dj;
+  unsigned short x = p.x();
+  unsigned short y = p.y();
   li = x - size;
   ri = x + size;
   uj = y - size;
@@ -140,16 +146,19 @@ void Layer::draw_point(unsigned short x,unsigned short y, unsigned int color, un
 
 void Layer::draw_tri(Triangle tri,unsigned int color, unsigned char size, bool is_fill)
 {
-	draw_line(tri.v1.x,tri.v1.y, tri.v2.x,tri.v2.y, color, size);
-	draw_line(tri.v2.x,tri.v2.y, tri.v3.x,tri.v3.y, color, size);
-	draw_line(tri.v3.x,tri.v3.y, tri.v1.x,tri.v1.y, color, size);
+  Line l1 = {Position2D(tri.v1), Position2D(tri.v2)};
+  Line l2 = {Position2D(tri.v2), Position2D(tri.v3)};
+  Line l3 = {Position2D(tri.v1), Position2D(tri.v3)};
+	draw_line(l1, color, size);
+  draw_line(l2, color, size);
+  draw_line(l3, color, size);
         if (is_fill){
-          int y3 = tri.v3.y;
-          int x3 = tri.v3.x;
-          int y2 = tri.v2.y;
-          int x2 = tri.v2.x;
-          int y1 = tri.v1.y;
-          int x1 = tri.v1.x;
+          int y3 = tri.v3.y();
+          int x3 = tri.v3.x();
+          int y2 = tri.v2.y();
+          int x2 = tri.v2.x();
+          int y1 = tri.v1.y();
+          int x1 = tri.v1.x();
           double slop1 = double(y2-y1)/double(x2-x1);
           double bb1 = double(y2*x1-y1*x2)/double(x1-x2);
           double slop2 = double(y3-y1)/double(x3-x1);
@@ -162,12 +171,12 @@ void Layer::draw_tri(Triangle tri,unsigned int color, unsigned char size, bool i
           int i,j;
           int datax[3];
           int datay[3];
-          datax[0] = tri.v1.x;
-          datax[1] = tri.v2.x;
-          datax[2] = tri.v3.x;
-          datay[0] = tri.v1.y;
-          datay[1] = tri.v2.y;
-          datay[2] = tri.v3.y;
+          datax[0] = tri.v1.x();
+          datax[1] = tri.v2.x();
+          datax[2] = tri.v3.x();
+          datay[0] = tri.v1.y();
+          datay[1] = tri.v2.y();
+          datay[2] = tri.v3.y();
           for(i=0;i<2;i++){
             for(j=1;j<3;j++){
               //from small to big sort use >

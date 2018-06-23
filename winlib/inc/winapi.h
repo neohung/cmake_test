@@ -17,6 +17,8 @@
 #define KEY_DOWN 81
 #define KEY_UP 82
 
+#include <smath.h>
+
 typedef enum {
        NOEVENT = 0,			
        KEYDOWN,	
@@ -84,10 +86,14 @@ typedef struct{
 PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char colorbit);
 void freePixelBuffer(PixelBuffer* pb);
 
+typedef SVector2 Position2D;
+
 typedef struct{
   int x;
   int y;
 } Vec2;
+
+typedef SVector3 Position3D;
 
 typedef struct{
   int x;
@@ -103,14 +109,14 @@ typedef struct{
 } Rect;
 
 typedef struct{
-  Vec2 v1;
-  Vec2 v2;
+  Position2D v1;
+  Position2D v2;
 } Line;
 
 typedef struct{
-  Vec2 v1;
-  Vec2 v2;
-  Vec2 v3;
+  Position2D v1;
+  Position2D v2;
+  Position2D v3;
 } Triangle;
 
 class Layer
@@ -130,8 +136,8 @@ class Layer
     ~Layer();
     void setPos(unsigned short x, unsigned short y);
     void update(PixelBuffer* pb);
-    void draw_line(unsigned short x1,unsigned short y1, unsigned short x2,unsigned short y2,unsigned int color, unsigned char size);
-    void draw_point(unsigned short x,unsigned short y, unsigned int color, unsigned char size);
+    void draw_line(Line l,unsigned int color, unsigned char size);
+    void draw_point(Position2D p, unsigned int color, unsigned char size);
     void draw_tri(Triangle tri,unsigned int color, unsigned char size, bool is_fill);
     void clearDraw();
 };

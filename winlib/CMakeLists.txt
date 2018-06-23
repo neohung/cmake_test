@@ -23,6 +23,7 @@ include_directories(
   #${SDL2IMAGE_INCLUDE_DIRS}
   #${SDL2TTF_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/inc 
+  ${CMAKE_SOURCE_DIR}/simplemathlib/inc 
 )
 
 ###########################
@@ -42,11 +43,13 @@ TARGET_LINK_LIBRARIES(winapi
   #${SDL2IMAGE_LIBRARIES}
   #${SDL2TTF_LIBRARIES}
   #tcimg
+  smathapi
 )
-#ADD_DEPENDENCIES(winapi
+ADD_DEPENDENCIES(winapi
+  smathapi
   #testapi
 #  tcimg
-#)
+)
 
 #ADD_LIBRARY(testapi STATIC ${TESTLIB_SRCS})
 

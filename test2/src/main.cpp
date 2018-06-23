@@ -48,11 +48,6 @@ void eventcb(WINEVENT e)
 	}
 }
 
-Triangle t={
- .v1={.x=100,.y=100},
- .v2={.x=50,.y=150},
- .v3={.x=150,.y=150} 
-};
 void updatecb(PixelBuffer screenbuffer)
 {
    Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
@@ -61,9 +56,14 @@ void updatecb(PixelBuffer screenbuffer)
       lx2 = SDLWindow::instance()->MouseX- l->PosX;
       ly2 = SDLWindow::instance()->MouseY- l->PosY;
     }
-    l->draw_line(lx1,ly1, lx2,ly2,0xff0000, 2);
-    l->draw_point(100,200, 0xff0000, 10);
-    l->draw_tri(t,0x00ff00, 1, true);
+    l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
+    l->draw_point(Position2D(100,200), 0xff0000, 10);
+    //l->draw_tri(t,0x00ff00, 1, true);
+    l->draw_tri((Triangle){
+                  .v1=Position2D(100,100),
+                  .v2=Position2D(50,150),
+                  .v3=Position2D(150,150) 
+                },0x00ff00, 1, true);
    //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
   /*
 	extern TrueColorImage abc;
