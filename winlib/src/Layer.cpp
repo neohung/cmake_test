@@ -24,6 +24,12 @@ void Layer::setPos(unsigned short x, unsigned short y)
   PosY = y;
 }
 
+void Layer::setPos(Position2D p)
+{
+  PosX = p.x();
+  PosY = p.y();
+}
+
 Layer::Layer(const char* name, unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color):
 PosX(x), PosY(y), Width(w), Height(h), IsSkip(false),order(255)
 {

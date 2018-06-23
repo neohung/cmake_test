@@ -124,8 +124,6 @@ class Layer
   protected:
   public:
     char* Name;
-    unsigned short PosX;
-    unsigned short PosY;
     unsigned short Width;
     unsigned short Height;
     unsigned char order;
@@ -135,11 +133,17 @@ class Layer
     Layer(const char* name,unsigned short x, unsigned short y, unsigned short w, unsigned short h,unsigned int color);
     ~Layer();
     void setPos(unsigned short x, unsigned short y);
+    void setPos(Position2D p);
     void update(PixelBuffer* pb);
     void draw_line(Line l,unsigned int color, unsigned char size);
     void draw_point(Position2D p, unsigned int color, unsigned char size);
     void draw_tri(Triangle tri,unsigned int color, unsigned char size, bool is_fill);
     void clearDraw();
+    inline unsigned short x() {return PosX;};
+    inline unsigned short y() {return PosY;};
+  private:
+     unsigned short PosX;
+     unsigned short PosY;
 };
 
 

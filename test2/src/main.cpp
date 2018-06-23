@@ -17,10 +17,10 @@ void eventcb(WINEVENT e)
 		{ 
       Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
       mflag = 0;
-      lx1 = e.button.x - l->PosX;
-      ly1 = e.button.y - l->PosY;
-      lx2 = e.button.x - l->PosX;
-      ly2 = e.button.y - l->PosY;
+      lx1 = e.button.x - l->x();
+      ly1 = e.button.y - l->y();
+      lx2 = e.button.x - l->x();
+      ly2 = e.button.y - l->y();
 			printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
       //Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
       //l->setPos(e.button.x,e.button.y);
@@ -30,8 +30,8 @@ void eventcb(WINEVENT e)
     { 
       Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
       mflag = 1;
-      lx2 = e.button.x- l->PosX;
-      ly2 = e.button.y- l->PosY;
+      lx2 = e.button.x- l->x();
+      ly2 = e.button.y- l->y();
       printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
       break;
 
@@ -53,8 +53,8 @@ void updatecb(PixelBuffer screenbuffer)
    Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
        l->clearDraw();
     if (mflag == 0){
-      lx2 = SDLWindow::instance()->MouseX- l->PosX;
-      ly2 = SDLWindow::instance()->MouseY- l->PosY;
+      lx2 = SDLWindow::instance()->MouseX- l->x();
+      ly2 = SDLWindow::instance()->MouseY- l->y();
     }
     l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
     l->draw_point(Position2D(100,200), 0xff0000, 10);

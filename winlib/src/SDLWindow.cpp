@@ -84,7 +84,7 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
                   //Layer* l = layers[0];
 
                      int j = 0;
-                     unsigned char* dst_offset = (unsigned char*)p->pixels + (layers[i]->PosY * p->bytesperline )+ (layers[i]->pixelbuf->colors*layers[i]->PosX);
+                     unsigned char* dst_offset = (unsigned char*)p->pixels + (layers[i]->y() * p->bytesperline )+ (layers[i]->pixelbuf->colors*layers[i]->x());
                      unsigned char* src_offset = (unsigned char*)layers[i]->pixelbuf->pixels;
                      while(j<layers[i]->Height){
                        dst_offset += p->bytesperline;
