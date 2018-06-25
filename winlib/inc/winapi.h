@@ -95,14 +95,18 @@ typedef SFLOAT PFLOAT;
 class DrawBase
 {
 public:
-  DrawBase():is_skip(false){};
+  DrawBase():is_skip(false),type(0){};
   inline PFLOAT size() {return s;};
   inline unsigned int color() {return c;};
   inline bool skip() {return is_skip;};
+  inline unsigned char getType() {return type;};
   void setSize(PFLOAT size) { s=size;};
   void setColor(unsigned int color) { c=color;};
   void setSkip(bool skip) { is_skip=skip;};
+  virtual void draw(void* pixelbuffer){};
+protected:
 private:
+  unsigned char type;
   bool is_skip;
   PFLOAT s;
   unsigned int c;
@@ -111,7 +115,8 @@ private:
 class Point : public DrawBase
 {
 public:
-  Point(Position2D p, PFLOAT size, unsigned int color)
+  Point(Position2D p, PFLOAT size, unsigned int color):
+  type(1)
   { 
     setPos(p);
     setSize(size);
@@ -123,7 +128,9 @@ public:
   //inline bool fill() {return is_fill;};
   void translation(Position2D p){pos += p;};
   void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
+  virtual void draw(PixelBuffer* pb);
 private:
+  unsigned char type;
   Position2D pos;
   std::vector<Position2D> v;
   //bool is_fill;
@@ -169,7 +176,9 @@ class Layer
     void clearDraw();
     inline unsigned short x() {return PosX;};
     inline unsigned short y() {return PosY;};
+    void add(DrawBase* db);
   private:
+     std::vector<DrawBase*> components;
      unsigned short PosX;
      unsigned short PosY;
 };

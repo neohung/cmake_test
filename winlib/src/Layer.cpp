@@ -16,6 +16,21 @@ Layer::~Layer()
 
 void Layer::update(PixelBuffer* pb)
 {
+ int i;
+ for(i=0;i<components.size();i++){
+   switch (components[i]->getType()){
+     case 0:
+       printf("0\n");
+       break;
+     case 1:
+       printf("1\n");
+       break;
+     default:
+       break;
+   //components[i]->draw(pb);
+   }
+ }
+ //printf("update\n");
 }
 
 void Layer::setPos(unsigned short x, unsigned short y)
@@ -217,4 +232,39 @@ void Layer::draw_tri(Triangle tri,unsigned int color, unsigned char size, bool i
           }
         }
    }
+}
+
+
+void Layer::add(DrawBase* db)
+{
+  components.push_back(db);
+}
+//====================
+/*
+class Point : public DrawBase
+{
+public:
+  Point(Position2D p, PFLOAT size, unsigned int color)
+  {
+    setPos(p);
+    setSize(size);
+    setColor(color);
+    //is_fill=fill;
+  };
+  inline PFLOAT x() {return pos.x();};
+  inline PFLOAT y() {return pos.y();};
+  //inline bool fill() {return is_fill;};
+  void translation(Position2D p){pos += p;};
+  void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
+  //void draw(void* pixelbuffer){
+  //};
+private:
+  Position2D pos;
+  std::vector<Position2D> v;
+  //bool is_fill;
+};*/
+//void Point::draw(void* pixelbuffer)
+void Point::draw(PixelBuffer* pb)
+{
+  printf("Draw Point\n");
 }

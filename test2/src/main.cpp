@@ -138,6 +138,8 @@ int main()
     SDLWindow::instance()->init("",640,480);
     SDLWindow::instance()->addLayer(l1);
     SDLWindow::instance()->addLayer(l2);
+    Point p = Point(Position2D(100,100), 1, 0x00FFFF00);
+    l1->add(&p);
     //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
     //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
     SDLWindow::instance()->show(updatecb,eventcb);
