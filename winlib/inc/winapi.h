@@ -96,6 +96,7 @@ class DrawBase
 {
 public:
   DrawBase():is_skip(false),type(0){};
+  DrawBase(unsigned char t):is_skip(false),type(t){};
   inline PFLOAT size() {return s;};
   inline unsigned int color() {return c;};
   inline bool skip() {return is_skip;};
@@ -103,10 +104,10 @@ public:
   void setSize(PFLOAT size) { s=size;};
   void setColor(unsigned int color) { c=color;};
   void setSkip(bool skip) { is_skip=skip;};
-  virtual void draw(void* pixelbuffer){};
-  unsigned char type;
+  virtual void draw(PixelBuffer* pb){};
 protected:
 private:
+  unsigned char type;
   bool is_skip;
   PFLOAT s;
   unsigned int c;
@@ -116,7 +117,7 @@ class Point : public DrawBase
 {
 public:
   Point(Position2D p, PFLOAT size, unsigned int color):
-  type(1)
+  DrawBase(1)
   { 
     setPos(p);
     setSize(size);
@@ -129,8 +130,29 @@ public:
   void translation(Position2D p){pos += p;};
   void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
   virtual void draw(PixelBuffer* pb);
-  unsigned char type;
-  unsigned char getType() {return type;};
+private:
+  Position2D pos;
+  std::vector<Position2D> v;
+  //bool is_fill;
+};
+
+class LLine : public DrawBase
+{
+public:
+  LLine(Position2D p, PFLOAT size, unsigned int color):
+  DrawBase(2)
+  { 
+    setPos(p);
+    setSize(size);
+    setColor(color);
+    //is_fill=fill;
+  };
+  inline PFLOAT x() {return pos.x();};
+  inline PFLOAT y() {return pos.y();};
+  //inline bool fill() {return is_fill;};
+  void translation(Position2D p){pos += p;};
+  void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
+  virtual void draw(PixelBuffer* pb);
 private:
   Position2D pos;
   std::vector<Position2D> v;
