@@ -14,11 +14,11 @@ Layer::~Layer()
 {
 }
 
-void Layer::update(PixelBuffer* pb)
+void Layer::update()
 {
  int i;
  for(i=0;i<components.size();i++){
-  components[i]->draw(pb);
+  components[i]->draw(pixelbuf);
   /*
    switch (components[i]->getType()){
      case 0:
@@ -246,11 +246,41 @@ void Layer::add(DrawBase* db)
 
 void Point::draw(PixelBuffer* pb)
 {
-  printf("Draw Point\n");
+  unsigned char b = 0x0000ff & color();
+  unsigned char g = (0x00ff00 & color()) >> 8;
+  unsigned char r = (0xff0000 & color()) >> 16;
+  
+  int li,ri,uj,dj;
+  unsigned short posx = x();
+  unsigned short posy = y();
+  li = posx - size();
+  ri = posx + size();
+  uj = posy - size();
+  dj = posy + size();
+  
+  if (li < 0) li = 0;
+  if (ri > (pb->w-1)) ri = pb->w-1;
+  if (uj < 0) uj = 0;
+  if (dj > (pb->h-1)) dj = pb->h-1;
+  
+  int size2 = size()*size();
+  int i,j;
+  for(j=uj;j<dj;j++){
+    for(i=li;i<ri;i++){
+      int dist2 = (j-posy)*(j-posy)+(i-posx)*(i-posx);
+      if (dist2 < size2){
+        unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
+        *offset = b;
+        *(offset+1) = g; //G
+        *(offset+2) = r; //R
+      }
+    }
+  } 
+  //printf("Draw Point\n");
 }
 
 void LLine::draw(PixelBuffer* pb)
 {
-  printf("Draw LLine\n");
+  //printf("Draw LLine\n");
 }
 

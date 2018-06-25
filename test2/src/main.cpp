@@ -58,8 +58,8 @@ void eventcb(WINEVENT e)
       }else if (e.key.keysym == KEY_DOWN){
       //  printf("Press ESC\n");
       }
-		        break;
-               }
+		  break;
+    }
 	}
 }
 
@@ -71,9 +71,9 @@ void updatecb(PixelBuffer screenbuffer)
       lx2 = SDLWindow::instance()->MouseX- l->x();
       ly2 = SDLWindow::instance()->MouseY- l->y();
     }
-    l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
-    l->draw_point(Position2D(100,200), 0xff0000, 10);
-    l->draw_tri(t,0x00ff00, 1, true);
+    //l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
+    //l->draw_point(Position2D(100,200), 0xff0000, 10);
+    //l->draw_tri(t,0x00ff00, 1, true);
 
     //l->draw_tri((Triangle){
     //              .v1=Position2D(100,100),
@@ -139,10 +139,10 @@ int main()
     SDLWindow::instance()->addLayer(l1);
     SDLWindow::instance()->addLayer(l2);
     //Point p = Point(Position2D(100,100), 1, 0x00FFFF00);
-    Point p = Point(Position2D(100,100), 1, 0x00FFFF00);
-    LLine l = LLine(Position2D(100,100), 1, 0x00FFFF00);
-    l1->add(&p);
-    l1->add(&l);
+    Point p = Point(Position2D(10,100), 10, 0x000000FF);
+    //LLine l = LLine(Position2D(100,100), 10, 0x00FFFF00);
+    l2->add(&p);
+    //l1->add(&l);
     //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
     //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
     SDLWindow::instance()->show(updatecb,eventcb);

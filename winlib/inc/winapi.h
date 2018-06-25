@@ -192,7 +192,7 @@ class Layer
     ~Layer();
     void setPos(unsigned short x, unsigned short y);
     void setPos(Position2D p);
-    void update(PixelBuffer* pb);
+    void update();
     void draw_line(Line l,unsigned int color, unsigned char size);
     void draw_point(Position2D p, unsigned int color, unsigned char size);
     void draw_tri(Triangle tri,unsigned int color, unsigned char size, bool is_fill);
