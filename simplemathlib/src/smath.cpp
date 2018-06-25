@@ -492,6 +492,18 @@ SMatrix4x4 SMatrix4x4::inverted()
     return res;
 }
 
+const SQuaternion SMatrix4x4::operator *(const SQuaternion& q) const
+{
+    SQuaternion result = SQuaternion();
+
+    result.setScalar(m_data[0][0] * q.scalar() + m_data[0][1] * q.x() + m_data[0][2] * q.y() + m_data[0][3] * q.z());
+    result.setX(m_data[1][0] * q.scalar() + m_data[1][1] * q.x() + m_data[1][2] * q.y() + m_data[1][3] * q.z());
+    result.setY(m_data[2][0] * q.scalar() + m_data[2][1] * q.x() + m_data[2][2] * q.y() + m_data[2][3] * q.z());
+    result.setZ(m_data[3][0] * q.scalar() + m_data[3][1] * q.x() + m_data[3][2] * q.y() + m_data[3][3] * q.z());
+
+    return result;
+}
+
 //############################################################################
 
 void SMatrix2x2::fill(SFLOAT f)
@@ -695,17 +707,19 @@ SMatrix2x2 SMatrix2x2::inverted()
     return result;
 }
 
-//############################################################################
-/*
-class SMatrix3x3
+const SVector2 SMatrix2x2::operator *(const SVector2& vec) const
 {
-public:
-    SFLOAT minorMatrix(const int row, const int col);
-    SFLOAT determinant();
-    SMatrix3x3 inverted();
+  // mat=[a b]   this = [x y] --> return [ ax + by ]
+  //     [c d] ,                         [ cx + dy ]
 
-};
-*/
+    SVector2 result = SVector2();
+    result.setX(m_data[0][0]*vec.x() + m_data[0][1]*vec.y());
+    result.setY(m_data[1][0]*vec.x() + m_data[1][1]*vec.y());
+    return result;
+}
+
+//############################################################################
+
 void SMatrix3x3::fill(SFLOAT f)
 {
   for (int row = 0; row < 3; row++)
@@ -914,6 +928,19 @@ SMatrix3x3 SMatrix3x3::inverted()
     }
     return result;
 }
+
+const SVector3 SMatrix3x3::operator *(const SVector3& vec) const
+{
+  // m33=[a b c]   vec  = [x y z] --> return [ ax + by + cz]
+  //     [d e f]                             [ dx + ey + fz]
+  //     [g h i] ,                           [ gx + hy + iz]
+  SVector3 result = SVector3();
+  for (int i = 0; i < 3; i++){
+    result.setData(i,val(i,0)*vec.x() + val(i,1)*vec.y() + val(i,2)*vec.z());
+  }
+  return result;
+}
+
 //############################################################################
 
 void SQuaternion::zero()
@@ -1071,6 +1098,74 @@ const SQuaternion SQuaternion::operator *(const SQuaternion& q) const
     return result;
 }
 
+//Return angle and SVector3 vec
+void SQuaternion::toAngleVector(SFLOAT& angle, SVector3& vec)
+{
+    SFLOAT halfTheta;
+    SFLOAT sinHalfTheta;
+
+    halfTheta = acos(m_data[0]);
+    sinHalfTheta = sin(halfTheta);
+
+    if (sinHalfTheta == 0) {
+        vec.setX(1.0);
+        vec.setY(0);
+        vec.setZ(0);
+    } else {
+        vec.setX(m_data[1] / sinHalfTheta);
+        vec.setY(m_data[1] / sinHalfTheta);
+        vec.setZ(m_data[1] / sinHalfTheta);
+    }
+    angle = 2.0 * halfTheta;
+}
+
+// Init from angle and vector
+void SQuaternion::fromAngleVector(const SFLOAT& angle, const SVector3& vec)
+{
+    SFLOAT sinHalfTheta = sin(angle / 2.0);
+    m_data[0] = cos(angle / 2.0);
+    m_data[1] = vec.x() * sinHalfTheta;
+    m_data[2] = vec.y() * sinHalfTheta;
+    m_data[3] = vec.z() * sinHalfTheta;
+}
+
+SQuaternion SQuaternion::conjugate() const
+{
+    SQuaternion q;
+    q.setScalar(m_data[0]);
+    q.setX(-m_data[1]);
+    q.setY(-m_data[2]);
+    q.setZ(-m_data[3]);
+    return q;
+}
+
+void SQuaternion::toEuler(SVector3& vec)
+{
+    vec.setX(atan2(2.0 * (m_data[2] * m_data[3] + m_data[0] * m_data[1]),
+            1 - 2.0 * (m_data[1] * m_data[1] + m_data[2] * m_data[2])));
+
+    vec.setY(asin(2.0 * (m_data[0] * m_data[2] - m_data[1] * m_data[3])));
+
+    vec.setZ(atan2(2.0 * (m_data[1] * m_data[2] + m_data[0] * m_data[3]),
+            1 - 2.0 * (m_data[2] * m_data[2] + m_data[3] * m_data[3])));
+}
+
+void SQuaternion::fromEuler(SVector3& vec)
+{
+    SFLOAT cosX2 = cos(vec.x() / 2.0f);
+    SFLOAT sinX2 = sin(vec.x() / 2.0f);
+    SFLOAT cosY2 = cos(vec.y() / 2.0f);
+    SFLOAT sinY2 = sin(vec.y() / 2.0f);
+    SFLOAT cosZ2 = cos(vec.z() / 2.0f);
+    SFLOAT sinZ2 = sin(vec.z() / 2.0f);
+
+    m_data[0] = cosX2 * cosY2 * cosZ2 + sinX2 * sinY2 * sinZ2;
+    m_data[1] = sinX2 * cosY2 * cosZ2 - cosX2 * sinY2 * sinZ2;
+    m_data[2] = cosX2 * sinY2 * cosZ2 + sinX2 * cosY2 * sinZ2;
+    m_data[3] = cosX2 * cosY2 * sinZ2 - sinX2 * sinY2 * cosZ2;
+    normalize();
+}
+
 //############################################################################
 //  Strings are put here. So the display functions are no re-entrant!
 /*
@@ -1190,91 +1285,5 @@ void RTVector3::accelToQuaternion(RTQuaternion& qPose) const
 }
 
 //----------------------------------------------------------
-//
-//  The RTQuaternion class
-
-void RTQuaternion::toEuler(RTVector3& vec)
-{
-    vec.setX(atan2(2.0 * (m_data[2] * m_data[3] + m_data[0] * m_data[1]),
-            1 - 2.0 * (m_data[1] * m_data[1] + m_data[2] * m_data[2])));
-
-    vec.setY(asin(2.0 * (m_data[0] * m_data[2] - m_data[1] * m_data[3])));
-
-    vec.setZ(atan2(2.0 * (m_data[1] * m_data[2] + m_data[0] * m_data[3]),
-            1 - 2.0 * (m_data[2] * m_data[2] + m_data[3] * m_data[3])));
-}
-
-void RTQuaternion::fromEuler(RTVector3& vec)
-{
-    RTFLOAT cosX2 = cos(vec.x() / 2.0f);
-    RTFLOAT sinX2 = sin(vec.x() / 2.0f);
-    RTFLOAT cosY2 = cos(vec.y() / 2.0f);
-    RTFLOAT sinY2 = sin(vec.y() / 2.0f);
-    RTFLOAT cosZ2 = cos(vec.z() / 2.0f);
-    RTFLOAT sinZ2 = sin(vec.z() / 2.0f);
-
-    m_data[0] = cosX2 * cosY2 * cosZ2 + sinX2 * sinY2 * sinZ2;
-    m_data[1] = sinX2 * cosY2 * cosZ2 - cosX2 * sinY2 * sinZ2;
-    m_data[2] = cosX2 * sinY2 * cosZ2 + sinX2 * cosY2 * sinZ2;
-    m_data[3] = cosX2 * cosY2 * sinZ2 - sinX2 * sinY2 * cosZ2;
-    normalize();
-}
-
-RTQuaternion RTQuaternion::conjugate() const
-{
-    RTQuaternion q;
-    q.setScalar(m_data[0]);
-    q.setX(-m_data[1]);
-    q.setY(-m_data[2]);
-    q.setZ(-m_data[3]);
-    return q;
-}
-
-void RTQuaternion::toAngleVector(RTFLOAT& angle, RTVector3& vec)
-{
-    RTFLOAT halfTheta;
-    RTFLOAT sinHalfTheta;
-
-    halfTheta = acos(m_data[0]);
-    sinHalfTheta = sin(halfTheta);
-
-    if (sinHalfTheta == 0) {
-        vec.setX(1.0);
-        vec.setY(0);
-        vec.setZ(0);
-    } else {
-        vec.setX(m_data[1] / sinHalfTheta);
-        vec.setY(m_data[1] / sinHalfTheta);
-        vec.setZ(m_data[1] / sinHalfTheta);
-    }
-    angle = 2.0 * halfTheta;
-}
-
-void RTQuaternion::fromAngleVector(const RTFLOAT& angle, const RTVector3& vec)
-{
-    RTFLOAT sinHalfTheta = sin(angle / 2.0);
-    m_data[0] = cos(angle / 2.0);
-    m_data[1] = vec.x() * sinHalfTheta;
-    m_data[2] = vec.y() * sinHalfTheta;
-    m_data[3] = vec.z() * sinHalfTheta;
-}
-
-
-
-//----------------------------------------------------------
-//
-//  The RTMatrix4x4 class
-
-const RTQuaternion RTMatrix4x4::operator *(const RTQuaternion& q) const
-{
-    RTQuaternion res;
-
-    res.setScalar(m_data[0][0] * q.scalar() + m_data[0][1] * q.x() + m_data[0][2] * q.y() + m_data[0][3] * q.z());
-    res.setX(m_data[1][0] * q.scalar() + m_data[1][1] * q.x() + m_data[1][2] * q.y() + m_data[1][3] * q.z());
-    res.setY(m_data[2][0] * q.scalar() + m_data[2][1] * q.x() + m_data[2][2] * q.y() + m_data[2][3] * q.z());
-    res.setZ(m_data[3][0] * q.scalar() + m_data[3][1] * q.x() + m_data[3][2] * q.y() + m_data[3][3] * q.z());
-
-    return res;
-}
 
 */
