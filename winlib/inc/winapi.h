@@ -130,9 +130,12 @@ public:
     SMatrix2x2 m22 = SMatrix2x2();
     m22.fromArray(m);    
     for(int i=0;i<v.size();i++){
-      v[i] = (v[i] - pos) * m22 + pos;
+      v[i] -= pos;
+      v[i] *= m22;
+      v[i] += pos;
+      //v[i] = m22 * (v[i] - pos) + pos;
+      //v[i] = (v[i] - pos) * m22 + pos;
     }
-
   }
   inline PFLOAT x() {return pos.x();};
   inline PFLOAT y() {return pos.y();};
@@ -247,6 +250,92 @@ private:
   PFLOAT h;
 };
 
+class DrawBase3D
+{
+public:
+  DrawBase3D():is_skip(false),type(0), is_fill(false){};
+  DrawBase3D(unsigned char t):is_skip(false),type(t){};
+  inline PFLOAT size() {return s;};
+  inline unsigned int color() {return c;};
+  inline bool skip() {return is_skip;};
+  inline bool fill() {return is_fill;};
+  inline Position3D POS() {return pos;};
+  unsigned char getType() {return type;};
+  void setSize(PFLOAT size) { s=size;};
+  void setColor(unsigned int color) { c=color;};
+  void setSkip(bool skip) { is_skip=skip;};
+  void setFill(bool fill) { is_fill=fill;};
+  virtual void draw(PixelBuffer* pb){};
+  void translation(Position3D p)
+  {
+    //pos += p;
+    //int i;
+    //for(int i=0;i<v.size();i++){
+    //  v[i] += p;
+    //}
+  };
+  void rotation(PFLOAT degree){
+    // [cos -sin]
+    // [sin  cos]
+    //PFLOAT rad = degree*SMATH_DEGREE_TO_RAD;
+    //PFLOAT m[] = {cos(rad),-sin(rad),sin(rad),cos(rad)};
+    //SMatrix2x2 m22 = SMatrix2x2();
+    //m22.fromArray(m);    
+    //for(int i=0;i<v.size();i++){
+    //  v[i] -= pos;
+    //  v[i] *= m22;
+    //  v[i] += pos;
+      //v[i] = m22 * (v[i] - pos) + pos;
+      //v[i] = (v[i] - pos) * m22 + pos;
+    //}
+  }
+  inline PFLOAT x() {return pos.x();};
+  inline PFLOAT y() {return pos.y();};
+  inline PFLOAT z() {return pos.z();};
+  void setPos(Position3D p) { 
+    Position3D dist = p - pos;
+    translation(dist);
+  };
+  //void findBound(Position2D* p, PFLOAT* w, PFLOAT* h);
+protected:
+  std::vector<Position3D> v;
+  Position3D pos;
+  bool is_fill;
+private:
+  unsigned char type;
+  bool is_skip;
+  PFLOAT s;
+  unsigned int c;
+};
+
+class Plane3D : public DrawBase3D
+{
+public:
+  Plane3D(Position3D p0, PFLOAT width,PFLOAT height,PFLOAT size, unsigned int color, bool fill)
+  {
+    setFill(fill);
+    PFLOAT z = p0.z();
+    Position3D p1 = p0 + Position3D(0,h,z);
+    Position3D p2 = p1 + Position3D(w,0,z);
+    Position3D p3 = p0 + Position3D(w,0,z);
+    setPos((p0+p2)*0.5);
+    setSize(size);
+    setColor(color);
+    v.push_back(p0);
+    v.push_back(p1);
+    v.push_back(p2);
+    v.push_back(p3);
+  };
+  virtual void draw(PixelBuffer* pb);
+  inline PFLOAT width() {return w;};
+  inline PFLOAT height() {return h;};
+  inline void setHieght(PFLOAT height) {h = height;};
+  inline void setWidth(PFLOAT width) {w = width;};
+private:
+  PFLOAT w;
+  PFLOAT h;
+};
+
 typedef struct{
   Position2D pos;
   PFLOAT w;
@@ -273,8 +362,10 @@ class Layer
     inline unsigned short x() {return PosX;};
     inline unsigned short y() {return PosY;};
     DrawBase* add(DrawBase* db);
+    DrawBase3D* add(DrawBase3D* db);
   private:
      std::vector<DrawBase*> components;
+     std::vector<DrawBase3D*> components3D;
      unsigned short PosX;
      unsigned short PosY;
 };

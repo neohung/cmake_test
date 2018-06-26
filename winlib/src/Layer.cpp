@@ -19,6 +19,10 @@ void Layer::update()
  int i;
  for(i=0;i<components.size();i++){
   components[i]->draw(pixelbuf);
+ }
+ for(i=0;i<components3D.size();i++){
+  components3D[i]->draw(pixelbuf);
+ }
   /*
    switch (components[i]->getType()){
      case 0:
@@ -32,7 +36,6 @@ void Layer::update()
    //components[i]->draw(pb);
    }
    */
- }
 }
 
 void Layer::setPos(unsigned short x, unsigned short y)
@@ -63,6 +66,12 @@ void Layer::clearDraw()
 DrawBase* Layer::add(DrawBase* db)
 {
   components.push_back(db);
+  return db;
+}
+
+DrawBase3D* Layer::add(DrawBase3D* db)
+{
+  components3D.push_back(db);
   return db;
 }
 //====================
@@ -329,4 +338,9 @@ void Rectangle::draw(PixelBuffer* pb)
      drawFill(pb);  
    }
    //drawBound(pb);
+}
+
+void Plane3D::draw(PixelBuffer* pb)
+{
+  printf("Plane3D::draw\n");
 }

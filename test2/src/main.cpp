@@ -122,6 +122,7 @@ void updatecb(PixelBuffer screenbuffer)
                                          0xFF000000);
     */    
 }
+Plane3D* pp3d;
 int main()
 {
   extern TrueColorImage abc;
@@ -140,10 +141,12 @@ int main()
   Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
   //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,150),1, 0x00FF00FF, true);
   Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
+  Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
   ppoint = (Point*)l2->add(&p);
   pline = (Line*)l2->add(&l);
   ttringle = (Triangle*)l2->add(&t);
   rrectangle = (Rectangle*)l2->add(&r);
+  pp3d = (Plane3D*) l2->add(&p3d);
   //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
   //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
   SDLWindow::instance()->show(updatecb,eventcb);
