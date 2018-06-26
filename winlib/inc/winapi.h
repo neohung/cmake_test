@@ -93,6 +93,11 @@ typedef SVector3 Position3D;
 
 typedef SFLOAT PFLOAT;
 
+typedef struct {
+  PFLOAT slop;
+  PFLOAT bias;
+}Fomula1D;
+
 class DrawBase
 {
 public:
@@ -102,6 +107,7 @@ public:
   inline unsigned int color() {return c;};
   inline bool skip() {return is_skip;};
   inline bool fill() {return is_fill;};
+  inline Position2D POS() {return pos;};
   unsigned char getType() {return type;};
   void setSize(PFLOAT size) { s=size;};
   void setColor(unsigned int color) { c=color;};
@@ -135,8 +141,9 @@ public:
     translation(dist);
   };
   void findBound(Position2D* p, PFLOAT* w, PFLOAT* h);
-  void drawBound(PixelBuffer* pb);
 protected:
+  void drawFill(PixelBuffer* pb);
+  void drawBound(PixelBuffer* pb);
   std::vector<Position2D> v;
   Position2D pos;
   bool is_fill;
@@ -158,12 +165,9 @@ public:
     setColor(color);
     v.clear();
     v.push_back(p);
-    //is_fill=fill;
   };
-  //inline bool fill() {return is_fill;};
   virtual void draw(PixelBuffer* pb);
 private:
-  //bool is_fill;
 };
 
 class Line : public DrawBase
@@ -178,9 +182,7 @@ public:
     v.clear();
     v.push_back(p1);
     v.push_back(p2);
-    //is_fill=fill;
   };
-  //inline bool fill() {return is_fill;};
   void setLinePos(Position2D p1,Position2D p2) { 
     setPos((p1+p2)*0.5);
     v.clear();
@@ -189,7 +191,6 @@ public:
   };
   virtual void draw(PixelBuffer* pb);
 private:
-  //bool is_fill;
 };
 
 class Triangle : public DrawBase
@@ -216,7 +217,6 @@ public:
   }
   virtual void draw(PixelBuffer* pb);
 private:
-  void drawFill(PixelBuffer* pb);
 };
 
 class Rectangle : public DrawBase
@@ -239,20 +239,18 @@ public:
   }
   inline PFLOAT width() {return w;};
   inline PFLOAT height() {return h;};
-  inline PFLOAT setHieght(PFLOAT height) {h = height;};
-  inline PFLOAT setWidth(PFLOAT width) {w = width;};
+  inline void setHieght(PFLOAT height) {h = height;};
+  inline void setWidth(PFLOAT width) {w = width;};
   virtual void draw(PixelBuffer* pb);
 private:
   PFLOAT w;
   PFLOAT h;
-  //void drawFill(PixelBuffer* pb);
 };
 
 typedef struct{
-  int x;
-  int y;
-  unsigned int w;
-  unsigned int h;
+  Position2D pos;
+  PFLOAT w;
+  PFLOAT h;
 } Rect;
 
 class Layer
