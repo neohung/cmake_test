@@ -106,12 +106,12 @@ const SVector2 SVector2::operator -(const SFLOAT& f) const
     return result;
 }
 
-void SVector2::display()
+void SVector2::display(const char* str)
 {
-  printf("data: (%f,%f)\n", m_data[0],m_data[1]);
+  printf("%sdata: (%f,%f)\n", str ,m_data[0],m_data[1]);
 }
 
-SVector2& SVector2::operator *=(const SMatrix4x4& mat)
+SVector2& SVector2::operator *=(const SMatrix2x2& mat)
 {
   // mat=[a b]   this = [x y] --> return [ ax + by ]
   //     [c d] ,                         [ cx + dy ]
@@ -122,7 +122,7 @@ SVector2& SVector2::operator *=(const SMatrix4x4& mat)
   return *this;
 }
 
-const SVector2 SVector2::operator *(const SMatrix4x4& mat) const
+const SVector2 SVector2::operator *(const SMatrix2x2& mat) const
 {
   // Vec2 * mat ==> Actually  mat=[a b]   Vec = [x y] --> return [ ax + by ]
   //                              [c d] ,                        [ cx + dy ]
@@ -131,6 +131,20 @@ const SVector2 SVector2::operator *(const SMatrix4x4& mat) const
   return result;
 }
 
+SVector2& SVector2::operator *=(const SFLOAT f)
+{
+  m_data[0] *= f;
+  m_data[1] *= f;
+  return *this;
+}
+
+
+const SVector2 SVector2::operator *(const SFLOAT f) const
+{    
+    SVector2 result = *this;
+    result *= f;
+    return result;
+}
 //############################################################################
 
 void SVector3::zero()
@@ -253,9 +267,9 @@ SFLOAT SVector3::length()
             m_data[2] * m_data[2]);
 }
 
-void SVector3::display()
+void SVector3::display(const char* str)
 {
-  printf("data: (%f,%f,%f)\n", m_data[0],m_data[1],m_data[2]);
+  printf("%sdata: (%f,%f,%f)\n", str,m_data[0],m_data[1],m_data[2]);
 }
 
 
@@ -279,6 +293,19 @@ const SVector3 SVector3::operator *(const SMatrix3x3& mat) const
   return result;
 }
 
+SVector3& SVector3::operator *=(const SFLOAT f)
+{
+  m_data[0] *= f;
+  m_data[1] *= f;
+  m_data[2] *= f;
+  return *this;
+}
+const SVector3 SVector3::operator *(const SFLOAT f) const
+{
+  SVector3 result = *this;
+  result *= f;
+  return result;
+}
 
 //############################################################################
 
@@ -293,9 +320,9 @@ SMatrix4x4::SMatrix4x4()
   fill(0);
 }
 
-void SMatrix4x4::display()
+void SMatrix4x4::display(const char* str)
 {
-  printf("Data:\n");
+  printf("%sData:\n",str);
   for (int row = 0; row < 4; row++){
   printf("[");
     for (int col = 0; col < 4; col++)
@@ -518,9 +545,9 @@ SMatrix2x2::SMatrix2x2()
   fill(0);
 }
 
-void SMatrix2x2::display()
+void SMatrix2x2::display(const char* str)
 {
-  printf("Data:\n");
+  printf("%sData:\n",str);
   for (int row = 0; row < 2; row++){
     printf("[");
     for (int col = 0; col < 2; col++)
@@ -732,9 +759,9 @@ SMatrix3x3::SMatrix3x3()
   fill(0);
 }
 
-void SMatrix3x3::display()
+void SMatrix3x3::display(const char* str)
 {
-  printf("Data:\n");
+  printf("%sData:\n",str);
   for (int row = 0; row < 3; row++){
     printf("[");
     for (int col = 0; col < 3; col++)

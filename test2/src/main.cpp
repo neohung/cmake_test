@@ -9,30 +9,26 @@
 
 int mflag = 1;
 int lx1=0,ly1=0,lx2=0,ly2=0;
-Triangle t = {
-                  .v1=Position2D(100,100),
-                  .v2=Position2D(50,150),
-                  .v3=Position2D(150,150) 
-                };
 
 Point pp = Point(Position2D(100,100), 5, 0x00FFFFFF);
+Point* ppoint;
+Triangle* ttringle;
+Rectangle* rrectangle;
 void eventcb(WINEVENT e)
 {
-	switch (e.type)
-	{
-		case MOUSEBUTTONDOWN:
-		{ 
+  switch (e.type)
+  {
+    case MOUSEBUTTONDOWN:
+    { 
       Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
       mflag = 0;
       lx1 = e.button.x - l->x();
       ly1 = e.button.y - l->y();
       lx2 = e.button.x - l->x();
       ly2 = e.button.y - l->y();
-			printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
-      //Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
-      //l->setPos(e.button.x,e.button.y);
-                        break;
-		}
+      printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
+      break;
+    }
     case MOUSEBUTTONUP:
     { 
       Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
@@ -41,28 +37,40 @@ void eventcb(WINEVENT e)
       ly2 = e.button.y- l->y();
       printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
       break;
-
     }
-		case KEYUP:
-		{
-			printf("K: state:%d,key (%d)\n",e.key.state,e.key.keysym);
-			if (e.key.keysym == KEY_ESCAPE){
-			//	printf("Press ESC\n");
-				exit(0);
-			}else if (e.key.keysym == KEY_LEFT){
-      //  printf("Press ESC\n");
+    //case KEYUP:
+    case KEYDOWN:
+    {
+      //printf("K: state:%d,key (%d)\n",e.key.state,e.key.keysym);
+      if (e.key.keysym == KEY_ESCAPE){
+        exit(0);
+      }else if (e.key.keysym == KEY_LEFT){
+        //  printf("Press ESC\n");
+        //ppoint->translation(Position2D(-5,0));
+        //ttringle->translation(Position2D(-5,0));
+        ttringle->rotation(-5);
+        rrectangle->rotation(-5);
       }else if (e.key.keysym == KEY_RIGHT){
-      //  printf("Press ESC\n");
+        //ppoint->translation(Position2D(5,0));
+        //ttringle->translation(Position2D(5,0));
+        ttringle->rotation(5);
+        rrectangle->rotation(5);
+        //  printf("Press ESC\n");
       }else if (e.key.keysym == KEY_UP){
-      //  printf("Press ESC\n");
+        //  printf("Press ESC\n");
+        ppoint->translation(Position2D(0,-5));
+        ttringle->translation(Position2D(0,-5));
       }else if (e.key.keysym == KEY_DOWN){
-      //  printf("Press ESC\n");
+        //  printf("Press ESC\n");
+        ppoint->translation(Position2D(0,5));
+        ttringle->translation(Position2D(0,5));
       }
-		  break;
+      break;
     }
-	}
+  }
 }
 
+Line* pline;
 void updatecb(PixelBuffer screenbuffer)
 {
    Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
@@ -71,6 +79,10 @@ void updatecb(PixelBuffer screenbuffer)
       lx2 = SDLWindow::instance()->MouseX- l->x();
       ly2 = SDLWindow::instance()->MouseY- l->y();
     }
+    if (pline){
+      pline->setLinePos(Position2D(lx1,ly1),Position2D(lx2,ly2));
+    }
+    //setLinePos
     //l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
     //l->draw_point(Position2D(100,200), 0xff0000, 10);
     //l->draw_tri(t,0x00ff00, 1, true);
@@ -110,44 +122,30 @@ void updatecb(PixelBuffer screenbuffer)
                                          0xFF000000);
     */    
 }
-
 int main()
 {
-  SFLOAT data[] = {3,2,-5,1,
-                   -1,0,-2,1,
-                   3,-4,1,1,
-                   1,2,3,4};
-  //SQuaternion  m33 = SQuaternion(data);
-  SQuaternion  m33 = SQuaternion(1,2,3,4);
-  //SMatrix3x3 m33 = SMatrix3x3(data);
-  //m33.fromArray(data);
-  //m22.setAsIdentity();
-  //SMatrix3x3 m3_3 = m33;
-  //SMatrix3x3 m3_3_3 = m3_3 * m33;
-  //m2_2.setAsIdentity();
-  m33.display("m33:");
-  //a2 = a1;
-	extern TrueColorImage abc;
-	printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
-	printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);
-	printf("ImgTotalPixels --> %d\n",abc.ImgTotalPixels);
-	printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
-    Layer* l1 = new Layer("AAA",0,0,abc.ImgWidth, abc.ImgHeight,0);
-    memcpy(l1->pixelbuf->pixels,abc.ImgData,abc.ImgTotalBytes);
-    Layer* l2 = new Layer("BBB",50,50,500,300,0);
-    SDLWindow::instance()->init("",640,480);
-    SDLWindow::instance()->addLayer(l1);
-    SDLWindow::instance()->addLayer(l2);
-    //Point p = Point(Position2D(100,100), 1, 0x00FFFF00);
-    Point p = Point(Position2D(10,100), 10, 0x000000FF);
-    //LLine l = LLine(Position2D(100,100), 10, 0x00FFFF00);
-    l2->add(&p);
-    //l1->add(&l);
-    //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
-    //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
-    SDLWindow::instance()->show(updatecb,eventcb);
-
-	//api1();
-	//api2();
+  extern TrueColorImage abc;
+  printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
+  printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);
+  printf("ImgTotalPixels --> %d\n",abc.ImgTotalPixels);
+  printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
+  Layer* l1 = new Layer("AAA",0,0,abc.ImgWidth, abc.ImgHeight,0);
+  memcpy(l1->pixelbuf->pixels,abc.ImgData,abc.ImgTotalBytes);
+  Layer* l2 = new Layer("BBB",50,50,500,300,0);
+  SDLWindow::instance()->init("",640,480);
+  SDLWindow::instance()->addLayer(l1);
+  SDLWindow::instance()->addLayer(l2);
+  Point p = Point(Position2D(10,100), 10, 0x000000FF);
+  Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
+  Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
+  //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,150),1, 0x00FF00FF, true);
+  Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
+  ppoint = (Point*)l2->add(&p);
+  pline = (Line*)l2->add(&l);
+  ttringle = (Triangle*)l2->add(&t);
+  rrectangle = (Rectangle*)l2->add(&r);
+  //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
+  //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
+  SDLWindow::instance()->show(updatecb,eventcb);
   return 0;
 }

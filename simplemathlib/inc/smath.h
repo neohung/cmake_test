@@ -47,13 +47,15 @@ public:
   const SVector2 operator -(const SVector2& vec) const;
   const SVector2 operator +(const SFLOAT& f) const;
   const SVector2 operator -(const SFLOAT& f) const;
-  void display();
+  void display(const char* str);
   
   inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 2 * sizeof(SFLOAT)); }
   inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 2 * sizeof(SFLOAT)); }
   // Fot rotate
-  SVector2& operator *=(const SMatrix4x4& mat);
-  const SVector2 operator *(const SMatrix4x4& mat) const;
+  SVector2& operator *=(const SMatrix2x2& mat);
+  const SVector2 operator *(const SMatrix2x2& mat) const;
+  SVector2& operator *=(const SFLOAT f);
+  const SVector2 operator *(const SFLOAT f) const;
 private:
   SFLOAT m_data[2];
 };
@@ -97,9 +99,11 @@ public:
     inline void fromArray(SFLOAT *val) { memcpy(m_data, val, 3 * sizeof(SFLOAT)); }
     //copy data to array pointer
     inline void toArray(SFLOAT *val) const { memcpy(val, m_data, 3 * sizeof(SFLOAT)); }
-    void display();
+    void display(const char* str);
     SVector3& operator *=(const SMatrix3x3& mat);
     const SVector3 operator *(const SMatrix3x3& mat) const;
+    SVector3& operator *=(const SFLOAT f);
+    const SVector3 operator *(const SFLOAT f) const;
 private:
     SFLOAT m_data[3];
 };
@@ -112,7 +116,7 @@ public:
     SMatrix2x2();
     inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
     inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
-    void display();
+    void display(const char* str);
     void setAsIdentity();
     SMatrix2x2 transposed();
     SMatrix2x2& operator =(const SMatrix2x2& mat);
@@ -148,7 +152,7 @@ public:
     SMatrix3x3();
     inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
     inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
-    void display();
+    void display(const char* str);
     void setAsIdentity();
     SMatrix3x3 transposed();
     SMatrix3x3& operator =(const SMatrix3x3& mat);
@@ -184,7 +188,7 @@ public:
     SMatrix4x4();
     inline SFLOAT val(int row, int col) const { return m_data[row][col]; }
     inline void setVal(int row, int col, SFLOAT val) { m_data[row][col] = val; }
-    void display();
+    void display(const char* str);
     void setAsIdentity();
     SMatrix4x4 transposed();
     SMatrix4x4& operator =(const SMatrix4x4& mat);

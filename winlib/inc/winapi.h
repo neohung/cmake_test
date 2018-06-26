@@ -18,6 +18,7 @@
 #define KEY_UP 82
 
 #include <smath.h>
+#include <math.h>
 
 typedef enum {
        NOEVENT = 0,			
@@ -95,17 +96,50 @@ typedef SFLOAT PFLOAT;
 class DrawBase
 {
 public:
-  DrawBase():is_skip(false),type(0){};
+  DrawBase():is_skip(false),type(0), is_fill(false){};
   DrawBase(unsigned char t):is_skip(false),type(t){};
   inline PFLOAT size() {return s;};
   inline unsigned int color() {return c;};
   inline bool skip() {return is_skip;};
+  inline bool fill() {return is_fill;};
   unsigned char getType() {return type;};
   void setSize(PFLOAT size) { s=size;};
   void setColor(unsigned int color) { c=color;};
   void setSkip(bool skip) { is_skip=skip;};
+  void setFill(bool fill) { is_fill=fill;};
   virtual void draw(PixelBuffer* pb){};
+  void translation(Position2D p)
+  {
+    pos += p;
+    int i;
+    for(int i=0;i<v.size();i++){
+      v[i] += p;
+    }
+  };
+  void rotation(PFLOAT degree){
+    // [cos -sin]
+    // [sin  cos]
+    PFLOAT rad = degree*SMATH_DEGREE_TO_RAD;
+    PFLOAT m[] = {cos(rad),-sin(rad),sin(rad),cos(rad)};
+    SMatrix2x2 m22 = SMatrix2x2();
+    m22.fromArray(m);    
+    for(int i=0;i<v.size();i++){
+      v[i] = (v[i] - pos) * m22 + pos;
+    }
+
+  }
+  inline PFLOAT x() {return pos.x();};
+  inline PFLOAT y() {return pos.y();};
+  void setPos(Position2D p) { 
+    Position2D dist = p - pos;
+    translation(dist);
+  };
+  void findBound(Position2D* p, PFLOAT* w, PFLOAT* h);
+  void drawBound(PixelBuffer* pb);
 protected:
+  std::vector<Position2D> v;
+  Position2D pos;
+  bool is_fill;
 private:
   unsigned char type;
   bool is_skip;
@@ -122,41 +156,96 @@ public:
     setPos(p);
     setSize(size);
     setColor(color);
+    v.clear();
+    v.push_back(p);
     //is_fill=fill;
   };
-  inline PFLOAT x() {return pos.x();};
-  inline PFLOAT y() {return pos.y();};
   //inline bool fill() {return is_fill;};
-  void translation(Position2D p){pos += p;};
-  void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
   virtual void draw(PixelBuffer* pb);
 private:
-  Position2D pos;
-  std::vector<Position2D> v;
   //bool is_fill;
 };
 
-class LLine : public DrawBase
+class Line : public DrawBase
 {
 public:
-  LLine(Position2D p, PFLOAT size, unsigned int color):
+  Line(Position2D p1,Position2D p2, PFLOAT size, unsigned int color):
   DrawBase(2)
   { 
-    setPos(p);
+    setPos((p1+p2)*0.5);
     setSize(size);
     setColor(color);
+    v.clear();
+    v.push_back(p1);
+    v.push_back(p2);
     //is_fill=fill;
   };
-  inline PFLOAT x() {return pos.x();};
-  inline PFLOAT y() {return pos.y();};
   //inline bool fill() {return is_fill;};
-  void translation(Position2D p){pos += p;};
-  void setPos(Position2D p) { pos.setX(p.x());pos.setY(p.y());};
+  void setLinePos(Position2D p1,Position2D p2) { 
+    setPos((p1+p2)*0.5);
+    v.clear();
+    v.push_back(p1);
+    v.push_back(p2);
+  };
   virtual void draw(PixelBuffer* pb);
 private:
-  Position2D pos;
-  std::vector<Position2D> v;
   //bool is_fill;
+};
+
+class Triangle : public DrawBase
+{
+public:
+  Triangle(Position2D p1,Position2D p2, Position2D p3 , PFLOAT size, unsigned int color, bool fill):
+  DrawBase(3)
+  {
+    setFill(fill);
+    setPos((((p1+p2)*0.5)+p3)*0.5);
+    setSize(size);
+    setColor(color);
+    v.push_back(p1);
+    v.push_back(p2);
+    v.push_back(p3);
+    //is_fill=fill;
+  };
+  void setTriPos(Position2D p1, Position2D p2, Position2D p3) {
+    setPos((((p1+p2)*0.5)+p3)*0.5);
+    v.clear();
+    v.push_back(p1);
+    v.push_back(p2);
+    v.push_back(p3);
+  }
+  virtual void draw(PixelBuffer* pb);
+private:
+  void drawFill(PixelBuffer* pb);
+};
+
+class Rectangle : public DrawBase
+{
+public:
+  Rectangle(Position2D p0, PFLOAT width, PFLOAT height , PFLOAT size, unsigned int color, bool fill):
+  DrawBase(4), w(width), h(height)
+  {
+    setFill(fill);
+    Position2D p1 = p0 + Position2D(0,h);
+    Position2D p2 = p1 + Position2D(w,0);
+    Position2D p3 = p0 + Position2D(w,0);
+    setPos((p0+p2)*0.5);
+    setSize(size);
+    setColor(color);
+    v.push_back(p0);
+    v.push_back(p1);
+    v.push_back(p2);
+    v.push_back(p3);
+  }
+  inline PFLOAT width() {return w;};
+  inline PFLOAT height() {return h;};
+  inline PFLOAT setHieght(PFLOAT height) {h = height;};
+  inline PFLOAT setWidth(PFLOAT width) {w = width;};
+  virtual void draw(PixelBuffer* pb);
+private:
+  PFLOAT w;
+  PFLOAT h;
+  //void drawFill(PixelBuffer* pb);
 };
 
 typedef struct{
@@ -165,17 +254,6 @@ typedef struct{
   unsigned int w;
   unsigned int h;
 } Rect;
-
-typedef struct{
-  Position2D v1;
-  Position2D v2;
-} Line;
-
-typedef struct{
-  Position2D v1;
-  Position2D v2;
-  Position2D v3;
-} Triangle;
 
 class Layer
 {
@@ -193,13 +271,10 @@ class Layer
     void setPos(unsigned short x, unsigned short y);
     void setPos(Position2D p);
     void update();
-    void draw_line(Line l,unsigned int color, unsigned char size);
-    void draw_point(Position2D p, unsigned int color, unsigned char size);
-    void draw_tri(Triangle tri,unsigned int color, unsigned char size, bool is_fill);
     void clearDraw();
     inline unsigned short x() {return PosX;};
     inline unsigned short y() {return PosY;};
-    void add(DrawBase* db);
+    DrawBase* add(DrawBase* db);
   private:
      std::vector<DrawBase*> components;
      unsigned short PosX;

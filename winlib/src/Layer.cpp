@@ -5,7 +5,7 @@
 
 #include <winapi.h>
 #include <SDL.h>
-
+#include <assert.h>
 Layer::Layer()
 {
 }
@@ -33,7 +33,6 @@ void Layer::update()
    }
    */
  }
- //printf("update\n");
 }
 
 void Layer::setPos(unsigned short x, unsigned short y)
@@ -61,188 +60,79 @@ void Layer::clearDraw()
 	memset(pixelbuf->pixels,0,pixelbuf->size);
 }
 
-void Layer::draw_line(Line l,unsigned int color, unsigned char size)
-{
-	unsigned char b = 0x0000ff & color;
-    unsigned char g = (0x00ff00 & color) >> 8;
-    unsigned char r = (0xff0000 & color) >> 16;
-    unsigned short x2 = l.v2.x();
-    unsigned short x1 = l.v1.x();
-    unsigned short y2 = l.v2.y();
-    unsigned short y1 = l.v1.y();
-    if (x2 == x1){
-    	if (y2 < y1){
-        		int tmp = y2;
-        		y2 = y1;
-        		y1 = tmp;
-        		tmp = x2;
-        		x2 = x1;
-        		x1 = tmp;
-        }
-    	int k;
-    	for(k=-size;k<size;k++){
-        	int j;
-        	for(j=y1;j<y2;j++){
-        		int i = x1+k;
-        		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
-        		*offset = b;
-        		*(offset+1) = g; //G
-        		*(offset+2) = r; 
-        	}
-    	}
-    }else{
-	double slop = double(y2-y1)/double(x2-x1);
-	//printf("slop %f\n", slop);
-	double bb = double(y2*x1-y1*x2)/double(x1-x2);
-        double abs_slop = abs(slop);
-    int k;
-    for(k=-size;k<size;k++){
-        if (abs_slop < 1){
-        	//X>Y
-        	if (x2 < x1){
-        		int tmp = x2;
-        		x2 = x1;
-        		x1 = tmp;
-        		tmp = y2;
-        		y2 = y1;
-        		y1 = tmp;
-        	}
-        	int i;
-        	for(i=x1;i<x2;i++){
-        		int j = int((i*slop)+bb)+k;
-        		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
-        		*offset = b;
-        		*(offset+1) = g; //G
-        		*(offset+2) = r; 
-        	}
-        }else{
-           //Y>X
-        	if (y2 < y1){
-        		int tmp = y2;
-        		y2 = y1;
-        		y1 = tmp;
-        		tmp = x2;
-        		x2 = x1;
-        		x1 = tmp;
-        	}
-        	int j;
-        	for(j=y1;j<y2;j++){
-        		int i = int((j-bb)/slop)-k;
-        		unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
-        		*offset = b;
-        		*(offset+1) = g; //G
-        		*(offset+2) = r; 
-        	}
-        }
-    }
-    }
-}
-void Layer::draw_point(Position2D p, unsigned int color, unsigned char size)
-{
-  unsigned char b = 0x0000ff & color;
-  unsigned char g = (0x00ff00 & color) >> 8;
-  unsigned char r = (0xff0000 & color) >> 16;
-  int li,ri,uj,dj;
-  unsigned short x = p.x();
-  unsigned short y = p.y();
-  li = x - size;
-  ri = x + size;
-  uj = y - size;
-  dj = y + size;
-  if (li < 0) li = 0;
-  if (ri > (Width-1)) ri = Width-1;
-  if (uj < 0) uj = 0;
-  if (dj > (Height-1)) dj = Height-1;
-  int size2 = size*size;
-  int i,j;
-  for(j=uj;j<dj;j++){
-  	for(i=li;i<ri;i++){
-  		int dist2 = (j-y)*(j-y)+(i-x)*(i-x);
-  		if (dist2 < size2){
-  		  unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
-  		  *offset = b;
-  		  *(offset+1) = g; //G
-  		  *(offset+2) = r; //R
-  		}
-  	}
-  } 
-}
-
-void Layer::draw_tri(Triangle tri,unsigned int color, unsigned char size, bool is_fill)
-{
-  Line l1 = {Position2D(tri.v1), Position2D(tri.v2)};
-  Line l2 = {Position2D(tri.v2), Position2D(tri.v3)};
-  Line l3 = {Position2D(tri.v1), Position2D(tri.v3)};
-	draw_line(l1, color, size);
-  draw_line(l2, color, size);
-  draw_line(l3, color, size);
-        if (is_fill){
-          int y3 = tri.v3.y();
-          int x3 = tri.v3.x();
-          int y2 = tri.v2.y();
-          int x2 = tri.v2.x();
-          int y1 = tri.v1.y();
-          int x1 = tri.v1.x();
-          double slop1 = double(y2-y1)/double(x2-x1);
-          double bb1 = double(y2*x1-y1*x2)/double(x1-x2);
-          double slop2 = double(y3-y1)/double(x3-x1);
-          double bb2 = double(y3*x1-y1*x3)/double(x1-x3);
-          double slop3 = double(y3-y2)/double(x3-x2);
-          double bb3 = double(y3*x2-y2*x3)/double(x2-x3);
-          double centerx = double(x1+x2+x3)/3.0;
-          double centery = double(y1+y2+y3)/3.0;
-          double val_center = (slop1*centerx+bb1-centery)*(slop2*centerx+bb2-centery)*(slop3*centerx+bb3-centery);
-          int i,j;
-          int datax[3];
-          int datay[3];
-          datax[0] = tri.v1.x();
-          datax[1] = tri.v2.x();
-          datax[2] = tri.v3.x();
-          datay[0] = tri.v1.y();
-          datay[1] = tri.v2.y();
-          datay[2] = tri.v3.y();
-          for(i=0;i<2;i++){
-            for(j=1;j<3;j++){
-              //from small to big sort use >
-              if (datax[i] >  datax[j]){
-                int tmp = datax[i];
-                datax[i] = datax[j];
-                datax[j] = tmp;
-              }
-              if (datay[i] >  datay[j]){
-                int tmp = datay[i];
-                datay[i] = datay[j];
-                datay[j] = tmp;
-              }
-            }
-          }
-          int li = datax[0];
-          int ri = datax[2];
-          int uj = datay[0];
-          int dj = datay[2];
-          unsigned char b = 0x0000ff & color;
-          unsigned char g = (0x00ff00 & color) >> 8;
-          unsigned char r = (0xff0000 & color) >> 16;
-          for(i=li;i<ri;i++){
-            for(j=uj;j<dj;j++){
-              double val = (slop1*i+bb1-j)*(slop2*i+bb2-j)*(slop3*i+bb3-j);
-              if (val*val_center > 0){
-                unsigned char* offset = (unsigned char*)pixelbuf->pixels + (j *  pixelbuf->bytesperline) + (pixelbuf->colors*i);
-                  *offset = b;
-                  *(offset+1) = g; //G
-                  *(offset+2) = r; //R
-             }
-          }
-        }
-   }
-}
-
-
-void Layer::add(DrawBase* db)
+DrawBase* Layer::add(DrawBase* db)
 {
   components.push_back(db);
+  return db;
 }
 //====================
+
+void DrawBase::findBound(Position2D* p, PFLOAT* w, PFLOAT* h)
+{
+  //v.size()
+  //Do sorting
+  std::vector<Position2D> xsort_vector;
+  std::vector<Position2D> ysort_vector;
+  xsort_vector.assign(v.begin(), v.end());
+  ysort_vector.assign(v.begin(), v.end());
+  
+  int i,j;
+  for(i=0;i<v.size()-1;i++){
+    for(j=1;j<v.size();j++){
+      if (xsort_vector[i].x() > xsort_vector[j].x())
+         std::swap(xsort_vector[i],xsort_vector[j]);
+      if (ysort_vector[i].y() > ysort_vector[j].y())
+         std::swap(ysort_vector[i],ysort_vector[j]);
+    }
+  }
+  p->setX(xsort_vector[0].x());
+  p->setY(ysort_vector[0].y());
+  if (v.size() == 4){
+    xsort_vector[0].display("X0_");
+    xsort_vector[1].display("X1_");
+    xsort_vector[2].display("X2_");
+    xsort_vector[3].display("X3_");
+    //ysort_vector[0].display("Y0_");
+    //ysort_vector[1].display("Y1_");
+    //ysort_vector[2].display("Y2_");
+    //ysort_vector[3].display("Y3_");
+  }
+  *w = xsort_vector[v.size()-1].x() - xsort_vector[0].x();
+  *h = ysort_vector[v.size()-1].y() - ysort_vector[0].y();
+}
+void DrawBase::drawBound(PixelBuffer* pb)
+{
+  Position2D bp = Position2D();
+  PFLOAT bw,bh;
+  findBound(&bp, &bw, &bh);
+  int i,j;
+  int x1 = bp.x();
+  int x2 = bp.x() + bw;
+  int y1 = bp.y();
+  int y2 = bp.y() + bh;
+  unsigned char* offset1 = (unsigned char*)pb->pixels + (y1 *  pb->bytesperline) + (pb->colors*x1);
+  unsigned char* offset2 = (unsigned char*)pb->pixels + (y2 *  pb->bytesperline) + (pb->colors*x1);
+  offset1--;
+  offset2--;
+  for(i=0;i<bw;i++){
+    *(offset1++) = 128;
+    *(offset1++) = 128; //G
+    *(offset1++) = 128; //R
+    *(offset2++) = 128;
+    *(offset2++) = 128; //G
+    *(offset2++) = 128; //R
+  }
+  for(j=0;j<bh;j++){
+    offset1 = (unsigned char*)pb->pixels + ((j+y1) *  pb->bytesperline) + (pb->colors*x1);
+    offset2 = (unsigned char*)pb->pixels + ((j+y1) *  pb->bytesperline) + (pb->colors*x2);
+    *(offset1) = 128;
+    *(offset1+1) = 128; //G
+    *(offset1+2) = 128; //R
+    *(offset2) = 128;
+    *(offset2+1) = 128; //G
+    *(offset2+2) = 128; //R
+  }
+}
 
 void Point::draw(PixelBuffer* pb)
 {
@@ -278,9 +168,163 @@ void Point::draw(PixelBuffer* pb)
   } 
   //printf("Draw Point\n");
 }
-
-void LLine::draw(PixelBuffer* pb)
+void Line::draw(PixelBuffer* pb)
 {
+  //size should be 2
+  assert(v.size()==2);
   //printf("Draw LLine\n");
+  unsigned char b = 0x0000ff & color();
+  unsigned char g = (0x00ff00 & color()) >> 8;
+  unsigned char r = (0xff0000 & color()) >> 16;
+  unsigned short x2 = v[1].x();
+  unsigned short x1 = v[0].x();
+  unsigned short y2 = v[1].y();
+  unsigned short y1 = v[0].y();
+  //printf("(%d,%d)-(%d,%d), size=%f\n",x1,y1,x2,y2,size());
+  if (x2 == x1){
+    if (y2 < y1){
+      int tmp = y2;
+      y2 = y1;
+      y1 = tmp;
+      tmp = x2;
+      x2 = x1;
+      x1 = tmp;
+    }
+    int k;
+    for(k=-size();k<size();k++){
+      int j;
+      for(j=y1;j<y2;j++){
+        int i = x1+k;
+        unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
+        *offset = b;
+        *(offset+1) = g; //G
+        *(offset+2) = r;
+      }
+    }
+  }else{
+    double slop = double(y2-y1)/double(x2-x1);
+    //printf("slop %f\n", slop);
+    double bb = double(y2*x1-y1*x2)/double(x1-x2);
+    double abs_slop = abs(slop);
+    int k;
+    for(k=-size();k<size();k++){
+      if (abs_slop < 1){
+        //X>Y
+        if (x2 < x1){
+          int tmp = x2;
+          x2 = x1;
+          x1 = tmp;
+          tmp = y2;
+          y2 = y1;
+          y1 = tmp;
+        }
+        int i;
+        for(i=x1;i<x2;i++){
+          int j = int((i*slop)+bb)+k;
+          unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
+          *offset = b;
+          *(offset+1) = g; //G
+          *(offset+2) = r;
+        }
+      }else{
+        //Y>X
+        if (y2 < y1){
+          int tmp = y2;
+          y2 = y1;
+          y1 = tmp;
+          tmp = x2;
+          x2 = x1;
+          x1 = tmp;
+        }
+        int j;
+        for(j=y1;j<y2;j++){
+          int i = int((j-bb)/slop)-k;
+          unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
+          *offset = b;
+          *(offset+1) = g; //G
+          *(offset+2) = r;
+        }
+      }
+    }
+  }
 }
 
+void Triangle::drawFill(PixelBuffer* pb)
+{
+  int y3 = v[2].y();
+  int x3 = v[2].x();
+  int y2 = v[1].y();
+  int x2 = v[1].x();
+  int y1 = v[0].y();
+  int x1 = v[0].x();
+  double slop1 = double(y2-y1)/double(x2-x1);
+  double bb1 = double(y2*x1-y1*x2)/double(x1-x2);
+  double slop2 = double(y3-y1)/double(x3-x1);
+  double bb2 = double(y3*x1-y1*x3)/double(x1-x3);
+  double slop3 = double(y3-y2)/double(x3-x2);
+  double bb3 = double(y3*x2-y2*x3)/double(x2-x3);
+  double centerx = double(x1+x2+x3)/3.0;
+  double centery = double(y1+y2+y3)/3.0;
+  double val_center = (slop1*centerx+bb1-centery)*(slop2*centerx+bb2-centery)*(slop3*centerx+bb3-centery);
+  //Find Bound
+  Position2D bp = Position2D();
+  PFLOAT bw,bh;
+  findBound(&bp, &bw, &bh);
+  int i,j;
+  //
+  int li = bp.x();
+  int ri = bp.x()+bw;
+  int uj = bp.y();
+  int dj = bp.y()+bh;
+  unsigned char b = 0x0000ff & color();
+  unsigned char g = (0x00ff00 & color()) >> 8;
+  unsigned char r = (0xff0000 & color()) >> 16;
+  for(i=li;i<ri;i++){
+    for(j=uj;j<dj;j++){
+      double val = (slop1*i+bb1-j)*(slop2*i+bb2-j)*(slop3*i+bb3-j);
+      if (val*val_center > 0){
+        unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
+        *offset = b;
+        *(offset+1) = g; //G
+        *(offset+2) = r; //R
+      }
+    }
+  }
+}
+void Triangle::draw(PixelBuffer* pb)
+{
+   assert(v.size()==3);
+   Line l1 = Line(v[0], v[1],size(), color());
+   Line l2 = Line(v[1], v[2],size(), color());
+   Line l3 = Line(v[0], v[2],size(), color());
+   l1.draw(pb);
+   l2.draw(pb);
+   l3.draw(pb);
+   if (fill()){
+     //drawFill(pb);  
+   }
+   //drawBound(pb);
+}
+
+void Rectangle::draw(PixelBuffer* pb)
+{
+   assert(v.size()==4);
+   Position2D p0 = v[0];
+   Position2D p1 = v[1];
+   Position2D p2 = v[2];
+   Position2D p3 = v[3];
+   Line l1 = Line(p0, p1, size(), color());
+   Line l2 = Line(p1, p2, size(), color());
+   Line l3 = Line(p2, p3, size(), color());
+   Line l4 = Line(p0, p3, size(), color());
+   l1.draw(pb);
+   l2.draw(pb);
+   l3.draw(pb);
+   l4.draw(pb);
+   //
+   Position2D bp = Position2D();
+   PFLOAT bw,bh;
+   findBound(&bp, &bw, &bh);
+
+   //drawBound(pb);
+}

@@ -156,6 +156,18 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
                                        }
                                        break;
                                 }
+                                case SDL_KEYDOWN:
+                                {
+                                       if (event_cb){
+                                           WINEVENT wine;
+                                           wine.key.type = KEYDOWN;
+                                           wine.key.state = event.key.state;
+                                           wine.key.keysym = event.key.keysym.sym;
+                                           event_cb(wine);
+                                       }
+                                       break;
+                                }
+
 		 		default:
 		 		{
 		 			break;
