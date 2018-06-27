@@ -125,6 +125,8 @@ void updatecb(PixelBuffer screenbuffer)
 Plane3D* pp3d;
 int main()
 {
+  Camera c = Camera(Position2D(100,100),90);
+  printf("ca: %f\n",c.angle());
   extern TrueColorImage abc;
   printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
   printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);

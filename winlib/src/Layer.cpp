@@ -342,5 +342,27 @@ void Rectangle::draw(PixelBuffer* pb)
 
 void Plane3D::draw(PixelBuffer* pb)
 {
+  assert(v.size()==4);
   printf("Plane3D::draw\n");
+  Position2D p0 = Position2D(v[0].x(),v[0].y());
+  Position2D p1 = Position2D(v[1].x(),v[1].y());
+  Position2D p2 = Position2D(v[2].x(),v[2].y());
+  Position2D p3 = Position2D(v[3].x(),v[3].y());
+  Point pt0 = Point(p0, 3, 0x000000FF);
+  Point pt1 = Point(p1, 3, 0x0000FFFF);
+  Point pt2 = Point(p2, 3, 0x0000FF00);
+  Point pt3 = Point(p3, 3, 0x00FF00FF);
+  pt0.draw(pb);
+  pt1.draw(pb);
+  pt2.draw(pb);
+  pt3.draw(pb);
+  Line l1 = Line(p0, p1, 1, 0x0000FF00);
+  Line l2 = Line(p1, p2, 1, 0x0000FF00);
+  Line l3 = Line(p2, p3, 1, 0x0000FF00);
+  Line l4 = Line(p0, p3, 1, 0x0000FF00);
+  l1.draw(pb);
+  l2.draw(pb);
+  l3.draw(pb);
+  l4.draw(pb);
+
 }

@@ -314,6 +314,8 @@ public:
   Plane3D(Position3D p0, PFLOAT width,PFLOAT height,PFLOAT size, unsigned int color, bool fill)
   {
     setFill(fill);
+    setHieght(height);
+    setWidth(width);
     PFLOAT z = p0.z();
     Position3D p1 = p0 + Position3D(0,h,z);
     Position3D p2 = p1 + Position3D(w,0,z);
@@ -335,6 +337,21 @@ private:
   PFLOAT w;
   PFLOAT h;
 };
+
+typedef struct Camera{
+  Position2D pos;
+  PFLOAT theta;
+  //use degree
+  Camera(Position3D p, PFLOAT angle){
+    pos = p;
+    theta = angle*SMATH_DEGREE_TO_RAD;
+  }
+  inline PFLOAT angle(){return theta;};
+  inline PFLOAT x(){return pos.x();};
+  inline PFLOAT y(){return pos.x();};
+  inline PFLOAT z(){return pos.x();};
+} _Camera;
+
 
 typedef struct{
   Position2D pos;
