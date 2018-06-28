@@ -9,6 +9,8 @@
 #define MOUSE_BUTTON_MIDDLE 2
 #define MOUSE_BUTTON_RIGHT 3
 
+#define KEY_PLUS 87 // "+"
+#define KEY_MINUS 86 // "-"
 #define KEY_ESCAPE 27
 #define KEY_ENTER 13
 #define KEY_SPACE 32
@@ -268,26 +270,62 @@ public:
   virtual void draw(PixelBuffer* pb){};
   void translation(Position3D p)
   {
-    //pos += p;
-    //int i;
-    //for(int i=0;i<v.size();i++){
-    //  v[i] += p;
-    //}
+    pos += p;
+    int i;
+    for(int i=0;i<v.size();i++){
+      v[i] += p;
+    }
   };
-  void rotation(PFLOAT degree){
-    // [cos -sin]
-    // [sin  cos]
-    //PFLOAT rad = degree*SMATH_DEGREE_TO_RAD;
-    //PFLOAT m[] = {cos(rad),-sin(rad),sin(rad),cos(rad)};
-    //SMatrix2x2 m22 = SMatrix2x2();
-    //m22.fromArray(m);    
-    //for(int i=0;i<v.size();i++){
-    //  v[i] -= pos;
-    //  v[i] *= m22;
-    //  v[i] += pos;
-      //v[i] = m22 * (v[i] - pos) + pos;
-      //v[i] = (v[i] - pos) * m22 + pos;
-    //}
+  void rotationX(PFLOAT degree){
+    // [1    0    0  ]
+    // [ 0  cos -sin ]
+    // [ 0  sin  cos ]
+    // 
+    PFLOAT rad = degree*SMATH_DEGREE_TO_RAD;
+    PFLOAT m[] = {1,0,0,0,cos(rad),-sin(rad),0,sin(rad),cos(rad)};
+    SMatrix3x3 m33 = SMatrix3x3();
+    m33.fromArray(m);    
+    for(int i=0;i<v.size();i++){
+      v[i] -= pos;
+      v[i] *= m33;
+      v[i] += pos;
+      //v[i] = m33 * (v[i] - pos) + pos;
+      //v[i] = (v[i] - pos) * m33 + pos;
+    }
+  }
+  void rotationY(PFLOAT degree){
+    // [ cos  0 sin ]
+    // [  0   1  0  ]
+    // [ -sin 0 cos ]
+    // 
+    PFLOAT rad = degree*SMATH_DEGREE_TO_RAD;
+    PFLOAT m[] = {cos(rad),0,sin(rad),0,1,0,-sin(rad),0,cos(rad)};
+    SMatrix3x3 m33 = SMatrix3x3();
+    m33.fromArray(m);
+    for(int i=0;i<v.size();i++){
+      v[i] -= pos;
+      v[i] *= m33;
+      v[i] += pos;
+      //v[i] = m33 * (v[i] - pos) + pos;
+      //v[i] = (v[i] - pos) * m33 + pos;
+    }
+  }
+  void rotationZ(PFLOAT degree){
+    // [ cos -sin  0 ]
+    // [ sin  cos  0 ]
+    // [  0    0   1 ]
+    // 
+    PFLOAT rad = degree*SMATH_DEGREE_TO_RAD;
+    PFLOAT m[] = {cos(rad),-sin(rad),0,sin(rad),cos(rad),0,0,0,1};
+    SMatrix3x3 m33 = SMatrix3x3();
+    m33.fromArray(m);
+    for(int i=0;i<v.size();i++){
+      v[i] -= pos;
+      v[i] *= m33;
+      v[i] += pos;
+      //v[i] = m33 * (v[i] - pos) + pos;
+      //v[i] = (v[i] - pos) * m33 + pos;
+    }
   }
   inline PFLOAT x() {return pos.x();};
   inline PFLOAT y() {return pos.y();};
@@ -316,10 +354,10 @@ public:
     setFill(fill);
     setHieght(height);
     setWidth(width);
-    PFLOAT z = p0.z();
-    Position3D p1 = p0 + Position3D(0,h,z);
-    Position3D p2 = p1 + Position3D(w,0,z);
-    Position3D p3 = p0 + Position3D(w,0,z);
+    //PFLOAT z = p0.z();
+    Position3D p1 = p0 + Position3D(0,h,0);
+    Position3D p2 = p1 + Position3D(w,0,0);
+    Position3D p3 = p0 + Position3D(w,0,0);
     setPos((p0+p2)*0.5);
     setSize(size);
     setColor(color);
@@ -338,8 +376,50 @@ private:
   PFLOAT h;
 };
 
+class Cube3D : public DrawBase3D
+{
+public:
+  Cube3D(Position3D p0, PFLOAT width,PFLOAT height,PFLOAT length,PFLOAT size, unsigned int color, bool fill)
+  {
+    setFill(fill);
+    setHieght(height);
+    setWidth(width);
+    setLength(length);
+    //PFLOAT z = p0.z();
+    Position3D p1 = p0 + Position3D(w,0,0);
+    Position3D p2 = p1 + Position3D(0,h,0);
+    Position3D p3 = p2 + Position3D(-w,0,0);
+    Position3D p4 = p0 + Position3D(0,0,l);
+    Position3D p5 = p4 + Position3D(w,0,0);
+    Position3D p6 = p5 + Position3D(0,h,0);
+    Position3D p7 = p6 + Position3D(-w,0,0);
+    setPos((p0+p1+p2+p3+p4+p5+p6+p7)*0.125);
+    setSize(size);
+    setColor(color);
+    v.push_back(p0);
+    v.push_back(p1);
+    v.push_back(p2);
+    v.push_back(p3);
+    v.push_back(p4);
+    v.push_back(p5);
+    v.push_back(p6);
+    v.push_back(p7);
+  };
+  virtual void draw(PixelBuffer* pb);
+  inline PFLOAT width() {return w;};
+  inline PFLOAT height() {return h;};
+  inline PFLOAT length() {return l;};
+  inline void setHieght(PFLOAT height) {h = height;};
+  inline void setWidth(PFLOAT width) {w = width;};
+  inline void setLength(PFLOAT length) {l = length;};
+private:
+  PFLOAT w;
+  PFLOAT h;
+  PFLOAT l;
+};
+
 typedef struct Camera{
-  Position2D pos;
+  Position3D pos;
   PFLOAT theta;
   //use degree
   Camera(Position3D p, PFLOAT angle){

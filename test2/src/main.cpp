@@ -14,6 +14,7 @@ Point pp = Point(Position2D(100,100), 5, 0x00FFFFFF);
 Point* ppoint;
 Triangle* ttringle;
 Rectangle* rrectangle;
+Cube3D* cc3d;
 void eventcb(WINEVENT e)
 {
   switch (e.type)
@@ -48,22 +49,37 @@ void eventcb(WINEVENT e)
         //  printf("Press ESC\n");
         //ppoint->translation(Position2D(-5,0));
         //ttringle->translation(Position2D(-5,0));
-        ttringle->rotation(-5);
-        rrectangle->rotation(-5);
+        //ttringle->rotation(-5);
+        //rrectangle->rotation(-5);
+        cc3d->translation(Position3D(-5,0,0));
       }else if (e.key.keysym == KEY_RIGHT){
         //ppoint->translation(Position2D(5,0));
         //ttringle->translation(Position2D(5,0));
-        ttringle->rotation(5);
-        rrectangle->rotation(5);
-        //  printf("Press ESC\n");
+        //ttringle->rotation(5);
+        //rrectangle->rotation(5);
+        cc3d->translation(Position3D(5,0,0));
       }else if (e.key.keysym == KEY_UP){
         //  printf("Press ESC\n");
-        ppoint->translation(Position2D(0,-5));
-        ttringle->translation(Position2D(0,-5));
+        //ppoint->translation(Position2D(0,-5));
+        //ttringle->translation(Position2D(0,-5));
+        cc3d->translation(Position3D(0,5,0));
       }else if (e.key.keysym == KEY_DOWN){
         //  printf("Press ESC\n");
-        ppoint->translation(Position2D(0,5));
-        ttringle->translation(Position2D(0,5));
+        //ppoint->translation(Position2D(0,5));
+        //ttringle->translation(Position2D(0,5));
+        cc3d->translation(Position3D(0,-5,0));
+      }else if (e.key.keysym == KEY_PLUS){
+        //cc3d->translation(Position3D(0,0,5));
+        //cc3d->rotationX(5);
+        //cc3d->rotationY(5);
+        cc3d->rotationZ(5);
+      }else if (e.key.keysym == KEY_MINUS){
+        //cc3d->translation(Position3D(0,0,-5));
+        //cc3d->rotationX(-5);
+        //cc3d->rotationY(-5);
+        cc3d->rotationZ(-5);
+      }else{
+        printf("KEY: %d\n", e.key.keysym);
       }
       break;
     }
@@ -122,10 +138,10 @@ void updatecb(PixelBuffer screenbuffer)
                                          0xFF000000);
     */    
 }
-Plane3D* pp3d;
+//Plane3D* pp3d;
 int main()
 {
-  Camera c = Camera(Position2D(100,100),90);
+  Camera c = Camera(Position3D(0,0,0),90);
   printf("ca: %f\n",c.angle());
   extern TrueColorImage abc;
   printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
@@ -143,12 +159,13 @@ int main()
   Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
   //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,150),1, 0x00FF00FF, true);
   Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
-  Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
+  //Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
+  Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
   ppoint = (Point*)l2->add(&p);
   pline = (Line*)l2->add(&l);
   ttringle = (Triangle*)l2->add(&t);
   rrectangle = (Rectangle*)l2->add(&r);
-  pp3d = (Plane3D*) l2->add(&p3d);
+  cc3d = (Cube3D*) l2->add(&c3d);
   //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
   //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
   SDLWindow::instance()->show(updatecb,eventcb);

@@ -366,3 +366,59 @@ void Plane3D::draw(PixelBuffer* pb)
   l4.draw(pb);
 
 }
+
+void Cube3D::draw(PixelBuffer* pb)
+{
+  assert(v.size()==8);
+  //Point ori_pt = Point(Position2D(225,125), 3, 0x00FFFFFF);
+  Point ori_pt = Point(Position2D(250,150), 3, 0x00FFFFFF);
+  int cx = 250;
+  int cy = 150; 
+  int cz = 640; //pixels
+  ori_pt.draw(pb);
+  //printf("Cube3D::draw\n");
+  int i;
+  int xs[8];
+  int ys[8];
+  Position2D ps[8];
+  for(i=0;i<8;i++){
+    int xp = v[i].x();
+    int yp = v[i].y();
+    int zp = v[i].z();
+    int zdenom = (zp + cz);
+    xs[i] = (cx + (((xp-cx) * cz ) / zdenom));
+    ys[i] = (cy - (((yp-cy) * cz )/ zdenom));
+    Position2D p = Position2D(xs[i],ys[i]);
+    ps[i] = p;
+    Point pt = Point(p, 3, 0x000000FF);
+    pt.draw(pb);
+  }
+  //Draw line	
+  Line l1 = Line(ps[0], ps[1], 1, 0x00FF0000);
+  l1.draw(pb);
+  Line l2 = Line(ps[1], ps[2], 1, 0x0000FF00);
+  l2.draw(pb);
+  Line l3 = Line(ps[2], ps[3], 1, 0x000000FF);
+  l3.draw(pb);
+  Line l4 = Line(ps[3], ps[0], 1, 0x00FFFFFF);
+  l4.draw(pb);
+  //
+  Line l5 = Line(ps[4], ps[5], 1, 0x00FF0000);
+  l5.draw(pb);
+  Line l6 = Line(ps[5], ps[6], 1, 0x0000FF00);
+  l6.draw(pb);
+  Line l7 = Line(ps[6], ps[7], 1, 0x000000FF);
+  l7.draw(pb);
+  Line l8 = Line(ps[7], ps[4], 1, 0x00FFFFFF);
+  l8.draw(pb);
+  //
+  Line l9 = Line(ps[0], ps[4], 1, 0x00FF0000);
+  l9.draw(pb);
+  Line l10 = Line(ps[1], ps[5], 1, 0x0000FF00);
+  l10.draw(pb);
+  Line l11 = Line(ps[2], ps[6], 1, 0x000000FF);
+  l11.draw(pb);
+  Line l12 = Line(ps[3], ps[7], 1, 0x00FFFFFF);
+  l12.draw(pb);
+
+}
