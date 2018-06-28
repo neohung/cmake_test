@@ -15,6 +15,8 @@ Point* ppoint;
 Triangle* ttringle;
 Rectangle* rrectangle;
 Cube3D* cc3d;
+int pre_mousex;
+int pre_mousey;
 void eventcb(WINEVENT e)
 {
   switch (e.type)
@@ -39,6 +41,25 @@ void eventcb(WINEVENT e)
       printf("M: state:%d,button %d (%d,%d)\n",e.button.state,e.button.button,e.button.x,e.button.y);
       break;
     }
+    case MOUSEMOTION:
+    {
+      //e.motion.state=1 lmouse, =2 rmouse
+      //??? why * -1?
+      int dx = pre_mousex - e.motion.x;
+      // change y axis
+      int dy = pre_mousey - e.motion.y;
+      //printf("M: state:%d (%d,%d)\n",e.motion.state,dx,dy);
+      if (e.motion.state == 1){
+        if (dx)
+          cc3d->rotationY(dx);
+        if (dy)
+          cc3d->rotationX(dy);
+      }
+      pre_mousex = e.motion.x;
+      pre_mousey = e.motion.y;
+      //printf("M: state:%d (%d,%d)\n",e.motion.state,e.motion.x,e.motion.y);
+      break;
+    }
     //case KEYUP:
     case KEYDOWN:
     {
@@ -59,24 +80,16 @@ void eventcb(WINEVENT e)
         //rrectangle->rotation(5);
         cc3d->translation(Position3D(5,0,0));
       }else if (e.key.keysym == KEY_UP){
-        //  printf("Press ESC\n");
         //ppoint->translation(Position2D(0,-5));
         //ttringle->translation(Position2D(0,-5));
         cc3d->translation(Position3D(0,5,0));
       }else if (e.key.keysym == KEY_DOWN){
-        //  printf("Press ESC\n");
         //ppoint->translation(Position2D(0,5));
         //ttringle->translation(Position2D(0,5));
         cc3d->translation(Position3D(0,-5,0));
       }else if (e.key.keysym == KEY_PLUS){
-        //cc3d->translation(Position3D(0,0,5));
-        //cc3d->rotationX(5);
-        //cc3d->rotationY(5);
         cc3d->rotationZ(5);
       }else if (e.key.keysym == KEY_MINUS){
-        //cc3d->translation(Position3D(0,0,-5));
-        //cc3d->rotationX(-5);
-        //cc3d->rotationY(-5);
         cc3d->rotationZ(-5);
       }else{
         printf("KEY: %d\n", e.key.keysym);
@@ -98,46 +111,8 @@ void updatecb(PixelBuffer screenbuffer)
     if (pline){
       pline->setLinePos(Position2D(lx1,ly1),Position2D(lx2,ly2));
     }
-    //setLinePos
-    //l->draw_line((Line){Position2D(lx1,ly1), Position2D(lx2,ly2)},0xff0000, 2);
-    //l->draw_point(Position2D(100,200), 0xff0000, 10);
-    //l->draw_tri(t,0x00ff00, 1, true);
-
-    //l->draw_tri((Triangle){
-    //              .v1=Position2D(100,100),
-    //              .v2=Position2D(50,150),
-    //              .v3=Position2D(150,150) 
-    //            },0x00ff00, 1, true);
-   //l->setPos(SDLWindow::instance()->MouseX,SDLWindow::instance()->MouseY);
-  /*
-	extern TrueColorImage abc;
-        PixelBuffer*  p = createPixelBuffer(abc.ImgWidth , abc.ImgHeight, 24);
-	memcpy(p->pixels,abc.ImgData,abc.ImgTotalBytes);
-        int i,j;
-        for (j=-20;j<20;j++)
-          for (i=-20;i<20;i++){
-                int jj = SDLWindow::instance()->MouseY+j;
-                int ii = SDLWindow::instance()->MouseX+i;
-                if ((jj > 5) && (ii > 5) && (jj < SDLWindow::instance()->Height-5) && (ii < SDLWindow::instance()->Width-5)){
-                  //printf(" p->bytesperline=%d\n", p->bytesperline);
-                  unsigned char* offset = (unsigned char*)(p->pixels) + (((SDLWindow::instance()->MouseY+j) * p->bytesperline)+ 3*(SDLWindow::instance()->MouseX+i));
-                  offset[0] = 0;
-                  offset[1] = 0;
-                  offset[2] = 255;
-                }
-        }
-        //SDLWindow::instance()->render(p);
-        freePixelBuffer(p);
-   */
-	 /*
-    SDL_Surface *screen1 = SDL_CreateRGBSurfaceFrom(abc.ImgData, abc.ImgWidth, abc.ImgHeight, 24,
-     	                                 abc.ImgByteWidth,
-                                         0x00FF0000,
-                                         0x0000FF00,
-                                         0x000000FF,
-                                         0xFF000000);
-    */    
 }
+
 //Plane3D* pp3d;
 int main()
 {
@@ -154,17 +129,17 @@ int main()
   SDLWindow::instance()->init("",640,480);
   SDLWindow::instance()->addLayer(l1);
   SDLWindow::instance()->addLayer(l2);
-  Point p = Point(Position2D(10,100), 10, 0x000000FF);
-  Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
-  Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
+  //Point p = Point(Position2D(10,100), 10, 0x000000FF);
+  //Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
+  //Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
   //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,150),1, 0x00FF00FF, true);
-  Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
+  //Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
   //Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
   Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
-  ppoint = (Point*)l2->add(&p);
-  pline = (Line*)l2->add(&l);
-  ttringle = (Triangle*)l2->add(&t);
-  rrectangle = (Rectangle*)l2->add(&r);
+  //ppoint = (Point*)l2->add(&p);
+  //pline = (Line*)l2->add(&l);
+  //ttringle = (Triangle*)l2->add(&t);
+  //rrectangle = (Rectangle*)l2->add(&r);
   cc3d = (Cube3D*) l2->add(&c3d);
   //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
   //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);

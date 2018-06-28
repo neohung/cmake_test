@@ -146,6 +146,14 @@ public:
     translation(dist);
   };
   void findBound(Position2D* p, PFLOAT* w, PFLOAT* h);
+  inline bool inBuffer(PixelBuffer* pb,int i, int j){
+    if ((i>=0)&&(j>=0)){
+      if ((i<pb->w)&&(j<pb->h)){
+        return true;
+      }
+    }
+    return false;
+  };
 protected:
   void drawFill(PixelBuffer* pb);
   void drawBound(PixelBuffer* pb);

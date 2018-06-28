@@ -111,6 +111,15 @@ int SDLWindow::show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT
 		 			SDL_GetMouseState( &x, &y );
 		 			MouseX = x;
 		 			MouseY = y;
+                                        //
+                                        if (event_cb){
+                                           WINEVENT wine;
+                                           wine.motion.type = MOUSEMOTION;
+                                           wine.motion.state = event.motion.state; //0 lmouse, 1 rmouse
+                                           wine.motion.x = event.motion.x;
+                                           wine.motion.y = event.motion.y;
+                                           event_cb(wine);
+                                        }
 		 			break;
 		 		}
 		 		case SDL_QUIT:

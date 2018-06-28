@@ -197,8 +197,8 @@ void Point::draw(PixelBuffer* pb)
   unsigned char r = (0xff0000 & color()) >> 16;
   
   int li,ri,uj,dj;
-  unsigned short posx = x();
-  unsigned short posy = y();
+  short posx = x();
+  short posy = y();
   li = posx - size();
   ri = posx + size();
   uj = posy - size();
@@ -215,10 +215,13 @@ void Point::draw(PixelBuffer* pb)
     for(i=li;i<ri;i++){
       int dist2 = (j-posy)*(j-posy)+(i-posx)*(i-posx);
       if (dist2 < size2){
-        unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
-        *offset = b;
-        *(offset+1) = g; //G
-        *(offset+2) = r; //R
+        int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+        if (inBuffer(pb,i,j)){
+          unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+          *offset = b;
+          *(offset+1) = g; //G
+          *(offset+2) = r; //R
+        }
       }
     }
   } 
@@ -231,10 +234,10 @@ void Line::draw(PixelBuffer* pb)
   unsigned char b = 0x0000ff & color();
   unsigned char g = (0x00ff00 & color()) >> 8;
   unsigned char r = (0xff0000 & color()) >> 16;
-  unsigned short x2 = v[1].x();
-  unsigned short x1 = v[0].x();
-  unsigned short y2 = v[1].y();
-  unsigned short y1 = v[0].y();
+  short x2 = v[1].x();
+  short x1 = v[0].x();
+  short y2 = v[1].y();
+  short y1 = v[0].y();
   //printf("(%d,%d)-(%d,%d), size=%f\n",x1,y1,x2,y2,size());
   if (x2 == x1){
     if (y2 < y1){
@@ -250,10 +253,13 @@ void Line::draw(PixelBuffer* pb)
       int j;
       for(j=y1;j<y2;j++){
         int i = x1+k;
-        unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
-        *offset = b;
-        *(offset+1) = g; //G
-        *(offset+2) = r;
+        int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+        if (inBuffer(pb,i,j)){
+          unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+          *offset = b;
+          *(offset+1) = g; //G
+          *(offset+2) = r;
+        }
       }
     }
   }else{
@@ -276,10 +282,13 @@ void Line::draw(PixelBuffer* pb)
         int i;
         for(i=x1;i<x2;i++){
           int j = int((i*slop)+bb)+k;
-          unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
-          *offset = b;
-          *(offset+1) = g; //G
-          *(offset+2) = r;
+          int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+          if (inBuffer(pb,i,j)){
+            unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+            *offset = b;
+            *(offset+1) = g; //G
+            *(offset+2) = r;
+          }
         }
       }else{
         //Y>X
@@ -294,10 +303,14 @@ void Line::draw(PixelBuffer* pb)
         int j;
         for(j=y1;j<y2;j++){
           int i = int((j-bb)/slop)-k;
-          unsigned char* offset = (unsigned char*)pb->pixels + (j *  pb->bytesperline) + (pb->colors*i);
-          *offset = b;
-          *(offset+1) = g; //G
-          *(offset+2) = r;
+          int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+          
+          if (inBuffer(pb,i,j)){
+            unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+            *offset = b;
+            *(offset+1) = g; //G
+            *(offset+2) = r;
+          }
         }
       }
     }
@@ -420,5 +433,4 @@ void Cube3D::draw(PixelBuffer* pb)
   l11.draw(pb);
   Line l12 = Line(ps[3], ps[7], 1, 0x00FFFFFF);
   l12.draw(pb);
-
 }
