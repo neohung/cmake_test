@@ -18,6 +18,15 @@
 #define KEY_LEFT 80
 #define KEY_DOWN 81
 #define KEY_UP 82
+#define KEY_w 119
+#define KEY_s 115
+#define KEY_a 97
+#define KEY_d 100
+#define KEY_e 101
+#define KEY_q 113
+#define KEY_z 122
+#define KEY_c 99
+#define KEY_x 120
 
 #include <smath.h>
 #include <math.h>
@@ -444,6 +453,10 @@ typedef struct Camera{
     pos = p;
     theta = angle*SMATH_DEGREE_TO_RAD;
   };
+  inline void translation(Position3D p)
+  {
+    pos += p;
+  };
 } _Camera;
 
 typedef struct{
@@ -474,6 +487,7 @@ class Layer
     DrawBase* add(DrawBase* db);
     DrawBase3D* add(DrawBase3D* db);
     void update_perspective_projection(DrawBase3D* db3);
+    Camera* getCamera(){return &camera;};
   private:
      Camera camera;
      std::vector<DrawBase*> components;

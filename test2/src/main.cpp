@@ -91,6 +91,25 @@ void eventcb(WINEVENT e)
         cc3d->rotationZ(5);
       }else if (e.key.keysym == KEY_MINUS){
         cc3d->rotationZ(-5);
+      }else if (e.key.keysym == KEY_w){
+        Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+        l->getCamera()->translation(Position3D(0,5,0));
+      }else if (e.key.keysym == KEY_s){
+        Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+        l->getCamera()->translation(Position3D(0,-5,0));
+      }else if (e.key.keysym == KEY_a){
+        Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+        l->getCamera()->translation(Position3D(-5,0,0));
+      }else if (e.key.keysym == KEY_d){
+        Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+        l->getCamera()->translation(Position3D(5,0,0));
+      }else if (e.key.keysym == KEY_q){
+        Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+        l->getCamera()->translation(Position3D(0,0,5));
+      }else if (e.key.keysym == KEY_e){
+        Layer* l = SDLWindow::instance()->getLayerByName((char*)"BBB");
+        l->getCamera()->translation(Position3D(0,0,-5));
+
       }else{
         printf("KEY: %d\n", e.key.keysym);
       }
@@ -136,11 +155,13 @@ int main()
   //Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
   //Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
   Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
+  Cube3D c3d_2 = Cube3D(Position3D(200,200,200), 100,100,100, 1, 0x00FF0000, true);
   //ppoint = (Point*)l2->add(&p);
   //pline = (Line*)l2->add(&l);
   //ttringle = (Triangle*)l2->add(&t);
   //rrectangle = (Rectangle*)l2->add(&r);
   cc3d = (Cube3D*) l2->add(&c3d);
+  l2->add(&c3d_2);
   //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
   //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
   SDLWindow::instance()->show(updatecb,eventcb);
