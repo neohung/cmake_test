@@ -343,8 +343,9 @@ public:
     translation(dist);
   };
   //void findBound(Position2D* p, PFLOAT* w, PFLOAT* h);
-protected:
+  std::vector<Position2D> v2d;
   std::vector<Position3D> v;
+protected:
   Position3D pos;
   bool is_fill;
 private:
@@ -429,6 +430,7 @@ private:
 typedef struct Camera{
   Position3D pos;
   PFLOAT theta;
+  Camera(){};
   //use degree
   Camera(Position3D p, PFLOAT angle){
     pos = p;
@@ -436,10 +438,13 @@ typedef struct Camera{
   }
   inline PFLOAT angle(){return theta;};
   inline PFLOAT x(){return pos.x();};
-  inline PFLOAT y(){return pos.x();};
-  inline PFLOAT z(){return pos.x();};
+  inline PFLOAT y(){return pos.y();};
+  inline PFLOAT z(){return pos.z();};
+  inline void setCamera(Position3D p,  PFLOAT angle){
+    pos = p;
+    theta = angle*SMATH_DEGREE_TO_RAD;
+  };
 } _Camera;
-
 
 typedef struct{
   Position2D pos;
@@ -468,7 +473,9 @@ class Layer
     inline unsigned short y() {return PosY;};
     DrawBase* add(DrawBase* db);
     DrawBase3D* add(DrawBase3D* db);
+    void update_perspective_projection(DrawBase3D* db3);
   private:
+     Camera camera;
      std::vector<DrawBase*> components;
      std::vector<DrawBase3D*> components3D;
      unsigned short PosX;

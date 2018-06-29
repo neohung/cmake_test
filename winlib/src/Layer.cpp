@@ -21,21 +21,28 @@ void Layer::update()
   components[i]->draw(pixelbuf);
  }
  for(i=0;i<components3D.size();i++){
+  update_perspective_projection(components3D[i]);
   components3D[i]->draw(pixelbuf);
  }
-  /*
-   switch (components[i]->getType()){
-     case 0:
-       printf("0\n");
-       break;
-     case 1:
-       printf("1\n");
-       break;
-     default:
-       break;
-   //components[i]->draw(pb);
-   }
-   */
+}
+
+void Layer::update_perspective_projection(DrawBase3D* db3)
+{
+  int cx = camera.x();
+  int cy =  camera.y();
+  int cz =  camera.z(); //pixels
+  int i;
+  db3->v2d.clear();
+  for(i=0;i<db3->v.size();i++){
+    int xp = db3->v[i].x();
+    int yp = db3->v[i].y();
+    int zp = db3->v[i].z();
+    int zdenom = (zp + cz);
+    float xs = (cx + (((xp-cx) * cz ) / zdenom));
+    float ys = (cy - (((yp-cy) * cz )/ zdenom));
+    Position2D p = Position2D(xs,ys);
+    db3->v2d.push_back(p);
+  }
 }
 
 void Layer::setPos(unsigned short x, unsigned short y)
@@ -56,6 +63,8 @@ PosX(x), PosY(y), Width(w), Height(h), IsSkip(false),order(255)
    Name = (char*)name;
    pixelbuf = createPixelBuffer(Width,Height, 24);
    memset(pixelbuf->pixels,color,pixelbuf->size);
+   //
+   camera.setCamera(Position3D(Width/2.0,Height/2.0,640), 0);
 }
 
 void Layer::clearDraw()
@@ -380,31 +389,22 @@ void Plane3D::draw(PixelBuffer* pb)
 
 }
 
+//void perspective_projection()
+//{
+  
+//}
+
 void Cube3D::draw(PixelBuffer* pb)
 {
   assert(v.size()==8);
-  //Point ori_pt = Point(Position2D(225,125), 3, 0x00FFFFFF);
-  Point ori_pt = Point(Position2D(250,150), 3, 0x00FFFFFF);
-  int cx = 250;
-  int cy = 150; 
-  int cz = 640; //pixels
-  ori_pt.draw(pb);
-  //printf("Cube3D::draw\n");
+  assert(v2d.size()==8);
+  Point p = Point(Position2D(100,100),2,0x00FF0000);
+  p.draw(pb);
   int i;
-  int xs[8];
-  int ys[8];
   Position2D ps[8];
   for(i=0;i<8;i++){
-    int xp = v[i].x();
-    int yp = v[i].y();
-    int zp = v[i].z();
-    int zdenom = (zp + cz);
-    xs[i] = (cx + (((xp-cx) * cz ) / zdenom));
-    ys[i] = (cy - (((yp-cy) * cz )/ zdenom));
-    Position2D p = Position2D(xs[i],ys[i]);
+    Position2D p = Position2D(v2d[i].x(),v2d[i].y());
     ps[i] = p;
-    Point pt = Point(p, 3, 0x000000FF);
-    pt.draw(pb);
   }
   //Draw line	
   Line l1 = Line(ps[0], ps[1], 1, 0x00FF0000);
