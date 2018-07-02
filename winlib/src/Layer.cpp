@@ -383,6 +383,8 @@ void Line::draw(PixelBuffer* pb)
   }
 }
 */
+
+
 void Triangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==3);
@@ -396,6 +398,63 @@ void Triangle::draw(PixelBuffer* pb)
      drawFill(pb);  
    }
    //drawBound(pb);
+}
+
+
+void Triangle::drawFill(PixelBuffer* pb)
+{
+  unsigned char b = 0x0000ff & color();
+  unsigned char g = (0x00ff00 & color()) >> 8;
+  unsigned char r = (0xff0000 & color()) >> 16;
+
+  Position2D t0 =v[0];
+  Position2D t1 =v[1];
+  Position2D t2 =v[2];
+  //sort Y
+  if (t0.y() > t1.y())
+    std::swap(t0,t1);
+  if (t0.y() > t2.y())
+    std::swap(t0,t2);
+  if (t1.y() > t2.y())
+    std::swap(t1,t2);
+
+  int total_height = t2.y()-t0.y(); 
+  for (int y=t0.y(); y<=t1.y(); y++) { 
+     int segment_height = t1.y()-t0.y()+1; 
+        float alpha = (float)(y-t0.y())/total_height; 
+        float beta  = (float)(y-t0.y())/segment_height; // be careful with divisions by zero 
+        //int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+        Position2D A = t0 + (t2-t0)*alpha;
+        Position2D B = t0 + (t1-t0)*beta;
+        //Sort A,B by X
+    if (A.x() > B.x())
+      std::swap(A,B);
+    for(int i=A.x();i<B.x();i++){
+       int dindex = (y *  pb->bytesperline) + (pb->colors*i);
+       unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+        *offset = b;
+        *(offset+1) = g; //G
+        *(offset+2) = r;
+    }
+  }
+
+  for (int y=t1.y(); y<=t2.y(); y++) { 
+    int segment_height =  t2.y()-t1.y()+1; 
+    float alpha = (float)(y-t0.y())/total_height; 
+    float beta  = (float)(y-t1.y())/segment_height; // be careful with divisions by zero 
+    Position2D A = t0 + (t2-t0)*alpha;
+    Position2D B = t1 + (t2-t1)*beta;
+    //Sort A,B by X
+    if (A.x() > B.x())
+      std::swap(A,B);
+    for(int i=A.x();i<B.x();i++){
+       int dindex = (y *  pb->bytesperline) + (pb->colors*i);
+       unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+        *offset = b;
+        *(offset+1) = g; //G
+        *(offset+2) = r;
+    }
+  }
 }
 
 void Rectangle::draw(PixelBuffer* pb)

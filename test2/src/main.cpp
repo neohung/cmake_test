@@ -70,15 +70,15 @@ void eventcb(WINEVENT e)
         //  printf("Press ESC\n");
         //ppoint->translation(Position2D(-5,0));
         //ttringle->translation(Position2D(-5,0));
-        //ttringle->rotation(-5);
+        ttringle->rotation(-5);
         //rrectangle->rotation(-5);
-        cc3d->translation(Position3D(-5,0,0));
+        //cc3d->translation(Position3D(-5,0,0));
       }else if (e.key.keysym == KEY_RIGHT){
         //ppoint->translation(Position2D(5,0));
         //ttringle->translation(Position2D(5,0));
-        //ttringle->rotation(5);
+        ttringle->rotation(5);
         //rrectangle->rotation(5);
-        cc3d->translation(Position3D(5,0,0));
+        //cc3d->translation(Position3D(5,0,0));
       }else if (e.key.keysym == KEY_UP){
         //ppoint->translation(Position2D(0,-5));
         //ttringle->translation(Position2D(0,-5));
@@ -151,14 +151,14 @@ int main()
   //Point p = Point(Position2D(10,100), 10, 0x000000FF);
   Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
   //Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
-  //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,150),1, 0x00FF00FF, true);
+  Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,200),1, 0x00FF00FF, true);
   //Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
   //Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
   Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
   Cube3D c3d_2 = Cube3D(Position3D(200,200,200), 100,100,100, 1, 0x00FF0000, true);
   //ppoint = (Point*)l2->add(&p);
   pline = (Line*)l2->add(&l);
-  //ttringle = (Triangle*)l2->add(&t);
+  ttringle = (Triangle*)l2->add(&t);
   //rrectangle = (Rectangle*)l2->add(&r);
   ////cc3d = (Cube3D*) l2->add(&c3d);
   ////l2->add(&c3d_2);

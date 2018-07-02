@@ -238,6 +238,8 @@ public:
     v.push_back(p3);
   }
   virtual void draw(PixelBuffer* pb);
+  //Overwrite drawFill()
+  void drawFill(PixelBuffer* pb);
 private:
 };
 
