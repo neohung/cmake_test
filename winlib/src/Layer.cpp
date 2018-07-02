@@ -238,10 +238,10 @@ void Point::draw(PixelBuffer* pb)
 void Line::draw(PixelBuffer* pb)
 {
   assert(v.size()==2);
-  int x0 =  v[0].x();
-  int y0 =  v[0].y();
-  int x1 =  v[1].x();
-  int y1 =  v[1].y();
+  PFLOAT x0 =  v[0].x();
+  PFLOAT y0 =  v[0].y();
+  PFLOAT x1 =  v[1].x();
+  PFLOAT y1 =  v[1].y();
   //
   bool is_swapxy = false;
   //
@@ -249,7 +249,7 @@ void Line::draw(PixelBuffer* pb)
   unsigned char g = (0x00ff00 & color()) >> 8;
   unsigned char r = (0xff0000 & color()) >> 16;
   //
-  if (std::abs(x1-x0) < std::abs(y1-y0)){
+  if (fabs(x1-x0) < fabs(y1-y0)){
     //We keep dx is longer than dy
     std::swap(x0,y0);
     std::swap(x1,y1);
