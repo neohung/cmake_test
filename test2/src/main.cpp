@@ -50,10 +50,10 @@ void eventcb(WINEVENT e)
       int dy = pre_mousey - e.motion.y;
       //printf("M: state:%d (%d,%d)\n",e.motion.state,dx,dy);
       if (e.motion.state == 1){
-        if (dx)
-          cc3d->rotationY(dx);
-        if (dy)
-          cc3d->rotationX(dy);
+        //if (dx)
+        //  cc3d->rotationY(dx);
+        //if (dy)
+        //  cc3d->rotationX(dy);
       }
       pre_mousex = e.motion.x;
       pre_mousey = e.motion.y;
@@ -149,7 +149,7 @@ int main()
   SDLWindow::instance()->addLayer(l1);
   SDLWindow::instance()->addLayer(l2);
   //Point p = Point(Position2D(10,100), 10, 0x000000FF);
-  //Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
+  Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
   //Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
   //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,150),1, 0x00FF00FF, true);
   //Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
@@ -157,11 +157,11 @@ int main()
   Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
   Cube3D c3d_2 = Cube3D(Position3D(200,200,200), 100,100,100, 1, 0x00FF0000, true);
   //ppoint = (Point*)l2->add(&p);
-  //pline = (Line*)l2->add(&l);
+  pline = (Line*)l2->add(&l);
   //ttringle = (Triangle*)l2->add(&t);
   //rrectangle = (Rectangle*)l2->add(&r);
-  cc3d = (Cube3D*) l2->add(&c3d);
-  l2->add(&c3d_2);
+  ////cc3d = (Cube3D*) l2->add(&c3d);
+  ////l2->add(&c3d_2);
   //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
   //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
   SDLWindow::instance()->show(updatecb,eventcb);

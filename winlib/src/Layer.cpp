@@ -237,6 +237,55 @@ void Point::draw(PixelBuffer* pb)
 }
 void Line::draw(PixelBuffer* pb)
 {
+  assert(v.size()==2);
+  int x0 =  v[0].x();
+  int y0 =  v[0].y();
+  int x1 =  v[1].x();
+  int y1 =  v[1].y();
+  //
+  bool is_swapxy = false;
+  //
+  unsigned char b = 0x0000ff & color();
+  unsigned char g = (0x00ff00 & color()) >> 8;
+  unsigned char r = (0xff0000 & color()) >> 16;
+  //
+  if (std::abs(x1-x0) < std::abs(y1-y0)){
+    //We keep dx is longer than dy
+    std::swap(x0,y0);
+    std::swap(x1,y1);
+    is_swapxy = true;
+  }
+  if (x0 > x1){
+    // always keeo x0 < x1
+    std::swap(x0,x1);
+    std::swap(y0,y1);
+  }
+  int i;
+  for(i=x0;i<x1;i++){
+      PFLOAT t = (i-x0)/(PFLOAT)(x1-x0); 
+      int j = y0*(1.0-t) + y1*t;
+      if (is_swapxy){
+        if (inBuffer(pb,j,i)){
+          int dindex = (i *  pb->bytesperline) + (pb->colors*j);
+          unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+          *offset = b;
+          *(offset+1) = g; //G
+          *(offset+2) = r;
+        }
+      }else{
+        if (inBuffer(pb,i,j)){
+          int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+          unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+          *offset = b;
+          *(offset+1) = g; //G
+          *(offset+2) = r;
+        }
+      }
+  }
+}
+/*
+void Line::draw(PixelBuffer* pb)
+{
   //size should be 2
   assert(v.size()==2);
   //printf("Draw LLine\n");
@@ -325,7 +374,7 @@ void Line::draw(PixelBuffer* pb)
     }
   }
 }
-
+*/
 void Triangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==3);
@@ -398,8 +447,8 @@ void Cube3D::draw(PixelBuffer* pb)
 {
   assert(v.size()==8);
   assert(v2d.size()==8);
-  Point p = Point(Position2D(100,100),2,0x00FF0000);
-  p.draw(pb);
+  //Point p = Point(Position2D(100,100),2,0x00FF0000);
+  //p.draw(pb);
   int i;
   Position2D ps[8];
   for(i=0;i<8;i++){
