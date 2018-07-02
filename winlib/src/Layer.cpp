@@ -260,10 +260,13 @@ void Line::draw(PixelBuffer* pb)
     std::swap(x0,x1);
     std::swap(y0,y1);
   }
+  //Try to cal step
+  int dx = abs(x1-x0);
+  int step = abs(y1-y0)*2;
+  int steps = 0;
   int i;
+  int j = y0;
   for(i=x0;i<x1;i++){
-      PFLOAT t = (i-x0)/(PFLOAT)(x1-x0); 
-      int j = y0*(1.0-t) + y1*t;
       if (is_swapxy){
         if (inBuffer(pb,j,i)){
           int dindex = (i *  pb->bytesperline) + (pb->colors*j);
@@ -280,6 +283,11 @@ void Line::draw(PixelBuffer* pb)
           *(offset+1) = g; //G
           *(offset+2) = r;
         }
+      }
+      steps += step;
+      if (steps > dx){
+        steps -= dx*2;
+        j += (y1>y0 ? 1:-1); 
       }
   }
 }
