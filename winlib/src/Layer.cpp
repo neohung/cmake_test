@@ -388,14 +388,18 @@ void Line::draw(PixelBuffer* pb)
 void Triangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==3);
-   Line l1 = Line(v[0], v[1],size(), color());
-   Line l2 = Line(v[1], v[2],size(), color());
-   Line l3 = Line(v[0], v[2],size(), color());
-   l1.draw(pb);
-   l2.draw(pb);
-   l3.draw(pb);
    if (fill()){
      drawFill(pb);  
+   }else{
+     Line l1 = Line(v[0], v[1],size(), color());
+     Line l2 = Line(v[1], v[2],size(), color());
+     Line l3 = Line(v[0], v[2],size(), color());
+     //Line l1 = Line(v[0], v[1],size(), 0x00FF0000);
+     //Line l2 = Line(v[1], v[2],size(), 0x0000FF00);
+     //Line l3 = Line(v[0], v[2],size(), 0x000000FF);
+     l1.draw(pb);
+     l2.draw(pb);
+     l3.draw(pb);
    }
    //drawBound(pb);
 }
@@ -419,40 +423,22 @@ void Triangle::drawFill(PixelBuffer* pb)
     std::swap(t1,t2);
 
   int total_height = t2.y()-t0.y(); 
-  for (int y=t0.y(); y<=t1.y(); y++) { 
-     int segment_height = t1.y()-t0.y()+1; 
-        float alpha = (float)(y-t0.y())/total_height; 
-        float beta  = (float)(y-t0.y())/segment_height; // be careful with divisions by zero 
-        //int dindex = (j *  pb->bytesperline) + (pb->colors*i);
-        Position2D A = t0 + (t2-t0)*alpha;
-        Position2D B = t0 + (t1-t0)*beta;
-        //Sort A,B by X
-    if (A.x() > B.x())
-      std::swap(A,B);
-    for(int i=A.x();i<B.x();i++){
-       int dindex = (y *  pb->bytesperline) + (pb->colors*i);
-       unsigned char* offset = (unsigned char*)pb->pixels + dindex;
-        *offset = b;
-        *(offset+1) = g; //G
-        *(offset+2) = r;
-    }
-  }
-
-  for (int y=t1.y(); y<=t2.y(); y++) { 
-    int segment_height =  t2.y()-t1.y()+1; 
-    float alpha = (float)(y-t0.y())/total_height; 
-    float beta  = (float)(y-t1.y())/segment_height; // be careful with divisions by zero 
+  for (int y=0; y<=total_height; y++) { 
+    bool is_second_line = (y > (t1.y()-t0.y())) || (t1.y()==t0.y()) ;
+    int segment_height = is_second_line ? (t2.y()-t1.y()+1) : (t1.y()-t0.y()+1);
+    float alpha = (float)(y)/(float)(total_height); 
+    float beta  = (float)(y-(is_second_line ? t1.y()-t0.y() : 0))/(float)(segment_height);
     Position2D A = t0 + (t2-t0)*alpha;
-    Position2D B = t1 + (t2-t1)*beta;
-    //Sort A,B by X
+    Position2D B = is_second_line? t1 + (t2-t1)*beta : t0 + (t1-t0)*beta;
     if (A.x() > B.x())
       std::swap(A,B);
     for(int i=A.x();i<B.x();i++){
-       int dindex = (y *  pb->bytesperline) + (pb->colors*i);
-       unsigned char* offset = (unsigned char*)pb->pixels + dindex;
-        *offset = b;
-        *(offset+1) = g; //G
-        *(offset+2) = r;
+      int j = y + t0.y();
+      int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+      unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+      *offset = b;
+      *(offset+1) = g; //G
+      *(offset+2) = r;
     }
   }
 }
@@ -460,20 +446,21 @@ void Triangle::drawFill(PixelBuffer* pb)
 void Rectangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==4);
-   Position2D p0 = v[0];
-   Position2D p1 = v[1];
-   Position2D p2 = v[2];
-   Position2D p3 = v[3];
-   Line l1 = Line(p0, p1, size(), color());
-   Line l2 = Line(p1, p2, size(), color());
-   Line l3 = Line(p2, p3, size(), color());
-   Line l4 = Line(p0, p3, size(), color());
-   l1.draw(pb);
-   l2.draw(pb);
-   l3.draw(pb);
-   l4.draw(pb);
    if (fill()){
      drawFill(pb);  
+   }else{
+     Position2D p0 = v[0];
+     Position2D p1 = v[1];
+     Position2D p2 = v[2];
+     Position2D p3 = v[3];
+     Line l1 = Line(p0, p1, size(), color());
+     Line l2 = Line(p1, p2, size(), color());
+     Line l3 = Line(p2, p3, size(), color());
+     Line l4 = Line(p0, p3, size(), color());
+     l1.draw(pb);
+     l2.draw(pb);
+     l3.draw(pb);
+     l4.draw(pb);
    }
    //drawBound(pb);
 }
