@@ -404,7 +404,55 @@ void Triangle::draw(PixelBuffer* pb)
    //drawBound(pb);
 }
 
+void Triangle::drawFill(PixelBuffer* pb)
+{
+  unsigned char b = 0x0000ff & color();
+  unsigned char g = (0x00ff00 & color()) >> 8;
+  unsigned char r = (0xff0000 & color()) >> 16;
 
+  Position2D A =v[0];
+  Position2D B =v[1];
+  Position2D C =v[2];
+  //find bounder
+  int li = v[0].x();
+  int ri = v[0].x();
+  int dj = v[0].y();
+  int uj = v[0].y();
+  
+  for (int i=1; i<v.size(); i++) { 
+    li = std::max(0, std::min(li, (int)v[i].x()));
+    ri = std::min((int)pb->w, std::max(ri, (int)v[i].x()));
+    uj = std::max(0, std::min(uj, (int)v[i].y()));
+    dj = std::min((int)pb->h, std::max(dj, (int)v[i].y()));
+  }
+
+  for (int j=uj; j<dj; j++) { 
+    for (int i=li; i<ri; i++) { 
+      //Cal cross dot
+      Position2D P = Position2D(i,j);
+      Position2D CA = C-A;
+      Position2D BA = B-A;
+      Position2D PA = A-P;
+      SVector3 v3x = SVector3(CA.x(),BA.x(),PA.x());
+      SVector3 v3y = SVector3(CA.y(),BA.y(),PA.y());
+      SVector3 cross_dot;
+      SVector3::crossProduct(v3x,v3y,cross_dot);
+      if (cross_dot.z() == 0) continue;
+      if (abs(cross_dot.z()) < 1) continue; //For Triangle
+      SFLOAT u = cross_dot.x() /cross_dot.z();
+      SFLOAT v = cross_dot.y() /cross_dot.z();
+      SFLOAT uv_1 = 1.f - u - v;
+      if ((uv_1 < 0) || (u < 0) || (v < 0)) continue;
+      int dindex = (j *  pb->bytesperline) + (pb->colors*i);
+      unsigned char* offset = (unsigned char*)pb->pixels + dindex;
+      *offset = b;
+      *(offset+1) = g; //G
+      *(offset+2) = r;
+    }
+  }
+
+}
+/*
 void Triangle::drawFill(PixelBuffer* pb)
 {
   unsigned char b = 0x0000ff & color();
@@ -442,7 +490,7 @@ void Triangle::drawFill(PixelBuffer* pb)
     }
   }
 }
-
+*/
 void Rectangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==4);
