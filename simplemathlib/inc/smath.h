@@ -8,6 +8,7 @@
   typedef float SFLOAT;
 #endif
 
+#include "smath_struct.h"
 #include <string.h> //for memcpy
 //#include <math.h> //for sqrt
 //  Useful constants
@@ -260,33 +261,6 @@ private:
     SFLOAT m_data[4];
 };
 
-/*
-class SQuaternion
-{
-public:
-    void toEuler(SVector3& vec);
-    void fromEuler(SVector3& vec);
-};
-
-class SMath
-{
-public:
-    // convenient display routines
-    //static const char *displayRadians(const char *label, SVector3& vec);
-    //static const char *displayDegrees(const char *label, SVector3& vec);
-    //static const char *display(const char *label, SQuaternion& quat);
-    //static const char *display(const char *label, SMatrix4x4& mat);
-    //static uint64_t currentUSecsSinceEpoch();
-    //  poseFromAccelMag generates pose Euler angles from measured settings
-    //static RTVector3 poseFromAccelMag(const RTVector3& accel, const RTVector3& mag);
-    //  Takes signed 16 bit data from a char array and converts it to a vector of scaled RTFLOATs
-    //static void convertToVector(unsigned char *rawData, RTVector3& vec, RTFLOAT scale, bool bigEndian);
-    //  Takes a pressure in hPa and returns height above sea level in meters
-    //static RTFLOAT convertPressureToHeight(RTFLOAT pressure, RTFLOAT staticPressure = 1013.25);
-
-private:
-    //static char m_string[1000];                             // for the display routines
-};
-*/
-
+//--------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 #endif /* _SMATH_H_ */
