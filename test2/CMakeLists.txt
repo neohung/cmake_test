@@ -35,6 +35,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/testlib/inc 
   ${CMAKE_SOURCE_DIR}/tcimg 
   ${CMAKE_SOURCE_DIR}/simplemathlib/inc 
+  ${CMAKE_SOURCE_DIR}/wavefront/inc 
 )
 
 
@@ -57,12 +58,14 @@ TARGET_LINK_LIBRARIES(${ProjectId}
   tcimg
   winapi
   smathapi
+  wavefront
 )
 ADD_DEPENDENCIES(${ProjectId} 
   winapi
   testapi
   tcimg
   smathapi
+  wavefront
 )
 
 INSTALL(TARGETS ${ProjectId} DESTINATION ${CMAKE_BINARY_DIR}/bin)
