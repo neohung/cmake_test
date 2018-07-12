@@ -68,18 +68,21 @@ private:
   T data[4];
 };
 
+//OPERATOR+
 template <size_t dim, typename T> vec<dim, T> operator+ (vec<dim, T> lhs, const vec<dim, T>& rhs)
 {
   for (size_t i=dim; i--; lhs[i]+=rhs[i]);
   return lhs;
 }
  
+//OPERATOR-
 template <size_t dim, typename T> vec<dim, T> operator- (vec<dim, T> lhs, const vec<dim, T>& rhs)
 {
   for (size_t i=dim; i--; lhs[i]-=rhs[i]);
   return lhs;
 }
 
+//OPERATOR+
 template <size_t dim, typename T> T operator* (const vec<dim, T>& lhs, const vec<dim, T>& rhs)
 { 
   T ret = T();
@@ -98,7 +101,27 @@ typedef vec<2,int>   Vec2i;
 typedef vec<3,float> Vec3f;
 typedef vec<3,int>   Vec3i;
 typedef vec<4,float> Vec4f;
+//##############################################################
 
+template<size_t dim_rows,size_t dim_cols,typename T> class mat;
+//
+template<size_t DIM,typename T> struct dt {
+    static T det(const mat<DIM,DIM,T>& src) {
+        T ret=0;
+        //MAT Need to implement cofactor(row,col) function
+        for (size_t i=DIM; i--; ret += src[0][i]*src.cofactor(0,i));
+        return ret;
+    }
+};
+
+template<typename T> struct dt<1,T> {
+  static T det(const mat<1,1,T>& src) {
+    return src[0][0];
+  }
+};
+
+//##############################################################
+//CLASS mat(Matrix)
 template<size_t dim_rows,size_t dim_cols,typename T> class mat{
 protected:
   vec<dim_cols,T> rows[dim_rows];
@@ -110,6 +133,7 @@ public:
   mat() {
     zero();
   }
+  // mat[i] would return i`th row
   vec<dim_cols,T>& operator[] (size_t i){assert(i<dim_rows); return rows[i];};
   const vec<dim_cols,T>& operator[] (size_t i) const {assert(i<dim_rows); return rows[i];};
   static mat<dim_rows,dim_cols,T> identity() {
@@ -118,6 +142,7 @@ public:
       for (size_t j=dim_cols;j--; ret[i][j]=(i==j));
     return ret;
   }
+  //mat.col(i) would return i`th col
   vec<dim_rows,T> col(const size_t i) const {
     assert(i<dim_cols);
     vec<dim_rows,T> ret;
@@ -128,13 +153,14 @@ public:
     assert(i<dim_cols);
     for (size_t j=dim_rows; j--; rows[j][i]=v[j]);
   }
-  /*
+  
   mat<dim_cols,dim_rows,T> transpose() {
     mat<dim_cols,dim_rows,T> ret;
+    //Set row from col
     for (size_t i=dim_rows; i--; ret[i]=this->col(i));
     return ret;
   }
-  */
+  
   void display(const char* str){
     printf("%s:\n", str);
     for (size_t i=dim_rows; i--;){
@@ -146,6 +172,48 @@ public:
       printf("\n");
     }
   }
+  //get_minor(row, col)
+  // ex [1,2,3] get_minor(0,0) --> [5 6], get_minor(0, 1) --> [4 6]
+  //    [4,5,6]                    [8 9]                      [7 9]
+  //    [7,8,9]
+  mat<dim_rows-1,dim_cols-1,T> get_minor(size_t row, size_t col) const {
+    mat<dim_rows-1,dim_cols-1,T> ret;
+    for (size_t i=dim_rows-1; i--; )
+      for (size_t j=dim_cols-1;j--; ret[i][j]=rows[i<row?i:i+1][j<col?j:j+1]);
+    return ret;
+  }
+
+  //cofactor
+  T cofactor(size_t row, size_t col) const {
+    //row+col=0, return 1, row+col=1 return -1, row+col=2 row+col=0.... 
+    return get_minor(row,col).det()*((row+col)%2 ? -1 : 1);
+  }
+
+  T det() const {
+    //cal Determinant()
+    assert(dim_rows==dim_cols);
+    return dt<dim_rows,T>::det(*this);
+  }
+  //adjugate matrix
+  // [a b]  adj [d -b]       
+  // [c d]      [-c a]       
+  mat<dim_rows,dim_cols,T> adjugate() const {
+    mat<dim_rows,dim_cols,T> ret;
+    for (size_t i=dim_rows; i--; )
+      for (size_t j=dim_cols; j--; ret[i][j]=cofactor(i,j));
+    return ret;
+  }
+
+  mat<dim_rows,dim_cols,T> invert_transpose() {
+    mat<dim_rows,dim_cols,T> ret = adjugate();
+    T tmp = ret[0]*rows[0];
+    return ret/tmp;
+  }
+
+  mat<dim_rows,dim_cols,T> invert() {
+    return invert_transpose().transpose();
+  }
+
 };
 
 template<size_t row1,size_t col,size_t col2,typename T> mat<row1,col2,T> operator*(const mat<row1,col,T>& lhs, const mat<col,col2,T>& rhs) {
