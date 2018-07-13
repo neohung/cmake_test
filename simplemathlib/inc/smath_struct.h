@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <string>
+#include <stdio.h>
 
 template <size_t dim, typename T> struct vec{
   vec(){

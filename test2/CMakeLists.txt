@@ -36,6 +36,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/tcimg 
   ${CMAKE_SOURCE_DIR}/simplemathlib/inc 
   ${CMAKE_SOURCE_DIR}/wavefront/inc 
+  ${CMAKE_SOURCE_DIR}/smatrixlib/inc 
 )
 
 
@@ -59,6 +60,7 @@ TARGET_LINK_LIBRARIES(${ProjectId}
   winapi
   smathapi
   wavefront
+  smatrixapi
 )
 ADD_DEPENDENCIES(${ProjectId} 
   winapi
@@ -66,6 +68,7 @@ ADD_DEPENDENCIES(${ProjectId}
   tcimg
   smathapi
   wavefront
+  smatrixapi
 )
 
 INSTALL(TARGETS ${ProjectId} DESTINATION ${CMAKE_BINARY_DIR}/bin)

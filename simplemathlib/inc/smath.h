@@ -8,6 +8,7 @@
   typedef float SFLOAT;
 #endif
 
+#include "smath_neo.h"
 #include "smath_struct.h"
 #include <string.h> //for memcpy
 //#include <math.h> //for sqrt

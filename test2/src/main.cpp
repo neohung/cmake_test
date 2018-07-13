@@ -6,6 +6,8 @@
 #include <tcimg.h>
 #include <winapi.h>
 #include <smath.h>
+#include <iostream>
+#include <smatrix.h>
 
 int mflag = 1;
 int lx1=0,ly1=0,lx2=0,ly2=0;
@@ -132,9 +134,62 @@ void updatecb(PixelBuffer screenbuffer)
     }
 }
 
+template <size_t dim, typename T> std::ostream& operator<<(std::ostream& out,const Vector<dim, T>& v) 
+{
+  out << "Vector: [ ";
+  for(int i=0;i<dim;i++){
+    out << v[i] << " ";
+  }
+  out << "]" << std::endl;
+  return out;
+}
+
+template <size_t rows,size_t cols, typename T> 
+std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
+{
+  out << "Matrix: "<<  std::endl << "[ " << std::endl;
+  for(int j=0;j<rows;j++){
+      for(int i=0;i<cols;i++){
+        out << m[j][i] << " ";
+      }
+      out << std::endl;
+  }
+  out << "]" << std::endl;
+  return out;
+}
+
+/*
+template <size_t dim, typename T> Vector<dim, T> operator*(T val,const Vector<dim, T>& v)
+{
+  Vector<dim, T> d;
+  printf("testttt\n");
+  return d;
+}
+*/
 //Plane3D* pp3d;
 int main()
 {
+  Matrix<3,3,float> mmm;
+  std::cout << mmm.identity();
+  std::cout << mmm;
+  Vector<3,float> v0;
+  v0[0] = 1;
+  v0[1] = 2;
+  v0[2] = 3;
+  Vector<3,float> v1;
+  v1[0] = 4;
+  v1[1] = 5;
+  v1[2] = 6;
+  Vector<3,float> v2;
+  v2[0] = 7;
+  v2[1] = 8;
+  v2[2] = 9;
+  mmm[0] = v0;
+  mmm[1] = v1;
+  mmm[2] = v2;
+  std::cout << mmm.minor_matrix(0,1);
+  float ttttt = mmm.cofactor(0,0);
+  //std::cout << v4 ;
   mat<2,2,int> mm;
   mm.display("mm");
   Camera c = Camera(Position3D(0,0,0),90);
