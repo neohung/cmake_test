@@ -150,7 +150,8 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
   out << "Matrix: "<<  std::endl << "[ " << std::endl;
   for(int j=0;j<rows;j++){
       for(int i=0;i<cols;i++){
-        out << m[j][i] << " ";
+        //out << m[j][i] << " ";
+        printf("%f ", m[j][i]);
       }
       out << std::endl;
   }
@@ -158,40 +159,52 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
   return out;
 }
 
-/*
-template <size_t dim, typename T> Vector<dim, T> operator*(T val,const Vector<dim, T>& v)
-{
-  Vector<dim, T> d;
-  printf("testttt\n");
-  return d;
-}
-*/
-//Plane3D* pp3d;
 int main()
 {
-  Matrix<3,3,float> mmm;
-  std::cout << mmm.identity();
-  std::cout << mmm;
-  Vector<3,float> v0;
+  //NEO nnn;
+  Matrix<4,4,float> mmm;
+  //std::cout << mmm.identity();
+  //std::cout << mmm;
+  //nnn[0][0] = 1;
+  //nnn.info();
+  //printf("%d\n",nnn[2]);
+
+  Vector<4,float> v0;
   v0[0] = 1;
   v0[1] = 2;
   v0[2] = 3;
-  Vector<3,float> v1;
-  v1[0] = 4;
-  v1[1] = 5;
-  v1[2] = 6;
-  Vector<3,float> v2;
-  v2[0] = 7;
-  v2[1] = 8;
-  v2[2] = 9;
+  v0[3] = 4;
+  Vector<4,float> v1;
+  v1[0] = 2;
+  v1[1] = 1;
+  v1[2] = 4;
+  v1[3] = 4;
+  Vector<4,float> v2;
+  v2[0] = 3;
+  v2[1] = 4;
+  v2[2] = 1;
+  v2[3] = 5;
+  Vector<4,float> v3;
+  v3[0] = 4;
+  v3[1] = 2;
+  v3[2] = 5;
+  v3[3] = 1;
   mmm[0] = v0;
   mmm[1] = v1;
   mmm[2] = v2;
-  std::cout << mmm.minor_matrix(0,1);
-  float ttttt = mmm.cofactor(0,0);
+  mmm[3] = v3;
+  printf("det %f\n",mmm.determinant());
+  std::cout << mmm.invert();
+  printf("#######\n");
+  std::cout << mmm;
+  //test(mmm);
+  //printf("DET: %f\n",mmm.determinant());
+  //std::cout << mmm.minor_matrix(0,1);
+  //float ttttt = mmm.det();
+  //std::cout << mmm.tt();
   //std::cout << v4 ;
-  mat<2,2,int> mm;
-  mm.display("mm");
+  //mat<2,2,int> mm;
+  //mm.display("mm");
   Camera c = Camera(Position3D(0,0,0),90);
   printf("ca: %f\n",c.angle());
   extern TrueColorImage abc;

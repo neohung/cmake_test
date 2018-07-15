@@ -79,29 +79,6 @@ public:
   //int size() {return dim;}
 };
 
-// ============ Determinant =========
-
-template <size_t rows, size_t cols, typename T> class Matrix;
-
-template <size_t dim, typename T> struct Determinant
-{
-  static T determinant(const Matrix<dim,dim,T>& m){
-    T ret = 0;
-    for(size_t i=0;i<dim;i++){
-      ret += m[0][i] * m.cofactor(0,i);
-    }
-    return ret; 
-  }
-};
-
-template <typename T> struct Determinant<1,T>{
-  static T determinant(const Matrix<1,1,T>& m){
-    return m[0][0];
-  }
-};
-
-// ==================================
-
 template <size_t rows, size_t cols, typename T> class Matrix{
 protected:
   Vector<cols,T> data[rows];
@@ -114,6 +91,18 @@ public:
   Matrix(){ zero(); }
   Vector<cols,T>& operator[](const size_t j){assert(j<rows);return data[j];}
   const Vector<cols,T>& operator[](const size_t j) const {assert(j<rows);return data[j];}
+  //
+  Matrix<rows,cols,T>& operator*=(const T v){
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++)
+        data[j][i] *= v;
+    return *this;
+  }
+  const Matrix<rows,cols,T> operator*(const T v) const{
+    Matrix<rows,cols,T> ret = *this;
+    ret *= v;
+    return ret;
+  }
   //Return col vector
   Vector<rows,T> col(const size_t i){
     assert(i < cols);
@@ -155,39 +144,55 @@ public:
         ret[j][i] = data[j<row?j:j+1][i<col?i:i+1];
     return ret;
   }
-
-  T cofactor(size_t row, size_t col) const {
-    //row+col=0, return 1, row+col=1 return -1, row+col=2 row+col=0.... 
-    //return minor_matrix(row,col).det()*((row+col)%2 ? -1 : 1);
+  // det| 3, 2,-5| = -54, det| 1,2,3,4 | = -101, det| 2,2,5 | = 6
+  //    |-1, 0,-2|           | 2,1,4,4 |            |-2,1,2 |
+  //    | 3,-4, 1|           | 3,4,1,5 |            | 6,3,9 |
+  //                         | 4,2,5,1 |
+  T determinant(){
+    assert(rows == cols);
+    T sum = T();
+    for(int i=0;i<rows;i++){
+      sum += data[0][i]*minor_matrix(0,i).determinant() * ((i)%2 ? -1 : 1);
+    }
+    return sum;
   }
 
-
-  T det(void) const {
-    //cal Determinant()
-    assert(rows==cols);
-    //return dt<dim_rows,T>::det(*this);
+  Matrix<rows,cols,T> adjugate() {
+    Matrix<rows,cols,T> ret;
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++)
+        ret[j][i] = minor_matrix(j,i).determinant() * ((i+j)%2 ? -1 : 1);
+    return ret;
   }
 
+  Matrix<rows,cols,T> invert_transpose() {
+    Matrix<rows,cols,T> ret = adjugate();
+    //T tmp = ret[0]*col(0); <-- wrong
+    T tmp = ret[0]*data[0];
+    return ret*(1/tmp);
+    //return ret;
+  }
+ // A[ 2,2,5]->A-1=[0.5,-0.5,-0.167]  , A[ 3, 2,-5]->A-1=[0.148148  -0.333333  0.074074]
+  // [-2,1,2]     [5.0,-2.0,-2.333]      [-1, 0,-2]      [0.092593  -0.333333 -0.203704]
+  // [ 6,3,9]     [ -2, 1.0, 1.0  ]      [ 3,-4, 1]      [-0.074074 -0.333333 -0.037037]
+  //A[1,2,3,4]->A-1=[ -0.712871,  0.415842,  0.227723,  0.049505 ]
+  // [2,1,4,4]      [  0.633663, -0.702970,  0.019802,  0.178218 ]
+  // [3,4,1,5]      [  0.346535, -0.118812, -0.207921,  0.128713 ]
+  // [4,2,5,1]      [ -0.148515,  0.336634,  0.089109, -0.198020 ]
+  Matrix<rows,cols,T> invert() {
+    return invert_transpose().transpose();
+  }
 };
 
-/*
-template <size_t dim, typename T>
-Vector<dim, T>& operator+(Vector<dim, T> lhs, const Vector<dim, T>& rhs){};
-*/
-
-struct NEO
-{
-  NEO(){};
-  //NEO& operator+(NEO lhs, NEO& rhs)
-  //{
-  //}
-  NEO& operator+(NEO& rhs)
-  {
+template <typename T> class Matrix<1,1,T>{
+protected:
+ Vector<1,T> data[1];
+public:
+  Vector<1,T>& operator[](const size_t i){assert(i==0);return data[i];}
+  const Vector<1,T>& operator[](const size_t i) const {assert(i==0);return data[i];}
+  T determinant(){
+    return data[0][0];
   }
 };
-/*
-NEO& operator+(NEO lhs, NEO& rhs)
-{
-}
-*/
+
 #endif
