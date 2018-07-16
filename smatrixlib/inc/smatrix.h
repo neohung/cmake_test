@@ -15,6 +15,9 @@ public:
   Vector(){
     for(size_t i=0;i<dim;i++)data[i]=T();
   }
+  Vector(T* array){
+    memcpy(data,array,dim*sizeof(T));
+  }
   T& operator[](const size_t i){assert(i<dim);return data[i];}
   const T& operator[](const size_t i) const {assert(i<dim);return data[i];}
   Vector<dim, T>& operator=(const Vector<dim, T>& vec){
@@ -89,6 +92,10 @@ public:
         data[j][i] = T();
   }
   Matrix(){ zero(); }
+  Matrix(T* array){
+    memcpy(data,array,rows*cols*sizeof(T));
+  }
+
   Vector<cols,T>& operator[](const size_t j){assert(j<rows);return data[j];}
   const Vector<cols,T>& operator[](const size_t j) const {assert(j<rows);return data[j];}
   //
@@ -182,6 +189,52 @@ public:
   Matrix<rows,cols,T> invert() {
     return invert_transpose().transpose();
   }
+  
+  Matrix<rows,cols,T>& operator+=(const Matrix<rows,cols,T>& m){
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++)
+        data[j][i] += m[j][i];
+    return *this;
+  }
+
+ Matrix<rows,cols,T>& operator-=(const Matrix<rows,cols,T>& m){
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++)
+        data[j][i] -= m[j][i];
+    return *this;
+  }
+
+  const  Matrix<rows,cols,T> operator+(const  Matrix<rows,cols,T>& m) const{
+    Matrix<rows,cols,T> ret = *this;
+    ret += m;
+    return ret;
+  }
+
+  const  Matrix<rows,cols,T> operator-(const  Matrix<rows,cols,T>& m) const{
+    Matrix<rows,cols,T> ret = *this;
+    ret -= m;
+    return ret;
+  }
+
+  Matrix<rows,cols,T>& operator*=(Matrix<cols,cols,T>& m){
+    Matrix<rows,cols,T> ret;
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++){
+        ret[j][i] = data[j] * m.col(i);
+    }
+  *this = ret;
+  return *this;
+  }
+
+  const Matrix<rows,cols,T> operator*(const Matrix<cols,cols,T>& m){
+    Matrix<rows,cols,T> ret;
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++){
+        ret[j][i] = data[j] * m.col(i);
+    }
+    return ret;
+  }
+  
 };
 
 template <typename T> class Matrix<1,1,T>{

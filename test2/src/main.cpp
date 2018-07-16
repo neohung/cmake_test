@@ -150,8 +150,7 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
   out << "Matrix: "<<  std::endl << "[ " << std::endl;
   for(int j=0;j<rows;j++){
       for(int i=0;i<cols;i++){
-        //out << m[j][i] << " ";
-        printf("%f ", m[j][i]);
+        out << m[j][i] << " ";
       }
       out << std::endl;
   }
@@ -162,41 +161,43 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
 int main()
 {
   //NEO nnn;
-  Matrix<4,4,float> mmm;
   //std::cout << mmm.identity();
   //std::cout << mmm;
   //nnn[0][0] = 1;
   //nnn.info();
   //printf("%d\n",nnn[2]);
+  /*
+  float val[] = {1,2,3,4,
+                 2,1,4,4,
+                 3,4,1,5,
+                 4,2,5,1        
+                };
+  
+  Matrix<4,4,float> mmm = Matrix<4,4,float>(val);
+  float val2[] = {1,2,3,4,
+                  5,6,7,8,
+                  9,10,11,12,
+                 13,14,15,16 
+                };
+  Matrix<4,4,float> mmm2 = Matrix<4,4,float>(val2);
+  mmm2 *= mmm;
+  */
+   float val[] = { 1,2,3,4};
+   Matrix<2,2,float> mmm = Matrix<2,2,float>(val);
+   float val2[] = { 5,6,7,8};
+   Matrix<2,2,float> mmm2 = Matrix<2,2,float>(val2);
+   float val3[] = { 9,10};
+   Matrix<2,1,float> mmm3 = Matrix<2,1,float>(val3);
+   std::cout << mmm3;
 
-  Vector<4,float> v0;
-  v0[0] = 1;
-  v0[1] = 2;
-  v0[2] = 3;
-  v0[3] = 4;
-  Vector<4,float> v1;
-  v1[0] = 2;
-  v1[1] = 1;
-  v1[2] = 4;
-  v1[3] = 4;
-  Vector<4,float> v2;
-  v2[0] = 3;
-  v2[1] = 4;
-  v2[2] = 1;
-  v2[3] = 5;
-  Vector<4,float> v3;
-  v3[0] = 4;
-  v3[1] = 2;
-  v3[2] = 5;
-  v3[3] = 1;
-  mmm[0] = v0;
-  mmm[1] = v1;
-  mmm[2] = v2;
-  mmm[3] = v3;
-  printf("det %f\n",mmm.determinant());
-  std::cout << mmm.invert();
-  printf("#######\n");
-  std::cout << mmm;
+  //Matrix<4,4,float> mmm3 = mmm2  mmm;
+  //std::cout << mmm2;
+  //printf("det %f\n",mmm.determinant());
+  //std::cout << mmm.invert();
+  //printf("#######\n");
+  //std::cout << mmm;
+  
+  
   //test(mmm);
   //printf("DET: %f\n",mmm.determinant());
   //std::cout << mmm.minor_matrix(0,1);
