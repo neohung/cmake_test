@@ -287,4 +287,16 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
   return out;
 }
 */
+typedef Vector<2,float> Vec2f;
+typedef Vector<2,int>   Vec2i;
+typedef Vector<3,float> Vec3f;
+typedef Vector<3,int>   Vec3i;
+typedef Vector<4,float> Vec4f;
+typedef Matrix<2,2,float> Mat2f;
+typedef Matrix<2,2,int> Mat2i;
+typedef Matrix<3,3,float> Mat3f;
+typedef Matrix<3,3,int> Mat3i;
+typedef Matrix<4,4,float> Mat4f;
+typedef Matrix<4,4,int> Mat4i;
+
 #endif

@@ -160,56 +160,6 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
 
 int main()
 {
-  //NEO nnn;
-  //std::cout << mmm.identity();
-  //std::cout << mmm;
-  //nnn[0][0] = 1;
-  //nnn.info();
-  //printf("%d\n",nnn[2]);
-  /*
-  float val[] = {1,2,3,4,
-                 2,1,4,4,
-                 3,4,1,5,
-                 4,2,5,1        
-                };
-  
-  Matrix<4,4,float> mmm = Matrix<4,4,float>(val);
-  float val2[] = {1,2,3,4,
-                  5,6,7,8,
-                  9,10,11,12,
-                 13,14,15,16 
-                };
-  Matrix<4,4,float> mmm2 = Matrix<4,4,float>(val2);
-  mmm2 *= mmm;
-  */
-   float val[] = { 1,2,3,4};
-   Matrix<2,2,float> mmm = Matrix<2,2,float>(val);
-   float val2[] = { 5,6};
-   Matrix<2,1,float> mmm2 = Matrix<2,1,float>(val2);
-   float val3[] = { 9,10};
-   Matrix<1,2,float> mmm3 = Matrix<1,2,float>(val3);
-   Matrix<2,2,float> mmm4 = mmm;
-   //mmm2 = mmm2 * mmm;
-   char a  = -2;
-   mmm4 = (a) * mmm4;
-   std::cout << mmm4;
-
-  //Matrix<4,4,float> mmm3 = mmm2  mmm;
-  //std::cout << mmm2;
-  //printf("det %f\n",mmm.determinant());
-  //std::cout << mmm.invert();
-  //printf("#######\n");
-  //std::cout << mmm;
-  
-  
-  //test(mmm);
-  //printf("DET: %f\n",mmm.determinant());
-  //std::cout << mmm.minor_matrix(0,1);
-  //float ttttt = mmm.det();
-  //std::cout << mmm.tt();
-  //std::cout << v4 ;
-  //mat<2,2,int> mm;
-  //mm.display("mm");
   Camera c = Camera(Position3D(0,0,0),90);
   printf("ca: %f\n",c.angle());
   extern TrueColorImage abc;
