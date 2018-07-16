@@ -4,11 +4,13 @@
 #include <main.h>
 #include <testapi.h>
 #include <tcimg.h>
-#include <winapi.h>
+#include <sdlwinapi.h>
 #include <smath.h>
 #include <iostream>
 #include <smatrix.h>
+#include <render.h>
 
+/*
 int mflag = 1;
 int lx1=0,ly1=0,lx2=0,ly2=0;
 
@@ -157,38 +159,55 @@ std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
   out << "]" << std::endl;
   return out;
 }
-
+*/
 int main()
 {
-  Camera c = Camera(Position3D(0,0,0),90);
-  printf("ca: %f\n",c.angle());
+  //Camera c = Camera(Position3D(0,0,0),90);
+  //printf("ca: %f\n",c.angle());
   extern TrueColorImage abc;
+  /*
   printf("W x H --> (%d,%d)\n",abc.ImgWidth, abc.ImgHeight);
   printf("ImgTotalBytes --> %d\n",abc.ImgTotalBytes);
   printf("ImgTotalPixels --> %d\n",abc.ImgTotalPixels);
   printf("ImgByteWidth --> %d\n",abc.ImgByteWidth);
-  Layer* l1 = new Layer("AAA",0,0,abc.ImgWidth, abc.ImgHeight,0);
-  memcpy(l1->pixelbuf->pixels,abc.ImgData,abc.ImgTotalBytes);
-  Layer* l2 = new Layer("BBB",50,50,500,300,0);
-  SDLWindow::instance()->init("",640,480);
-  SDLWindow::instance()->addLayer(l1);
-  SDLWindow::instance()->addLayer(l2);
+  */
+  ////Layer* l1 = new Layer("AAA",0,0,abc.ImgWidth, abc.ImgHeight,0);
+  //
+  /*Render* r1 = new Render(l1);
+  for(int j=0;j<100;j++)
+    for(int i=0;i<100;i++){
+      r1->setPixel(i,j,0xFF00FFFF);
+  }
+*/
+  //memcpy(l1->pixelbuf->pixels,abc.ImgData,abc.ImgTotalBytes);
+  
+  ////Layer* l2 = new Layer("BBB",50,50,500,300,0);
+  ////Render r2 = Render(l2);
+  //SDLWindow::instance()->init("",640,480);
+  //SDLWindow::GetInstance().init("",640,480);
+  //Window::GetInstance().init("",640,480);
+  Window* pw = Window::instance();
+  ////SDLWindow::instance()->addLayer(l1);
+  
+  //SDLWindow::instance()->addLayer(l2);
   //Point p = Point(Position2D(10,100), 10, 0x000000FF);
-  Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
+  //Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);
   //Triangle t = Triangle(Position2D(100,100), Position2D(50,150),Position2D(150,150),1, 0x00FF00FF, true);
-  Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,200),1, 0x00FF00FF, true);
+  //Triangle t = Triangle(Position2D(50,150), Position2D(100,100),Position2D(150,200),1, 0x00FF00FF, true);
   //Rectangle r = Rectangle(Position2D(300,100), 100,50,1, 0x00FF0000, true);
   //Plane3D p3d = Plane3D(Position3D(100,100,100), 100,100, 1, 0x00FF0000, true);
-  Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
-  Cube3D c3d_2 = Cube3D(Position3D(200,200,200), 100,100,100, 1, 0x00FF0000, true);
+  //Cube3D c3d = Cube3D(Position3D(100,100,100), 100,100,100, 1, 0x00FF0000, true);
+  //Cube3D c3d_2 = Cube3D(Position3D(200,200,200), 100,100,100, 1, 0x00FF0000, true);
   //ppoint = (Point*)l2->add(&p);
-  pline = (Line*)l2->add(&l);
-  ttringle = (Triangle*)l2->add(&t);
+  //pline = (Line*)l2->add(&l);
+  //ttringle = (Triangle*)l2->add(&t);
   //rrectangle = (Rectangle*)l2->add(&r);
   ////cc3d = (Cube3D*) l2->add(&c3d);
   ////l2->add(&c3d_2);
   //SDLWindow::instance()->resize(abc.ImgWidth,abc.ImgHeight);
   //SDLWindow::instance()->init("ABC",abc.ImgWidth,abc.ImgHeight);
-  SDLWindow::instance()->show(updatecb,eventcb);
+  //SDLWindow::instance()->show(updatecb,eventcb);
+  
+  ////SDLWindow::instance()->show(NULL,NULL);
   return 0;
 }

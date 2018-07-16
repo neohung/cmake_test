@@ -3,16 +3,9 @@
 //#include <testapi.h>
 //#include <tcimg.h>
 
-#include <sdlwinapi.h>
+#include <winapi.h>
 #include <SDL.h>
 
-void SDLWindow::init(const char* title, size_t w, size_t h)
-{
-
-}
-
-
-/*
 //For Singleton the static need to init first
 SDLWindow* SDLWindow::s_instance = 0;
 
@@ -240,4 +233,3 @@ void freePixelBuffer(PixelBuffer* pb){
    SDL_FreeSurface((SDL_Surface*)pb->freePtr);
    free(pb);
 }
-*/

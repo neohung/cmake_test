@@ -28,9 +28,8 @@
 #define KEY_c 99
 #define KEY_x 120
 
-//#include <smath.h>
+#include <smath.h>
 #include <math.h>
-#include <layer.h>
 
 typedef enum {
        NOEVENT = 0,			
@@ -85,75 +84,31 @@ typedef union{
   QEvent quit;
 } WINEVENT;
 
-#include <memory>
 
-class Window
-{
-private:
-        //static std::auto_ptr<Window> s_instance;
-        static Window *s_instance;
+typedef struct{
+  unsigned short w;
+  unsigned short h;
+  unsigned char colors;
+  unsigned short bytesperline;
+  unsigned long int size;
+  void* freePtr;
+  void* pixels;
+} PixelBuffer;
 
-protected:
+PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char colorbit);
+void freePixelBuffer(PixelBuffer* pb);
 
-        //static Window *s_instance;
-        unsigned int DELAYTIME;
-        void (* event_cb)(WINEVENT e);
-        //void (* update_cb)(PixelBuffer screenbuffer);
-        //SDL_Window* Window;
-        //WINDOW Window;
-public:
-        //static Window* s_instance;
-        //static std::auto_ptr<Window> s_instance;
-        //static Window& GetInstance(){
-          //if (s_instance.get() == NULL)
-          //{
-          //  s_instance.reset(new Window());
-          //}
-        //  return *s_instance;
-        //};
-        static Window *instance(void){
-          return s_instance;
-        }
+typedef SVector2 Position2D;
 
-        std::vector<Layer*> layers;
-        void addLayer(Layer* l);
-        int MouseX;
-        int MouseY;
-        size_t Width;
-        size_t Height;
-        Window(){};
-        virtual void init(const char* title, size_t w, size_t h);
-        ~Window();
-        //int show(void (*u_cb)(PixelBuffer screenbuffer),void (*e_cb)(WINEVENT e));
-        virtual int show(void (*e_cb)(WINEVENT e));
-        //void render(PixelBuffer* pb);
-        //void resize(unsigned short w, unsigned short h);
-        void resize(size_t w,size_t h);
-        //Layer* getLayerByName(char* n);
-        //PixelBuffer Screen;
-        //static Window *instance(void)
-        //{
-        //  if (!s_instance)
-        //    s_instance = new Window;
-        //  return s_instance;
-        //}
-};
+typedef SVector3 Position3D;
 
+typedef SFLOAT PFLOAT;
 
-//PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char colorbit);
-//void freePixelBuffer(PixelBuffer* pb);
+typedef struct {
+  PFLOAT slop;
+  PFLOAT bias;
+}Fomula1D;
 
-//typedef SVector2 Position2D;
-
-//typedef SVector3 Position3D;
-
-//typedef SFLOAT PFLOAT;
-
-//typedef struct {
-//  PFLOAT slop;
-//  PFLOAT bias;
-//}Fomula1D;
-/*
 class DrawBase
 {
 public:
@@ -555,8 +510,7 @@ typedef struct{
 
 //typedef void * SCREEN;
 //typedef void * WINDOW;
-*/
-/*
+
 class SDLWindow
 {
   protected:
@@ -590,7 +544,6 @@ public:
           return s_instance;
         }
 };
-*/
 //For Singleton the static need to init first
 //SDLWindow* SDLWindow::s_instance = 0;
 

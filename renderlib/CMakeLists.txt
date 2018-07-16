@@ -1,15 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-#project(Test)
-#USE FOLDER NAME AS PROJECT NAME
-get_filename_component(ProjectId ${CMAKE_CURRENT_LIST_DIR} NAME)
-string(REPLACE " " "_" ProjectId ${ProjectId})
-project(${ProjectId} C CXX)
+project(Renderlib)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
-
-set(CMAKE_INSTALL_RPATH "./")
-#set(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/bin")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (APPLE)
   message(STATUS ">>> MAC")
@@ -32,48 +24,57 @@ include_directories(
   #${SDL2TTF_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/inc 
   ${CMAKE_SOURCE_DIR}/winlib/inc 
-  ${CMAKE_SOURCE_DIR}/testlib/inc 
-  ${CMAKE_SOURCE_DIR}/tcimg 
+  #${CMAKE_SOURCE_DIR}/testlib/inc 
+  #${CMAKE_SOURCE_DIR}/tcimg 
   ${CMAKE_SOURCE_DIR}/simplemathlib/inc 
-  ${CMAKE_SOURCE_DIR}/wavefront/inc 
+  #${CMAKE_SOURCE_DIR}/wavefront/inc 
   ${CMAKE_SOURCE_DIR}/smatrixlib/inc 
-  ${CMAKE_SOURCE_DIR}/renderlib/inc 
-)
 
+)
 
 ###########################
 
-SET(SRCS
-    src/main.cpp
-    src/a.c
+SET(RENDERLIB_SRCS
+    src/render.cpp
+    inc/render.h
 )
 
 
-###########################
-ADD_EXECUTABLE(${ProjectId} ${SRCS})
-TARGET_LINK_LIBRARIES(${ProjectId}
-  ${LIBSDL2_LIBRARIES_PATH}
+
+ADD_LIBRARY(renderapi SHARED ${RENDERLIB_SRCS})
+
+TARGET_LINK_LIBRARIES(renderapi
   ${SDL2_LIBRARIES}
   #${SDL2IMAGE_LIBRARIES}
   #${SDL2TTF_LIBRARIES}
-  testapi
-  tcimg
+  #tcimg
+  #smathapi
   winapi
-  smathapi
-  wavefront
+  #testapi
+  #tcimg
+  #smathapi
+  #wavefront
   smatrixapi
-  renderapi
+
 )
-ADD_DEPENDENCIES(${ProjectId} 
+ADD_DEPENDENCIES(renderapi
+  #smathapi
+  #testapi
+#  tcimg
   winapi
-  testapi
-  tcimg
-  smathapi
-  wavefront
+  #testapi
+  #tcimg
+  #smathapi
+  #wavefront
   smatrixapi
-  renderapi
 )
 
-INSTALL(TARGETS ${ProjectId} DESTINATION ${CMAKE_BINARY_DIR}/bin)
+#ADD_LIBRARY(testapi STATIC ${TESTLIB_SRCS})
+
+#target_link_libraries(testapi
+#)
+#add_dependencies(testapi t2)
+
+INSTALL(TARGETS renderapi DESTINATION ${CMAKE_BINARY_DIR}/bin)
 ############################
 

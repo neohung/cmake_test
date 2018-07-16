@@ -6,7 +6,6 @@
 #include <winapi.h>
 #include <SDL.h>
 #include <assert.h>
-/*
 Layer::Layer()
 {
 }
@@ -306,7 +305,6 @@ void Line::draw(PixelBuffer* pb)
       }
   }
 }
-*/
 /*
 void Line::draw(PixelBuffer* pb)
 {
@@ -400,7 +398,7 @@ void Line::draw(PixelBuffer* pb)
 }
 */
 
-/*
+
 void Triangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==3);
@@ -468,7 +466,6 @@ void Triangle::drawFill(PixelBuffer* pb)
   }
 
 }
-*/
 /*
 void Triangle::drawFill(PixelBuffer* pb)
 {
@@ -508,7 +505,6 @@ void Triangle::drawFill(PixelBuffer* pb)
   }
 }
 */
-/*
 void Rectangle::draw(PixelBuffer* pb)
 {
    assert(v.size()==4);
@@ -603,4 +599,3 @@ void Cube3D::draw(PixelBuffer* pb)
   Line l12 = Line(ps[3], ps[7], 1, 0x00FFFFFF);
   l12.draw(pb);
 }
-*/
