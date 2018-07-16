@@ -1,6 +1,6 @@
 #ifndef _SMATH_STRUCT_H_
 #define _SMATH_STRUCT_H_
-
+/*
 #include <assert.h>
 #include <string>
 #include <stdio.h>
@@ -223,4 +223,5 @@ template<size_t row1,size_t col,size_t col2,typename T> mat<row1,col2,T> operato
     for (size_t j=col2; j--; ret[i][j]=lhs[i]*rhs.col(j));
   return ret;
 }
+*/
 #endif

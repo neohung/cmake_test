@@ -99,6 +99,13 @@ public:
   Vector<cols,T>& operator[](const size_t j){assert(j<rows);return data[j];}
   const Vector<cols,T>& operator[](const size_t j) const {assert(j<rows);return data[j];}
   //
+  Matrix<rows,cols,T>& operator=(const Matrix<rows,cols,T>& m){
+    if (this == &m)
+      return *this;
+    memcpy(data,&m[0],sizeof(data));
+    return *this;
+  }
+  //
   Matrix<rows,cols,T>& operator*=(const T v){
     for(size_t j=0;j<rows;j++)
       for(size_t i=0;i<cols;i++)
@@ -111,7 +118,7 @@ public:
     return ret;
   }
   //Return col vector
-  Vector<rows,T> col(const size_t i){
+  const Vector<rows,T> col(const size_t i) const{
     assert(i < cols);
     Vector<rows,T> ret;
     for(size_t j=0;j<rows;j++){
@@ -216,7 +223,7 @@ public:
     return ret;
   }
 
-  Matrix<rows,cols,T>& operator*=(Matrix<cols,cols,T>& m){
+  Matrix<rows,cols,T>& operator*=(const Matrix<cols,cols,T>& m){
     Matrix<rows,cols,T> ret;
     for(size_t j=0;j<rows;j++)
       for(size_t i=0;i<cols;i++){
@@ -225,16 +232,6 @@ public:
   *this = ret;
   return *this;
   }
-
-  const Matrix<rows,cols,T> operator*(const Matrix<cols,cols,T>& m){
-    Matrix<rows,cols,T> ret;
-    for(size_t j=0;j<rows;j++)
-      for(size_t i=0;i<cols;i++){
-        ret[j][i] = data[j] * m.col(i);
-    }
-    return ret;
-  }
-  
 };
 
 template <typename T> class Matrix<1,1,T>{
@@ -248,4 +245,46 @@ public:
   }
 };
 
+template<size_t rows,size_t cols,size_t cols2,typename T>  Matrix<rows,cols2,T> operator*(const Matrix<rows,cols,T>& lhs, const Matrix<cols,cols2,T>& rhs) {
+    Matrix<rows,cols2,T> ret;
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols2;i++){
+        ret[j][i] = lhs[j] * rhs.col(i);
+    }
+    return ret;
+}
+//I don't know why need to use float& , T& is not work?
+template<size_t rows,size_t cols,typename T>  Matrix<rows,cols,T> operator*(const float& lhs, const Matrix<rows,cols,T>& rhs) {
+    Matrix<rows,cols,T> ret = rhs;
+    for(size_t j=0;j<rows;j++)
+      for(size_t i=0;i<cols;i++){
+        ret[j][i] *= lhs;
+    }
+    return ret;
+}
+/*
+template <size_t dim, typename T> std::ostream& operator<<(std::ostream& out,const Vector<dim, T>& v)
+{
+  out << "Vector: [ ";
+  for(int i=0;i<dim;i++){
+    out << v[i] << " ";
+  }
+  out << "]" << std::endl;
+  return out;
+}
+
+template <size_t rows,size_t cols, typename T>
+std::ostream& operator<<(std::ostream& out,const Matrix<rows,cols, T>& m)
+{
+  out << "Matrix: "<<  std::endl << "[ " << std::endl;
+  for(int j=0;j<rows;j++){
+      for(int i=0;i<cols;i++){
+        out << m[j][i] << " ";
+      }
+      out << std::endl;
+  }
+  out << "]" << std::endl;
+  return out;
+}
+*/
 #endif

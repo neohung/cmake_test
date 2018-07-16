@@ -184,11 +184,15 @@ int main()
   */
    float val[] = { 1,2,3,4};
    Matrix<2,2,float> mmm = Matrix<2,2,float>(val);
-   float val2[] = { 5,6,7,8};
-   Matrix<2,2,float> mmm2 = Matrix<2,2,float>(val2);
+   float val2[] = { 5,6};
+   Matrix<2,1,float> mmm2 = Matrix<2,1,float>(val2);
    float val3[] = { 9,10};
-   Matrix<2,1,float> mmm3 = Matrix<2,1,float>(val3);
-   std::cout << mmm3;
+   Matrix<1,2,float> mmm3 = Matrix<1,2,float>(val3);
+   Matrix<2,2,float> mmm4 = mmm;
+   //mmm2 = mmm2 * mmm;
+   char a  = -2;
+   mmm4 = (a) * mmm4;
+   std::cout << mmm4;
 
   //Matrix<4,4,float> mmm3 = mmm2  mmm;
   //std::cout << mmm2;
