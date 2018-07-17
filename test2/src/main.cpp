@@ -186,9 +186,11 @@ int main()
   //SDLWindow::instance()->init("",640,480);
   //SDLWindow::GetInstance().init("",640,480);
   //Window::GetInstance().init("",640,480);
-  Window* pw = Window::instance();
+  //Window* pw = Window::instance();
+  //Window::getInstance();
+  //MySingleton::getInstance().test();
+  //MySingleton::getInstance().test();
   ////SDLWindow::instance()->addLayer(l1);
-  
   //SDLWindow::instance()->addLayer(l2);
   //Point p = Point(Position2D(10,100), 10, 0x000000FF);
   //Line l = Line(Position2D(100,100), Position2D(250,200),1, 0x00FFFF00);

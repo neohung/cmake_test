@@ -87,11 +87,49 @@ typedef union{
 
 #include <memory>
 
+class MySingleton
+{
+    private:
+        // Private Constructor
+        MySingleton(){printf("TEST\n");};
+        // Stop the compiler generating methods of copy the object
+        MySingleton(MySingleton const& copy){};            // Not Implemented
+        MySingleton& operator=(MySingleton const& copy); // Not Implemented
+    public:
+        static MySingleton& getInstance()
+        {
+            // The only instance
+            // Guaranteed to be lazy initialized
+            // Guaranteed that it will be destroyed correctly
+            static MySingleton instance;
+            return instance;
+        }
+        void test(){}
+};
+
+
+class Window
+{
+  private:
+    Window(){/*Here only init once*/};
+    Window (Window const& copy){};         
+    Window& operator=(Window const& copy); 
+
+  public:
+    static Window& getInstance()
+    {
+      static Window instance;
+      return instance;
+    }
+    
+};
+
+/*
 class Window
 {
 private:
         //static std::auto_ptr<Window> s_instance;
-        static Window *s_instance;
+        //static Window *s_instance;
 
 protected:
 
@@ -111,9 +149,9 @@ public:
           //}
         //  return *s_instance;
         //};
-        static Window *instance(void){
-          return s_instance;
-        }
+        //static Window *instance(void){
+        //  return s_instance;
+        //}
 
         std::vector<Layer*> layers;
         void addLayer(Layer* l);
@@ -138,7 +176,7 @@ public:
         //  return s_instance;
         //}
 };
-
+*/
 
 //PixelBuffer* createPixelBuffer(unsigned short w, unsigned short h, unsigned char colorbit);
 //void freePixelBuffer(PixelBuffer* pb);
