@@ -2,6 +2,7 @@
 #define __WINAPI_H__
 
 #include <vector>
+#include <stdio.h>
 
 #define STATE_RELEASED 0
 #define STATE_PRESSED	1
@@ -85,43 +86,44 @@ typedef union{
   QEvent quit;
 } WINEVENT;
 
-#include <memory>
+//#include <memory>
 
-class MySingleton
+template <typename T>
+class Singleton
 {
-    private:
-        // Private Constructor
-        MySingleton(){printf("TEST\n");};
-        // Stop the compiler generating methods of copy the object
-        MySingleton(MySingleton const& copy){};            // Not Implemented
-        MySingleton& operator=(MySingleton const& copy); // Not Implemented
-    public:
-        static MySingleton& getInstance()
-        {
-            // The only instance
-            // Guaranteed to be lazy initialized
-            // Guaranteed that it will be destroyed correctly
-            static MySingleton instance;
-            return instance;
-        }
-        void test(){}
+private:
+  
+public:
+  static T& GetInstance()
+  {
+    static T instance;
+    return instance;
+  }
 };
 
-
-class Window
+class Window 
 {
   private:
-    Window(){/*Here only init once*/};
-    Window (Window const& copy){};         
-    Window& operator=(Window const& copy); 
-
+    void (* event_cb)(WINEVENT e);
+    void* winHandle;
   public:
-    static Window& getInstance()
-    {
-      static Window instance;
-      return instance;
-    }
-    
+    Window(){};
+    void setHandle(void* h){winHandle = h;};
+    void setEventcb(void (*cb)(WINEVENT e)){event_cb = cb;};
+    void* handle(){return winHandle;};
+    virtual void init(const char* title, int w, int h){};
+    ~Window(){};
+    virtual int show(void (*e_cb)(WINEVENT e)){};
+    void addLayer(Layer* l);
+    Layer* getLayerByName(char* n);
+   
+    virtual void resize(unsigned int w, unsigned int h){}; 
+    //PixelBuffer Screen;
+    std::vector<Layer*> layers;
+    int MouseX;
+    int MouseY;
+    int Width;
+    int Height;
 };
 
 /*

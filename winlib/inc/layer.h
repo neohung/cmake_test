@@ -18,13 +18,13 @@ class Layer
   protected:
   public:
     char* Name;
-    size_t Width;
-    size_t Height;
+    unsigned int Width;
+    unsigned int Height;
     unsigned char order;
     bool IsSkip;
     PixelBuffer* pixelbuf;
     Layer();
-    Layer(const char* name,int x, int y, size_t w, size_t h,unsigned int color);
+    Layer(const char* name,int x, int y, unsigned int w, unsigned int  h,unsigned int color);
     ~Layer();
     void setPos(int x, int y);
     //void setPos(Position2D p);

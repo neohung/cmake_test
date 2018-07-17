@@ -185,7 +185,11 @@ int main()
   ////Render r2 = Render(l2);
   //SDLWindow::instance()->init("",640,480);
   //SDLWindow::GetInstance().init("",640,480);
-  //Window::GetInstance().init("",640,480);
+  SDLWindow::GetInstance().init("",640,480);
+  SDLWindow::GetInstance().show(NULL);
+  //Window::GetInstance()->init("",640,480);
+  //SDLWindow::GetInstance()->init("",640,480);
+  //SDLWindow::GetInstance().init("",640,480);
   //Window* pw = Window::instance();
   //Window::getInstance();
   //MySingleton::getInstance().test();

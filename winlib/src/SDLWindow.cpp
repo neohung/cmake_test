@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 //#include <main.h>
 //#include <testapi.h>
 //#include <tcimg.h>
@@ -6,12 +7,65 @@
 #include <sdlwinapi.h>
 #include <SDL.h>
 
-void SDLWindow::init(const char* title, size_t w, size_t h)
+//Here to create Window and set winHandle, Width, Height 
+void SDLWindow::init(const char* title, int w, int h)
 {
+  Width = w;
+  Height = h;
+  //INIT SDL
+  if (SDL_Init( SDL_INIT_VIDEO)  < 0 ){
+    fprintf(stderr, "Unable to initialize SDL: %s\n",SDL_GetError());
+    exit(1);
+  }
+  //
+  atexit(SDL_Quit);
+  SDL_Window* win = SDL_CreateWindow(title,
+                                     //SDL_WINDOWPOS_UNDEFINED,
+                                     //SDL_WINDOWPOS_UNDEFINED,
+                                     SDL_WINDOWPOS_CENTERED,
+                                     SDL_WINDOWPOS_CENTERED,
+                                     Width, Height,
+                                     //SDL_WINDOW_FULLSCREEN | 
+                                     SDL_WINDOW_OPENGL);
+    //Window.handle = win;
+    setHandle((void*)win);
+    SDL_GetWindowSize( (SDL_Window*)handle(), &Width, &Height);
+    //SDL_GetWindowPosition( (SDL_Window*)Window.handle, &Window.posx, &Window.posy);
 
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);   
+    //SDL_Surface* sf = SDL_GetWindowSurface((SDL_Window*)handle());
 }
 
-
+int SDLWindow::show(void (*e_cb)(WINEVENT e))
+{
+  unsigned int DELAYTIME = 10;
+  setEventcb(e_cb);
+  while (1)
+  {
+    if (layers.size() > 0){
+       layers[i]->update();
+    }
+    //SDL_BlitSurface(SDL_GetWindowSurface((SDL_Window*)handle()), NULL, (SDL_Surface*)p->freePtr, NULL);
+    SDL_UpdateWindowSurface((SDL_Window*)handle());
+    SDL_Delay(DELAYTIME);
+    //
+    SDL_Event event;
+    while (SDL_PollEvent(&event)){
+      switch (event.type)
+      {
+        case SDL_QUIT:
+        {
+          goto QUITPOINT;
+          break;
+        }
+      }
+    }
+  }
+  QUITPOINT:
+  return EXIT_SUCCESS;
+  exit(0);  
+}
 /*
 //For Singleton the static need to init first
 SDLWindow* SDLWindow::s_instance = 0;

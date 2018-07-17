@@ -3,10 +3,13 @@
 
 #include <winapi.h>
 
-class SDLWindow : public Window{
+class SDLWindow : public Singleton<SDLWindow>, public Window
+{
 public:
+   SDLWindow(){printf("First SDLWindow\n");};
   //Override
-  void init(const char* title, size_t w, size_t h);
+  void init(const char* title, int w, int h);
+  int show(void (*e_cb)(WINEVENT e));
 };
 
 #endif
